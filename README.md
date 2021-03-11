@@ -1,6 +1,6 @@
-🧙‍♂️ Beardblaster
+# 🧙‍♂️ Beardblaster
 
 
-# Installation
+## Installation
 TODO: Write me!
 
