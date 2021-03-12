@@ -14,4 +14,5 @@ dependencies {
 	api "io.github.libktx:ktx-log:$ktxLogVersion"
 	api "io.github.libktx:ktx-graphics:$ktxLogVersion"
 	api "com.kotcrab.vis:vis-ui:$visUiVersion"
+	implementation "pl.mk5.gdx-fireapp:gdx-fireapp-core:$gdxFireappVersion"
 }
