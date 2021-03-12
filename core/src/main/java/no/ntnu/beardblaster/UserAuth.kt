@@ -16,14 +16,10 @@ class UserAuth : IUserAuth {
         GdxFIRAuth.inst()
                 .createUserWithEmailAndPassword(email, password.toCharArray())
                 .then<GdxFirebaseUser> {
-                    Gdx.app.debug("Create user", "attempted to create user")
-                    Gdx.app.debug("Create user", " " + GdxFIRAuth.inst().currentUser?.userInfo?.email)
+                    Gdx.app.debug("Create user", "attempted to create user. Created user: " + GdxFIRAuth.inst().currentUser?.userInfo?.email)
                 }
                 .fail { s, _ ->
                     if (s.contains("The email address is already in use by another account")) {
-                        GdxFIRAuth.inst().currentUser?.let {
-                            GdxFIRAuth.inst().currentUser.delete()?.subscribe()
-                        }
                         Gdx.app.debug("Create user", "Tried to create a duplicate user")
                     }
                 }
@@ -33,12 +29,10 @@ class UserAuth : IUserAuth {
         GdxFIRAuth.inst()
                 .signInWithEmailAndPassword(email, password.toCharArray())
                 .then<GdxFirebaseUser> { gdxFirebaseUser ->
-                    gdxFirebaseUser.delete().subscribe()
                     Gdx.app.debug("Sign in user", "Signed in. currentUser: " + GdxFIRAuth.inst().currentUser?.userInfo?.email)
                 }
                 .fail { s, _ ->
                     if (s.contains("")) {
-                        GdxFIRAuth.inst().currentUser.delete().subscribe()
                         Gdx.app.debug("Sign in user", "No user exists with those credentials" + s)
                     }
                 }
