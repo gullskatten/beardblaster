@@ -12,5 +12,6 @@ dependencies {
 	api "io.github.libktx:ktx-vis:$ktxVisVersion"
 	api "io.github.libktx:ktx-scene2d:$ktxScene2DVersion"
 	api "io.github.libktx:ktx-log:$ktxLogVersion"
+	api "io.github.libktx:ktx-graphics:$ktxLogVersion"
 	api "com.kotcrab.vis:vis-ui:$visUiVersion"
 }
