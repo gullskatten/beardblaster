@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "558603033577",
+    "project_id": "beardblaster-fda34",
+    "storage_bucket": "beardblaster-fda34.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:558603033577:android:ca5c72e6857d849ce28978",
+        "android_client_info": {
+          "package_name": "no.ntnu.beardblaster"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "558603033577-53mktni4198696214bsf6dkibnpgom5d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBP1hkgAFChwI17aYqy61u5_nRiFBxgiWM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "558603033577-53mktni4198696214bsf6dkibnpgom5d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
