@@ -13,5 +13,6 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration configuration = new AndroidApplicationConfiguration();
 		initialize(new BeardBlasterGame(), configuration);
+
 	}
 }
