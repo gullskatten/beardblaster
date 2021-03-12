@@ -43,3 +43,7 @@
    boolean reportFixture(long);
    float   reportRayFixture(long, float, float, float, float, float);
 }
+
+-keep class pl.mk5.gdx.fireapp.**{*;}
+-keepattributes Signature
+-keepattributes *Annotation*
