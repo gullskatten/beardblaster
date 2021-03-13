@@ -12,7 +12,7 @@ dependencies {
 	api "io.github.libktx:ktx-vis:$ktxVisVersion"
 	api "io.github.libktx:ktx-scene2d:$ktxScene2DVersion"
 	api "io.github.libktx:ktx-log:$ktxLogVersion"
-	api "io.github.libktx:ktx-graphics:$ktxLogVersion"
+	api "io.github.libktx:ktx-graphics:$ktxGraphicsVersion"
 	api "com.kotcrab.vis:vis-ui:$visUiVersion"
 	implementation "pl.mk5.gdx-fireapp:gdx-fireapp-core:$gdxFireappVersion"
 }
