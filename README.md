@@ -1,6 +1,9 @@
 # 🧙‍♂️ Beardblaster
 
+A magical game developed by students at NTNU.
 
-## Installation
-TODO: Write me!
+## Development
+
+### Branching strategy
+This project uses the branching strategy defined in [Github-Flow](https://guides.github.com/introduction/flow/).
 
