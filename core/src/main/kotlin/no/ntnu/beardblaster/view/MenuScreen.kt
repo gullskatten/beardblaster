@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import ktx.graphics.use
 import ktx.log.debug
 import ktx.log.logger
+import no.ntnu.beardblaster.AbstractScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 
 

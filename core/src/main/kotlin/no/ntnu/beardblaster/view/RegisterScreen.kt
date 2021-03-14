@@ -5,13 +5,10 @@ import ktx.log.debug
 import ktx.log.logger
 import no.ntnu.beardblaster.AbstractScreen
 import no.ntnu.beardblaster.BeardBlasterGame
-
-private val LOG = logger<LoginScreen>()
-
-class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
+private val LOG = logger<RegisterScreen>()
+class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     override fun show() {
-        LOG.debug { "LOGIN SCREEN SHOWN" }
-
+        LOG.debug { "Registration Screen Shown" }
     }
 
     override fun update(delta: Float) {
@@ -26,10 +23,10 @@ class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun resize(width: Int, height: Int) {
-        super.resize(width, height)
+
     }
 
     override fun dispose() {
-        super.dispose()
+
     }
 }

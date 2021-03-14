@@ -4,37 +4,46 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.viewport.FitViewport
 import ktx.app.KtxGame
 import ktx.log.debug
 import ktx.log.logger
-import no.ntnu.beardblaster.view.AbstractScreen
-import no.ntnu.beardblaster.view.LoadingScreen
-import no.ntnu.beardblaster.view.LoginScreen
-import no.ntnu.beardblaster.view.MenuScreen
+import no.ntnu.beardblaster.assets.Assets
+import no.ntnu.beardblaster.view.*
 
-
-
-private val UNIT_SCALE:Float = 1 / 16f
 private val LOG = logger<BeardBlasterGame>()
+private val worldWidth = 1920f
+private val worldHeight = 1080f
 
-
-
+//Gameclass that extends KTX game with an abstract screen
 class BeardBlasterGame : KtxGame<AbstractScreen>() {
     val batch : Batch by lazy { SpriteBatch() }
-    /*val stage: Stage by lazy {
-        val result = Stage(FitViewport(135f, 240f))
+    val stage: Stage by lazy {
+        val result = Stage(FitViewport(worldWidth, worldHeight))
         Gdx.input.inputProcessor = result
         result
-    }*/
+    }
+
     override fun create() {
+        //Set debug level
         Gdx.app.logLevel = Application.LOG_DEBUG
         LOG.debug { "Create game instance" }
-
+        initScreens()
+    }
+    //Add all screens and set loading screen
+    fun initScreens() {
         addScreen(LoadingScreen(this))
+        addScreen(LoginMenuScreenScreen(this))
         addScreen(LoginScreen(this))
+        addScreen(RegisterScreen(this))
         addScreen(MenuScreen(this))
+
         setScreen<LoadingScreen>()
+    }
 
-
+    override fun dispose() {
+        super.dispose()
+        Assets.dispose()
     }
 }
