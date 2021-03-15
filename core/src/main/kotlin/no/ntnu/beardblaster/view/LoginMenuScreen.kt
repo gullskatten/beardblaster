@@ -48,8 +48,9 @@ class LoginMenuScreenScreen(game: BeardBlasterGame) : AbstractScreen(game) {
 
         //creating buttons
         val textButtonStyle = TextButton.TextButtonStyle()
-        skin.getDrawable("butotn_fancy_dark_short").also { textButtonStyle.up = it }
-        skin.getDrawable("button_fancy_dark_short").also { textButtonStyle.down = it }
+        skin.getDrawable("button_default").also { textButtonStyle.up = it }
+        skin.getDrawable("button_default_hover").also { textButtonStyle.over = it }
+        skin.getDrawable("button_default_pressed").also { textButtonStyle.down = it }
         textButtonStyle.pressedOffsetX = 4f
         textButtonStyle.pressedOffsetY = -4f
         textButtonStyle.font = standardFont
