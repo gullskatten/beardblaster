@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.FitViewport
+import ktx.actors.onClick
 import ktx.log.debug
 import ktx.log.logger
 import no.ntnu.beardblaster.AbstractScreen
@@ -109,6 +110,10 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun update(delta: Float) {
+        createButton.onClick {
+            LOG.debug { "Insert user creation here" }
+        }
+
     }
 
     override fun render(delta: Float) {
