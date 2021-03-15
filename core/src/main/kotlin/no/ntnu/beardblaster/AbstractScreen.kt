@@ -1,9 +1,6 @@
 package no.ntnu.beardblaster
 
-import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.utils.viewport.FitViewport
 import ktx.app.KtxScreen
 
 abstract class AbstractScreen(
@@ -11,9 +8,8 @@ abstract class AbstractScreen(
         val batch: Batch = game.batch
         )
     : KtxScreen {
-    val cam = game.stage.camera as OrthographicCamera
-    val viewport = game.stage.viewport as FitViewport
-    val stage: Stage = game.stage
+    val cam = game.cam
+    val viewport = game.viewport
 
     override fun show() {
 
