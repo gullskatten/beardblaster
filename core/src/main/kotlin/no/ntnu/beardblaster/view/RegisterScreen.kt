@@ -80,7 +80,7 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
 
         textInputStyle.also {
             it.background = skin.getDrawable("input_texture_dark")
-            it.fontColor = Color.BLACK
+            it.fontColor = Color.BROWN
             it.font = standardFont
         }
 
