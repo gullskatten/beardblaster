@@ -15,10 +15,10 @@ object Assets {
     val loginImg = AssetDescriptor<Texture>("graphics/login.png", Texture::class.java)
     val test1 = AssetDescriptor<Texture>("bar_container.png", Texture::class.java)
     val test2 = AssetDescriptor<Texture>("bb_gui.png", Texture::class.java)
-    val test3 = AssetDescriptor<Texture>("bg_modal_fancy.png", Texture::class.java)
+    val test3 = AssetDescriptor<Texture>("modal_fancy_skull.png", Texture::class.java)
     val test4 = AssetDescriptor<Texture>("bg_modal_small.png", Texture::class.java)
     val test5 = AssetDescriptor<Texture>("bg_modal_wooden.png", Texture::class.java)
-    val test6 = AssetDescriptor<Texture>("button_fancy_dark_icon.png", Texture::class.java)
+    val test6 = AssetDescriptor<Texture>("button_default.png", Texture::class.java)
     val atlas = AssetDescriptor<TextureAtlas>("bb_gui.atlas", TextureAtlas::class.java)
 
     //fonts
