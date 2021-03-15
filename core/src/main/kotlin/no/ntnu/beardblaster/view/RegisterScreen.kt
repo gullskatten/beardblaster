@@ -64,7 +64,7 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         skin.getDrawable("modal_fancy_header_button_red").also { unCheckButtonStyle.up = it }
         skin.getDrawable("modal_fancy_header_button_red_cross").also { unCheckButtonStyle.down = it }
         skin.getDrawable("button_fancy_dark_short").also { createUserButtonStyle.down = it }
-        skin.getDrawable("button_fancy_dark_short").also { createUserButtonStyle.up = it }
+        skin.getDrawable("button_default").also { createUserButtonStyle.up = it }
 
         standardFont.apply {
             checkButtonStyle.font = this
