@@ -82,6 +82,7 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             it.background = skin.getDrawable("input_texture_dark")
             it.fontColor = Color.BROWN
             it.font = standardFont
+             it.messageFontColor = Color.GRAY
         }
 
         userNameInput = TextField("Enter wizard name..", textInputStyle)
