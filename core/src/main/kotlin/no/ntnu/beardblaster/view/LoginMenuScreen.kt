@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.FitViewport
 import ktx.actors.onClick
 import ktx.log.debug
@@ -59,19 +60,20 @@ class LoginMenuScreenScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         buttonLogin = TextButton("LOGIN", textButtonStyle)
         buttonRegister = TextButton("REGISTER", textButtonStyle)
 
-
         //Creating heading
-        val headingStyle = Label.LabelStyle(standardFont, Color.WHITE).also {
+        val headingStyle = Label.LabelStyle(standardFont, Color.BLACK).also {
             heading = Label("BEARDBLASTER", it)
             heading.setFontScale(2f)
+            it.background = skin.getDrawable("modal_fancy_header")
+            heading.setAlignment(Align.center)
         }
 
         //Creating table
         table.background = skin.getDrawable("modal_fancy")
         table.add(heading).pad(50f)
-
+        table.row()
         table.add(buttonLogin).pad(40f)
-
+        table.row()
         table.add(buttonRegister).pad(40f)
         table.row()
         table.add(buttonExit).pad(40f)
