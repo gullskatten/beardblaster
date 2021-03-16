@@ -5,23 +5,25 @@ import pl.mk5.gdx.fireapp.GdxFIRAuth
 import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
 
 interface IUserAuth {
-    fun createUser(email: String, password: String)
+    fun createUser(email: String, password: String, displayName: String)
     fun signIn(email: String, password: String)
     fun signOut()
 }
 
 class UserAuth : IUserAuth {
 
-    override fun createUser(email: String, password: String) {
+    override fun createUser(email: String, password: String, displayName: String) {
         GdxFIRAuth.inst()
                 .createUserWithEmailAndPassword(email, password.toCharArray())
                 .then<GdxFirebaseUser> {
-                    Gdx.app.debug("Create user", "attempted to create user. Created user: " + GdxFIRAuth.inst().currentUser?.userInfo?.email)
+                    Gdx.app.debug("Create user", "Created user: " + GdxFIRAuth.inst().currentUser?.userInfo?.email)
+                    // TODO: Add user to /users/${GdxFIRAuth.inst().currentUser?.userInfo?.uid} with displayName and beardLength = 0
                 }
                 .fail { s, _ ->
                     if (s.contains("The email address is already in use by another account")) {
                         Gdx.app.debug("Create user", "Tried to create a duplicate user")
                     }
+                    Gdx.app.error("Create user failed", s)
                 }
     }
 
