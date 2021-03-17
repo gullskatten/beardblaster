@@ -84,7 +84,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation "pl.mk5.gdx-fireapp:gdx-fireapp-android:$gdxFireappVersion"
-
+    implementation project(':commons')
 }
 
 // Called every time gradle gets executed, takes the native dependencies of

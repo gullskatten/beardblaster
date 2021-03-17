@@ -18,5 +18,5 @@ dependencies {
 	api "com.kotcrab.vis:vis-ui:$visUiVersion"
 	implementation "pl.mk5.gdx-fireapp:gdx-fireapp-core:$gdxFireappVersion"
 	implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-
+	implementation project(':commons')
 }
