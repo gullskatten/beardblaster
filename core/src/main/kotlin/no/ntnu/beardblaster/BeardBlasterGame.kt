@@ -16,9 +16,10 @@ private val LOG = logger<BeardBlasterGame>()
 const val worldWidth = 1920f
 const val worldHeight = 1080f
 
-//Gameclass that extends KTX game with an abstract screen
+// Game class that extends KTX game with an abstract screen
 class BeardBlasterGame : KtxGame<AbstractScreen>() {
-    val batch : Batch by lazy { SpriteBatch() }
+    val batch: Batch by lazy { SpriteBatch() }
+
     /*val stage: Stage by lazy {
         val result = Stage(FitViewport(worldWidth, worldHeight))
         Gdx.input.inputProcessor = result
@@ -31,15 +32,24 @@ class BeardBlasterGame : KtxGame<AbstractScreen>() {
         //Set debug level
         Gdx.app.logLevel = Application.LOG_DEBUG
         LOG.debug { "Create game instance" }
+        // Speed login
+        // if (!UserAuth().isLoggedIn()) {
+        //    UserAuth().signIn("beard@blaster.com", "beardblaster")
+        //}
         initScreens()
+
     }
-    //Add all screens and set loading screen
+
+    // Add all screens and set loading screen
     fun initScreens() {
         addScreen(LoadingScreen(this))
         addScreen(LoginMenuScreen(this))
         addScreen(LoginScreen(this))
         addScreen(RegisterScreen(this))
         addScreen(MenuScreen(this))
+        addScreen(CreateLobbyScreen(this))
+        addScreen(JoinLobbyScreen(this))
+        addScreen(GameplayScreen(this))
 
         setScreen<LoadingScreen>()
     }
