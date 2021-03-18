@@ -7,27 +7,33 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import no.ntnu.beardblaster.commons.AbstractFirestore
-import no.ntnu.beardblaster.commons.CreateDocumentFailureException
+import no.ntnu.beardblaster.commons.FirestoreDocumentFailureException
 import no.ntnu.beardblaster.commons.DocumentType
 
 class Firestore<T : DocumentType>(private val db: FirebaseFirestore = Firebase.firestore) : AbstractFirestore<T> {
     val TAG = "Firestore"
 
-    override fun getDocument(ref: String, onSuccess: Function<T?>, onFail: Function<String>) {
 
-        if (ref.isEmpty()) {
-            onFail.run { "Document reference is empty." }
+    override fun getDocument(id: String, collection: String) : T? {
+        var c : T? = null
+        if (id.isEmpty() || collection.isEmpty()) {
+            Log.e(TAG, "Document/collection cannot be empty. Was collection: $collection , document: $id")
         }
         db
-                .document(ref)
+                .collection(collection)
+                .document(id)
                 .get()
                 .addOnSuccessListener { document ->
                     if (document != null) {
-                        onSuccess.run { toObjectRef(document) }
+                        // TODO: 3/18/2021 - Throws exception
+                        //  java.util.HashMap cannot be cast to no.ntnu.beardblaster.commons.DocumentType
+                        c = document.toObject<Any>() as T
                     } else {
-                        onFail.run { "Document not found!" }
+                        c = null
                     }
                 }
+
+        return c
     }
 
     override fun create(doc: T, collection: String): T {
@@ -43,18 +49,13 @@ class Firestore<T : DocumentType>(private val db: FirebaseFirestore = Firebase.f
                         }
                         .addOnFailureListener {
                             Log.e(TAG, "Failed to create document at $collection : ${it.message}")
-                            throw CreateDocumentFailureException(it)
+                            throw FirestoreDocumentFailureException(it)
                         }
             }
         } else {
-            Log.w(TAG, "Cannot create document without specifying its collection!")
+            Log.w(TAG, "No collection specified!")
         }
 
         return doc
-    }
-
-
-    private inline fun <reified T : Any> toObjectRef(document: DocumentSnapshot): T? {
-        return document.toObject<T>()
     }
 }

@@ -18,8 +18,8 @@ class Firestore<T : DocumentType> : PlatformDistributor<AbstractFirestore<T>>(),
         TODO("Not yet implemented")
     }
 
-    override fun getDocument(ref: String, onSuccess: Function<T?>, onFail: Function<String>) {
-        platformObject.getDocument(ref, onSuccess, onFail)
+    override fun getDocument(id: String, collection: String) : T? {
+       return platformObject.getDocument(id, collection)
     }
 
     override fun create(doc: T, collection: String): T {

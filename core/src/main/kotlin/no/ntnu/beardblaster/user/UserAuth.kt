@@ -15,14 +15,16 @@ interface IUserAuth {
 class UserAuth : IUserAuth {
 
     override fun createUser(email: String, password: String, displayName: String) {
-
-
         GdxFIRAuth.inst()
                 .createUserWithEmailAndPassword(email, password.toCharArray())
                 .then<GdxFirebaseUser> {
-                    Gdx.app.debug("Create user", "Created user: " + GdxFIRAuth.inst().currentUser?.userInfo?.email)
+                    Gdx.app.debug("Create user", "Created user: ${GdxFIRAuth.inst().currentUser?.userInfo?.email}")
                     val newUser = User(displayName, id = GdxFIRAuth.inst().currentUser.userInfo.uid)
                     Firestore<User>().create(newUser, "users")
+
+                  // TODO: This should not throw an exception!
+                  //  val usr = Firestore<User>().getDocument(GdxFIRAuth.inst().currentUser.userInfo.uid, "users")
+                  //  Gdx.app.debug("Create user", "Found user: ${usr?.displayName}")
                 }
                 .fail { s, _ ->
                     if (s.contains("The email address is already in use by another account")) {
