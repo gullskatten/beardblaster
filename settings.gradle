@@ -1,1 +1,2 @@
+include ':commons'
 include 'core', 'android', 'lwjgl3'

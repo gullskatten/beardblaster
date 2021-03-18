@@ -1,6 +1,8 @@
 package no.ntnu.beardblaster
 
 import com.badlogic.gdx.Gdx
+import no.ntnu.beardblaster.commons.User
+import no.ntnu.beardblaster.firestore.Firestore
 import pl.mk5.gdx.fireapp.GdxFIRAuth
 import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
 
@@ -16,8 +18,13 @@ class UserAuth : IUserAuth {
         GdxFIRAuth.inst()
                 .createUserWithEmailAndPassword(email, password.toCharArray())
                 .then<GdxFirebaseUser> {
-                    Gdx.app.debug("Create user", "Created user: " + GdxFIRAuth.inst().currentUser?.userInfo?.email)
-                    // TODO: Add user to /users/${GdxFIRAuth.inst().currentUser?.userInfo?.uid} with displayName and beardLength = 0
+                    Gdx.app.debug("Create user", "Created user: ${GdxFIRAuth.inst().currentUser?.userInfo?.email}")
+                    val newUser = User(displayName, id = GdxFIRAuth.inst().currentUser.userInfo.uid)
+                    Firestore<User>().create(newUser, "users")
+
+                  // TODO: This should not throw an exception!
+                  //  val usr = Firestore<User>().getDocument(GdxFIRAuth.inst().currentUser.userInfo.uid, "users")
+                  //  Gdx.app.debug("Create user", "Found user: ${usr?.displayName}")
                 }
                 .fail { s, _ ->
                     if (s.contains("The email address is already in use by another account")) {
