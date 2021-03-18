@@ -36,7 +36,7 @@ class BeardBlasterGame : KtxGame<AbstractScreen>() {
     //Add all screens and set loading screen
     fun initScreens() {
         addScreen(LoadingScreen(this))
-        addScreen(LoginMenuScreenScreen(this))
+        addScreen(LoginMenuScreen(this))
         addScreen(LoginScreen(this))
         addScreen(RegisterScreen(this))
         addScreen(MenuScreen(this))

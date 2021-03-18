@@ -34,7 +34,7 @@ class LoadingScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         if (Assets.assetManager.update()) {
             if (Gdx.input.justTouched()) {
                 //Change screen
-                game.setScreen<LoginMenuScreenScreen>()
+                game.setScreen<LoginMenuScreen>()
             }
         }
     }
