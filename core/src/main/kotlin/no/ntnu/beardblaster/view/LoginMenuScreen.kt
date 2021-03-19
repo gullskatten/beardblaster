@@ -19,9 +19,9 @@ import no.ntnu.beardblaster.assets.Assets
 import no.ntnu.beardblaster.worldHeight
 import no.ntnu.beardblaster.worldWidth
 
-private val LOG = logger<LoginMenuScreenScreen>()
+private val LOG = logger<LoginMenuScreen>()
 
-class LoginMenuScreenScreen(game: BeardBlasterGame) : AbstractScreen(game) {
+class LoginMenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
 
 
     private lateinit var skin: Skin
@@ -39,7 +39,8 @@ class LoginMenuScreenScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
     override fun show() {
         LOG.debug { "LOGINMENU Screen" }
-
+        //Resetting inputprocessor to correct stage
+        Gdx.input.inputProcessor = loginMenuStage
         skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
         table.setBounds(0f,0f, viewport.worldWidth, viewport.worldHeight)
@@ -69,14 +70,17 @@ class LoginMenuScreenScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         }
 
         //Creating table
-        table.background = skin.getDrawable("modal_fancy")
-        table.add(heading).pad(50f)
-        table.row()
-        table.add(buttonLogin).pad(40f)
-        table.row()
-        table.add(buttonRegister).pad(40f)
-        table.row()
-        table.add(buttonExit).pad(40f)
+        table.apply {
+            this.background = skin.getDrawable("modal_fancy")
+            this.add(heading).pad(50f)
+            this.row()
+            this.add(buttonLogin).pad(40f)
+            this.row()
+            this.add(buttonRegister).pad(40f)
+            this.row()
+            this.add(buttonExit).pad(40f)
+        }
+
         // Adding actors to the stage
         loginMenuStage.addActor(table)
 

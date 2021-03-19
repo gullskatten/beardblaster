@@ -10,8 +10,11 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import ktx.actors.onClick
 import ktx.log.debug
 import ktx.log.logger
-import no.ntnu.beardblaster.*
+import no.ntnu.beardblaster.AbstractScreen
+import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
+import no.ntnu.beardblaster.worldHeight
+import no.ntnu.beardblaster.worldWidth
 
 private val LOG = logger<RegisterScreen>()
 class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
@@ -24,10 +27,15 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
 
 
     private lateinit var skin: Skin
+
     private lateinit var table: Table
+    private lateinit var leftTable: Table
+    private lateinit var rightTable: Table
+
     private lateinit var heading: Label
 
     private lateinit var createButton: TextButton
+    private lateinit var backButton: Button
 
     private lateinit var userNameInput: TextField
     private lateinit var emailInput: TextField
@@ -36,10 +44,12 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private var hasRegistered = false
     override fun show() {
         LOG.debug { "Registration Screen Shown" }
-
+        Gdx.input.inputProcessor = registrationStage
         skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
         table.setBounds(0f,0f, viewport.worldWidth, viewport.worldHeight)
+        rightTable = Table(skin)
+        leftTable = Table(skin)
 
         val standardFont = Assets.assetManager.get(Assets.standardFont)
 
@@ -54,11 +64,17 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         skin.getDrawable("button_default_pressed").also { createUserButtonStyle.down = it }
         skin.getDrawable("button_default").also { createUserButtonStyle.up = it }
 
+        val backButtonStyle =  Button.ButtonStyle()
+        skin.getDrawable("modal_fancy_header_button_red_cross_left").also {
+            backButtonStyle.down = it
+            backButtonStyle.up = it
+        }
+
         standardFont.apply {
             createUserButtonStyle.font = this
         }
-
-        createButton = TextButton("Create Wizard", createUserButtonStyle)
+        backButton = Button(backButtonStyle)
+        createButton = TextButton("CREATE WIZARD", createUserButtonStyle)
 
         val textInputStyle = TextField.TextFieldStyle()
 
@@ -83,33 +99,55 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         rePasswordInput.isPasswordMode = true
 
 
-
-
         //%TODO(find out why input fields renders with wrong width)
         //Creating table
-        table.defaults().pad(30f)
-        table.background = skin.getDrawable("modal_fancy")
-        table.add(heading)
-        table.row()
-        table.add(userNameInput).width(570f)
-        table.row()
-        table.add(emailInput).width(570f)
-        table.row()
-        table.add(passwordInput).width(570f)
-        table.row()
-        table.add(rePasswordInput).width(570f)
-        table.row()
-        table.add(createButton)
+
+        rightTable.apply {
+            this.defaults().pad(30f)
+            this.background = skin.getDrawable("modal_fancy")
+            this.add(heading)
+            this.row()
+            this.add(userNameInput).width(570f)
+            this.row()
+            this.add(emailInput).width(570f)
+            this.row()
+            this.add(passwordInput).width(570f)
+            this.row()
+            this.add(rePasswordInput).width(570f)
+            this.row()
+            this.add(createButton).width(370f)
+        }
+
+        val stack = Stack()
+        stack.add(backButton)
+
+        leftTable.apply {
+            this.top()
+            this.add(stack).fillY().align(Align.top).padTop(50f)
+        }
+
+
+
+        table.apply {
+            this.background = skin.getDrawable("background")
+            this.add(leftTable).width(91f).expandY().fillY()
+            this.add(rightTable).width(viewport.worldWidth * 0.9f).fillY()
+        }
+
         // Adding actors to the stage
         registrationStage.addActor(table)
     }
 
     override fun update(delta: Float) {
         createButton.onClick {
-            if(!hasRegistered) {
+            /*if(!hasRegistered) {
                 UserAuth().createUser(emailInput.text, passwordInput.text, userNameInput.text)
                 hasRegistered = true
-            }
+            }*/
+            game.setScreen<LoginMenuScreen>()
+        }
+        backButton.onClick {
+            game.setScreen<LoginMenuScreen>()
         }
     }
 
