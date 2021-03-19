@@ -13,6 +13,7 @@ import ktx.log.logger
 import no.ntnu.beardblaster.AbstractScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
+import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.worldHeight
 import no.ntnu.beardblaster.worldWidth
 
@@ -125,6 +126,9 @@ class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
 
     override fun update(delta: Float) {
         loginButton.onClick {
+            if (!UserAuth().isLoggedIn() && emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty()) {
+                UserAuth().signIn(emailInput.text, passwordInput.text)
+            }
             game.setScreen<MenuScreen>()
         }
         backButton.onClick {
