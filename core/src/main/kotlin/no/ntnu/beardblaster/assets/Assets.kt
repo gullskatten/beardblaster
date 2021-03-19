@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 
 object Assets {
 
-    //Define all assets that must be loaded during loading screen
+    // Define all assets that must be loaded during loading screen
     var assetManager = AssetManager()
     val loadBar = AssetDescriptor<Texture>("graphics/load_bar.png", Texture::class.java)
     val loginImg = AssetDescriptor<Texture>("graphics/login.png", Texture::class.java)
@@ -21,11 +21,11 @@ object Assets {
     val test6 = AssetDescriptor<Texture>("button_default.png", Texture::class.java)
     val atlas = AssetDescriptor<TextureAtlas>("bb_gui.atlas", TextureAtlas::class.java)
 
-    //fonts
-    val standardFont =  AssetDescriptor<BitmapFont>("font_nevis/nevis.fnt", BitmapFont::class.java)
+    // Fonts
+    val standardFont = AssetDescriptor<BitmapFont>("font_nevis/nevis.fnt", BitmapFont::class.java)
 
 
-    //Load all assets
+    // Load all assets
     fun loadTextures() {
         assetManager.load(loadBar)
         assetManager.load(loginImg)
@@ -37,8 +37,8 @@ object Assets {
         assetManager.load(test6)
         assetManager.load(atlas)
         assetManager.load(standardFont)
-
     }
+
     fun dispose() {
         assetManager.dispose()
     }

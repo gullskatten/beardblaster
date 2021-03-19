@@ -22,33 +22,31 @@ import no.ntnu.beardblaster.worldWidth
 private val LOG = logger<LoginMenuScreen>()
 
 class LoginMenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
-
-
     private lateinit var skin: Skin
     private lateinit var table: Table
     private lateinit var heading: Label
 
-    private lateinit var buttonExit: TextButton
-    private lateinit var buttonLogin: TextButton
-    private lateinit var buttonRegister: TextButton
+    private lateinit var exitBtn: TextButton
+    private lateinit var loginBtn: TextButton
+    private lateinit var registerBtn: TextButton
 
     private val loginMenuStage: Stage by lazy {
         val result = Stage(FitViewport(worldWidth, worldHeight))
         Gdx.input.inputProcessor = result
         result
     }
+
     override fun show() {
-        LOG.debug { "LOGINMENU Screen" }
-        //Resetting inputprocessor to correct stage
-        Gdx.input.inputProcessor = loginMenuStage
+        LOG.debug { "LOGIN MENU Screen" }
+
         skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
-        table.setBounds(0f,0f, viewport.worldWidth, viewport.worldHeight)
+        table.setBounds(0f, 0f, viewport.worldWidth, viewport.worldHeight)
 
-        //fonts
-        var standardFont = Assets.assetManager.get(Assets.standardFont)
+        // Fonts
+        val standardFont = Assets.assetManager.get(Assets.standardFont)
 
-        //creating buttons
+        // Creating buttons
         val textButtonStyle = TextButton.TextButtonStyle()
         skin.getDrawable("button_default").also { textButtonStyle.up = it }
         skin.getDrawable("button_default_hover").also { textButtonStyle.over = it }
@@ -57,58 +55,57 @@ class LoginMenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         textButtonStyle.pressedOffsetY = -4f
         textButtonStyle.font = standardFont
 
-        buttonExit = TextButton("EXIT", textButtonStyle)
-        buttonLogin = TextButton("LOGIN", textButtonStyle)
-        buttonRegister = TextButton("REGISTER", textButtonStyle)
+        exitBtn = TextButton("EXIT GAME", textButtonStyle)
+        loginBtn = TextButton("LOGIN", textButtonStyle)
+        registerBtn = TextButton("REGISTER", textButtonStyle)
 
-        //Creating heading
+        // Creating heading
         val headingStyle = Label.LabelStyle(standardFont, Color.BLACK).also {
-            heading = Label("BEARDBLASTER", it)
+            heading = Label("BeardBlaster", it)
             heading.setFontScale(2f)
             it.background = skin.getDrawable("modal_fancy_header")
             heading.setAlignment(Align.center)
         }
 
-        //Creating table
+        // Creating table
         table.apply {
             this.background = skin.getDrawable("modal_fancy")
             this.add(heading).pad(50f)
             this.row()
-            this.add(buttonLogin).pad(40f)
+            this.add(loginBtn).pad(40f)
             this.row()
-            this.add(buttonRegister).pad(40f)
+            this.add(registerBtn).pad(40f)
             this.row()
-            this.add(buttonExit).pad(40f)
+            this.add(exitBtn).pad(40f)
         }
 
         // Adding actors to the stage
         loginMenuStage.addActor(table)
 
+        Gdx.input.inputProcessor = loginMenuStage
 
     }
 
     override fun update(delta: Float) {
-        buttonLogin.onClick {
+        loginBtn.onClick {
             game.setScreen<LoginScreen>()
         }
-        buttonExit.onClick {
-            Gdx.app.exit()
-        }
-        buttonRegister.onClick {
+        registerBtn.onClick {
             game.setScreen<RegisterScreen>()
         }
-
+        exitBtn.onClick {
+            Gdx.app.exit()
+        }
     }
 
     override fun render(delta: Float) {
-        Gdx.gl.glClearColor(0f,0f,0f,1f)
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         update(delta)
 
         loginMenuStage.act(delta)
         loginMenuStage.draw()
     }
-
 
 
 }

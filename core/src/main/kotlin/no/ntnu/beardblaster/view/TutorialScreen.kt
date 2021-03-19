@@ -20,71 +20,64 @@ import no.ntnu.beardblaster.worldHeight
 import no.ntnu.beardblaster.worldWidth
 
 
-private val LOG = logger<CreateLobbyScreen>()
+private val LOG = logger<TutorialScreen>()
 
 
-class CreateLobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
+class TutorialScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var skin: Skin
     private lateinit var table: Table
     private lateinit var heading: Label
 
-    private lateinit var btnStartGame: TextButton
-    private lateinit var btnBack: TextButton
+    private lateinit var closeTutorialBtn: TextButton
 
-    private val createLobbyStage: Stage by lazy {
+    private val tutorialStage: Stage by lazy {
         val result = Stage(FitViewport(worldWidth, worldHeight))
         Gdx.input.inputProcessor = result
         result
     }
 
     override fun show() {
-        LOG.debug { "CREATE LOBBY Screen" }
+        LOG.debug { "TUTORIAL Screen" }
 
         skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
         table.setBounds(0f, 0f, viewport.worldWidth, viewport.worldHeight)
 
-        // Fonts
         val standardFont = Assets.assetManager.get(Assets.standardFont)
 
-        // Creating buttons
-        val textButtonStyle = TextButton.TextButtonStyle()
-        skin.getDrawable("button_default").also { textButtonStyle.up = it }
-        skin.getDrawable("button_default_hover").also { textButtonStyle.over = it }
-        skin.getDrawable("button_default_pressed").also { textButtonStyle.down = it }
-        textButtonStyle.pressedOffsetX = 4f
-        textButtonStyle.pressedOffsetY = -4f
-        textButtonStyle.font = standardFont
-
-        btnStartGame = TextButton("START GAME", textButtonStyle)
-        btnBack = TextButton("GO BACK", textButtonStyle)
-
-        // Creating heading
         Label.LabelStyle(standardFont, Color.BLACK).also {
-            heading = Label("CREATE LOBBY", it)
+            heading = Label("Tutorial", it)
             heading.setFontScale(2f)
             it.background = skin.getDrawable("modal_fancy_header")
             heading.setAlignment(Align.center)
         }
 
+        val buttonStyle = TextButton.TextButtonStyle()
+        skin.getDrawable("button_default_pressed").also { buttonStyle.down = it }
+        skin.getDrawable("button_default").also { buttonStyle.up = it }
+        standardFont.apply {
+            buttonStyle.font = this
+        }
+
+        closeTutorialBtn = TextButton("CLOSE", buttonStyle)
+
         // Creating table
-        table.background = skin.getDrawable("modal_fancy")
-        table.add(heading).pad(50f)
-        table.row()
-        table.add(btnStartGame).pad(40f)
-        table.row()
-        table.add(btnBack).pad(40f)
-        table.row()
+        table.apply {
+            this.defaults().pad(30f)
+            this.background = skin.getDrawable("background")
+            this.add(heading)
+            this.row()
+            this.add(closeTutorialBtn)
+        }
 
         // Adding actors to the stage
-        createLobbyStage.addActor(table)
+        tutorialStage.addActor(table)
+
+        Gdx.input.inputProcessor = tutorialStage
     }
 
     override fun update(delta: Float) {
-        btnStartGame.onClick {
-            game.setScreen<GameplayScreen>()
-        }
-        btnBack.onClick {
+        closeTutorialBtn.onClick {
             game.setScreen<MenuScreen>()
         }
     }
@@ -94,9 +87,7 @@ class CreateLobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         update(delta)
 
-        createLobbyStage.act(delta)
-        createLobbyStage.draw()
+        tutorialStage.act(delta)
+        tutorialStage.draw()
     }
-
-
 }

@@ -39,9 +39,7 @@ class UserAuth : IUserAuth {
                     LOG.debug { "Signed in. currentUser: ${GdxFIRAuth.inst().currentUser?.userInfo?.email}" }
                 }
                 .fail { s, _ ->
-                    if (s.contains("")) {
-                        LOG.debug { "No user exists with those credentials: ($email, $password) - $s" }
-                    }
+                    LOG.debug { "Login failed: $s" }
                 }
     }
 
@@ -51,9 +49,7 @@ class UserAuth : IUserAuth {
                     LOG.debug { "Signed out. currentUser: ${GdxFIRAuth.inst().currentUser}" }
                 }
                 .fail { s, _ ->
-                    if (s.contains("")) {
-                        LOG.debug { "Already logged out $s" }
-                    }
+                    LOG.debug { "Already logged out $s" }
                 }
     }
 

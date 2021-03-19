@@ -19,14 +19,6 @@ import no.ntnu.beardblaster.worldWidth
 private val LOG = logger<LoginScreen>()
 
 class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
-
-    private val loginStage: Stage by lazy {
-        val result = Stage(FitViewport(worldWidth, worldHeight))
-        Gdx.input.inputProcessor = result
-        result
-    }
-
-
     private lateinit var skin: Skin
     private lateinit var table: Table
     private lateinit var heading: Label
@@ -40,13 +32,19 @@ class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var emailInput: TextField
     private lateinit var passwordInput: TextField
 
+    private val loginStage: Stage by lazy {
+        val result = Stage(FitViewport(worldWidth, worldHeight))
+        Gdx.input.inputProcessor = result
+        result
+    }
+
     override fun show() {
-        LOG.debug { "LOGIN SCREEN SHOWN" }
+        LOG.debug { "LOGIN SCREEN" }
 
         Gdx.input.inputProcessor = loginStage
         skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
-        table.setBounds(0f,0f, viewport.worldWidth, viewport.worldHeight)
+        table.setBounds(0f, 0f, viewport.worldWidth, viewport.worldHeight)
 
         rightTable = Table(skin)
         leftTable = Table(skin)
@@ -69,7 +67,7 @@ class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             buttonStyle.font = this
         }
 
-        val backButtonStyle =  Button.ButtonStyle()
+        val backButtonStyle = Button.ButtonStyle()
         skin.getDrawable("modal_fancy_header_button_red_cross_left").also { backButtonStyle.down = it }
         skin.getDrawable("modal_fancy_header_button_red_cross_left").also { backButtonStyle.up = it }
 
@@ -93,8 +91,8 @@ class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         passwordInput.messageText = "Enter password.."
 
 
-        //%TODO(find out why input fields renders with wrong width)
-        //Creating table
+        // TODO: find out why input fields renders with wrong width
+        // Creating table
         rightTable.apply {
             this.defaults().pad(30f)
             this.background = skin.getDrawable("modal_fancy")
@@ -119,6 +117,7 @@ class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             this.add(leftTable).width(91f).expandY().fillY()
             this.add(rightTable).width(viewport.worldWidth * 0.9f).fillY()
         }
+
         // Adding actors to the stage
         loginStage.addActor(table)
 
@@ -134,20 +133,11 @@ class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun render(delta: Float) {
-        Gdx.gl.glClearColor(0f,0f,0f,1f)
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         update(delta)
 
         loginStage.act(delta)
         loginStage.draw()
-
-    }
-
-    override fun resize(width: Int, height: Int) {
-        super.resize(width, height)
-    }
-
-    override fun dispose() {
-        super.dispose()
     }
 }
