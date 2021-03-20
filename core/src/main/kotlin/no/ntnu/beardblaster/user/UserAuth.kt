@@ -1,8 +1,8 @@
-package no.ntnu.beardblaster
+package no.ntnu.beardblaster.user
 
-import com.badlogic.gdx.Gdx
-import no.ntnu.beardblaster.commons.User
-import no.ntnu.beardblaster.firestore.Firestore
+import ktx.log.debug
+import ktx.log.error
+import ktx.log.logger
 import pl.mk5.gdx.fireapp.GdxFIRAuth
 import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
 
@@ -10,7 +10,10 @@ interface IUserAuth {
     fun createUser(email: String, password: String, displayName: String)
     fun signIn(email: String, password: String)
     fun signOut()
+    fun isLoggedIn(): Boolean
 }
+
+private val LOG = logger<UserAuth>()
 
 class UserAuth : IUserAuth {
 
@@ -18,19 +21,14 @@ class UserAuth : IUserAuth {
         GdxFIRAuth.inst()
                 .createUserWithEmailAndPassword(email, password.toCharArray())
                 .then<GdxFirebaseUser> {
-                    Gdx.app.debug("Create user", "Created user: ${GdxFIRAuth.inst().currentUser?.userInfo?.email}")
-                    val newUser = User(displayName, id = GdxFIRAuth.inst().currentUser.userInfo.uid)
-                    Firestore<User>().create(newUser, "users")
-
-                  // TODO: This should not throw an exception!
-                  //  val usr = Firestore<User>().getDocument(GdxFIRAuth.inst().currentUser.userInfo.uid, "users")
-                  //  Gdx.app.debug("Create user", "Found user: ${usr?.displayName}")
+                    LOG.debug { "Created user: $displayName, ${GdxFIRAuth.inst().currentUser?.userInfo?.email}" }
+                    // TODO: Add user to /users/${GdxFIRAuth.inst().currentUser?.userInfo?.uid} with displayName and beardLength = 0
                 }
                 .fail { s, _ ->
                     if (s.contains("The email address is already in use by another account")) {
-                        Gdx.app.debug("Create user", "Tried to create a duplicate user")
+                        LOG.debug { "Tried to create a duplicate user $email" }
                     }
-                    Gdx.app.error("Create user failed", s)
+                    LOG.error { "Create user failed $s" }
                 }
     }
 
@@ -38,24 +36,25 @@ class UserAuth : IUserAuth {
         GdxFIRAuth.inst()
                 .signInWithEmailAndPassword(email, password.toCharArray())
                 .then<GdxFirebaseUser> { gdxFirebaseUser ->
-                    Gdx.app.debug("Sign in user", "Signed in. currentUser: " + GdxFIRAuth.inst().currentUser?.userInfo?.email)
+                    LOG.debug { "Signed in. currentUser: ${GdxFIRAuth.inst().currentUser?.userInfo?.email}" }
                 }
                 .fail { s, _ ->
-                    if (s.contains("")) {
-                        Gdx.app.debug("Sign in user", "No user exists with those credentials" + s)
-                    }
+                    LOG.debug { "Login failed: $s" }
                 }
     }
 
     override fun signOut() {
         GdxFIRAuth.inst().signOut()
                 .then<Void> {
-                    Gdx.app.debug("Sign out user", "Signed out. currentUser: " + GdxFIRAuth.inst().currentUser)
+                    LOG.debug { "Signed out. currentUser: ${GdxFIRAuth.inst().currentUser}" }
                 }
                 .fail { s, _ ->
-                    if (s.contains("")) {
-                        Gdx.app.debug("Sign out user", "Already logged out" + s)
-                    }
+                    LOG.debug { "Already logged out $s" }
                 }
+    }
+
+    override fun isLoggedIn(): Boolean {
+        LOG.debug { "Check current user: ${GdxFIRAuth.inst().currentUser?.userInfo?.email}" }
+        return GdxFIRAuth.inst().currentUser !== null
     }
 }

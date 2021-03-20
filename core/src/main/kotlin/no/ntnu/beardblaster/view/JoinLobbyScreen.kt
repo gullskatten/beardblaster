@@ -16,66 +16,62 @@ import no.ntnu.beardblaster.assets.Assets
 import no.ntnu.beardblaster.worldHeight
 import no.ntnu.beardblaster.worldWidth
 
-private val LOG = logger<RegisterScreen>()
+private val LOG = logger<LoginScreen>()
 
-class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
-    private var hasRegistered = false
-
+class JoinLobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var skin: Skin
-
     private lateinit var table: Table
-    private lateinit var leftTable: Table
-    private lateinit var rightTable: Table
     private lateinit var heading: Label
 
+    private lateinit var leftTable: Table
+    private lateinit var rightTable: Table
+
+    private lateinit var codeInput: TextField
+
+    private lateinit var submitCodeBtn: TextButton
     private lateinit var backBtn: Button
-    private lateinit var createBtn: TextButton
 
-    private lateinit var userNameInput: TextField
-    private lateinit var emailInput: TextField
-    private lateinit var passwordInput: TextField
-    private lateinit var rePasswordInput: TextField
-
-    private val registrationStage: Stage by lazy {
+    private val joinLobbyStage: Stage by lazy {
         val result = Stage(FitViewport(worldWidth, worldHeight))
         Gdx.input.inputProcessor = result
         result
     }
 
     override fun show() {
-        LOG.debug { "REGISTRATION Screen" }
-        Gdx.input.inputProcessor = registrationStage
+        LOG.debug { "JOIN LOBBY Screen" }
+
         skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
         table.setBounds(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+
         rightTable = Table(skin)
         leftTable = Table(skin)
+
 
         val standardFont = Assets.assetManager.get(Assets.standardFont)
 
         Label.LabelStyle(standardFont, Color.BLACK).also {
-            heading = Label("Create Wizard", it)
+            heading = Label("Join Game", it)
             heading.setFontScale(2f)
             it.background = skin.getDrawable("modal_fancy_header")
             heading.setAlignment(Align.center)
         }
 
-        val createUserButtonStyle = TextButton.TextButtonStyle()
-        skin.getDrawable("button_default_pressed").also { createUserButtonStyle.down = it }
-        skin.getDrawable("button_default").also { createUserButtonStyle.up = it }
-
-        val backBtnStyle = Button.ButtonStyle()
-        skin.getDrawable("modal_fancy_header_button_red_cross_left").also {
-            backBtnStyle.down = it
-            backBtnStyle.up = it
-        }
+        val buttonStyle = TextButton.TextButtonStyle()
+        skin.getDrawable("button_default_pressed").also { buttonStyle.down = it }
+        skin.getDrawable("button_default").also { buttonStyle.up = it }
 
         standardFont.apply {
-            createUserButtonStyle.font = this
+            buttonStyle.font = this
         }
-        backBtn = Button(backBtnStyle)
-        createBtn = TextButton("CREATE WIZARD", createUserButtonStyle)
 
+        val backBtnStyle = Button.ButtonStyle()
+        skin.getDrawable("modal_fancy_header_button_red_cross_left").also { backBtnStyle.down = it }
+        skin.getDrawable("modal_fancy_header_button_red_cross_left").also { backBtnStyle.up = it }
+
+
+        submitCodeBtn = TextButton("SUBMIT", buttonStyle)
+        backBtn = Button(backBtnStyle)
         val textInputStyle = TextField.TextFieldStyle()
 
         textInputStyle.also {
@@ -85,38 +81,23 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             it.messageFontColor = Color.GRAY
         }
 
-        userNameInput = TextField("", textInputStyle)
-        userNameInput.messageText = "Enter wizard name.."
-        emailInput = TextField("", textInputStyle)
-        emailInput.messageText = "Enter e-mail address.."
-        passwordInput = TextField("", textInputStyle)
-        passwordInput.setPasswordCharacter("*"[0])
-        passwordInput.isPasswordMode = true
-        passwordInput.messageText = "Enter password.."
-        rePasswordInput = TextField("", textInputStyle)
-        rePasswordInput.setPasswordCharacter("*"[0])
-        rePasswordInput.messageText = "Re-enter password.."
-        rePasswordInput.isPasswordMode = true
+        codeInput = TextField("", textInputStyle)
+        codeInput.messageText = "Enter game code.."
 
+
+        // Creating table
         rightTable.apply {
             this.defaults().pad(30f)
             this.background = skin.getDrawable("modal_fancy")
             this.add(heading)
             this.row()
-            this.add(userNameInput).width(570f)
+            this.add(codeInput).width(570f)
             this.row()
-            this.add(emailInput).width(570f)
-            this.row()
-            this.add(passwordInput).width(570f)
-            this.row()
-            this.add(rePasswordInput).width(570f)
-            this.row()
-            this.add(createBtn).width(370f)
+            this.add(submitCodeBtn)
         }
 
         val stack = Stack()
         stack.add(backBtn)
-
         leftTable.apply {
             this.top()
             this.add(stack).fillY().align(Align.top).padTop(50f)
@@ -127,20 +108,21 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             this.add(leftTable).width(91f).expandY().fillY()
             this.add(rightTable).width(viewport.worldWidth * 0.9f).fillY()
         }
+        // Adding actors to the stage
+        joinLobbyStage.addActor(table)
 
-        registrationStage.addActor(table)
+        Gdx.input.inputProcessor = joinLobbyStage
+
     }
 
     override fun update(delta: Float) {
-        createBtn.onClick {
-            /*if(!hasRegistered) {
-                UserAuth().createUser(emailInput.text, passwordInput.text, userNameInput.text)
-                hasRegistered = true
-            }*/
-            game.setScreen<LoginMenuScreen>()
+        submitCodeBtn.onClick {
+            // TODO: Set off handling if code is valid. If so, join lobby (go to lobby screen)
+            // but if not, show feedback to user that the code is not connected to an active game
+            game.setScreen<LobbyScreen>()
         }
         backBtn.onClick {
-            game.setScreen<LoginMenuScreen>()
+            game.setScreen<MenuScreen>()
         }
     }
 
@@ -149,8 +131,7 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         update(delta)
 
-        registrationStage.act(delta)
-        registrationStage.draw()
-
+        joinLobbyStage.act(delta)
+        joinLobbyStage.draw()
     }
 }

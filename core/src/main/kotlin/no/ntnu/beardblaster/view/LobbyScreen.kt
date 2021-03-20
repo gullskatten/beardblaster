@@ -13,13 +13,12 @@ import ktx.log.logger
 import no.ntnu.beardblaster.AbstractScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
-import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.worldHeight
 import no.ntnu.beardblaster.worldWidth
 
 private val LOG = logger<LoginScreen>()
 
-class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
+class LobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var skin: Skin
     private lateinit var table: Table
     private lateinit var heading: Label
@@ -27,22 +26,21 @@ class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var leftTable: Table
     private lateinit var rightTable: Table
 
-    private lateinit var loginButton: TextButton
-    private lateinit var backButton: Button
+    private lateinit var codeLabel: Label
+    private lateinit var infoLabel: Label
+    
+    private lateinit var startGameBtn: TextButton
+    private lateinit var backBtn: Button
 
-    private lateinit var emailInput: TextField
-    private lateinit var passwordInput: TextField
-
-    private val loginStage: Stage by lazy {
+    private val lobbyStage: Stage by lazy {
         val result = Stage(FitViewport(worldWidth, worldHeight))
         Gdx.input.inputProcessor = result
         result
     }
 
     override fun show() {
-        LOG.debug { "LOGIN SCREEN" }
+        LOG.debug { "LOBBY SCREEN SHOWN" }
 
-        Gdx.input.inputProcessor = loginStage
         skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
         table.setBounds(0f, 0f, viewport.worldWidth, viewport.worldHeight)
@@ -54,10 +52,19 @@ class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         val standardFont = Assets.assetManager.get(Assets.standardFont)
 
         Label.LabelStyle(standardFont, Color.BLACK).also {
-            heading = Label("Log in", it)
+            heading = Label("Lobby", it)
             heading.setFontScale(2f)
             it.background = skin.getDrawable("modal_fancy_header")
             heading.setAlignment(Align.center)
+        }
+        Label.LabelStyle(standardFont, Color.BLACK).also {
+            codeLabel = Label("39281", it)
+            codeLabel.setFontScale(1.5f)
+            codeLabel.setAlignment(Align.center)
+
+            infoLabel = Label("Share this code with a friend to start playing", it)
+            infoLabel.setFontScale(1f)
+            infoLabel.setAlignment(Align.center)
         }
 
         val buttonStyle = TextButton.TextButtonStyle()
@@ -68,46 +75,30 @@ class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             buttonStyle.font = this
         }
 
-        val backButtonStyle = Button.ButtonStyle()
-        skin.getDrawable("modal_fancy_header_button_red_cross_left").also { backButtonStyle.down = it }
-        skin.getDrawable("modal_fancy_header_button_red_cross_left").also { backButtonStyle.up = it }
+        val backBtnStyle = Button.ButtonStyle()
+        skin.getDrawable("modal_fancy_header_button_red_cross_left").also { backBtnStyle.down = it }
+        skin.getDrawable("modal_fancy_header_button_red_cross_left").also { backBtnStyle.up = it }
 
 
-        loginButton = TextButton("LOGIN", buttonStyle)
-        backButton = Button(backButtonStyle)
-        val textInputStyle = TextField.TextFieldStyle()
+        startGameBtn = TextButton("START GAME", buttonStyle)
+        // startGameBtn.isDisabled = true // TODO: Disabled start button until two players in lobby (or remove start button altogether and just start automatically
+        backBtn = Button(backBtnStyle)
 
-        textInputStyle.also {
-            it.background = skin.getDrawable("input_texture_dark")
-            it.fontColor = Color.BROWN
-            it.font = standardFont
-            it.messageFontColor = Color.GRAY
-        }
-
-        emailInput = TextField("", textInputStyle)
-        emailInput.messageText = "Enter e-mail address.."
-        passwordInput = TextField("", textInputStyle)
-        passwordInput.setPasswordCharacter("*"[0])
-        passwordInput.isPasswordMode = true
-        passwordInput.messageText = "Enter password.."
-
-
-        // TODO: find out why input fields renders with wrong width
         // Creating table
         rightTable.apply {
             this.defaults().pad(30f)
             this.background = skin.getDrawable("modal_fancy")
             this.add(heading)
             this.row()
-            this.add(emailInput).width(570f)
+            this.add(codeLabel).pad((30f))
             this.row()
-            this.add(passwordInput).width(570f)
+            this.add(infoLabel)
             this.row()
-            this.add(loginButton)
+            this.add(startGameBtn)
         }
 
         val stack = Stack()
-        stack.add(backButton)
+        stack.add(backBtn)
         leftTable.apply {
             this.top()
             this.add(stack).fillY().align(Align.top).padTop(50f)
@@ -118,21 +109,21 @@ class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             this.add(leftTable).width(91f).expandY().fillY()
             this.add(rightTable).width(viewport.worldWidth * 0.9f).fillY()
         }
-
         // Adding actors to the stage
-        loginStage.addActor(table)
+        lobbyStage.addActor(table)
+
+        Gdx.input.inputProcessor = lobbyStage
 
     }
 
     override fun update(delta: Float) {
-        loginButton.onClick {
-            if (!UserAuth().isLoggedIn() && emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty()) {
-                UserAuth().signIn(emailInput.text, passwordInput.text)
-            }
-            game.setScreen<MenuScreen>()
+        startGameBtn.onClick {
+            // When two players have joined the game, the host can chose to start it
+            // (or alternatively just start immediately (might be simpler))
+            game.setScreen<GameplayScreen>()
         }
-        backButton.onClick {
-            game.setScreen<LoginMenuScreen>()
+        backBtn.onClick {
+            game.setScreen<MenuScreen>()
         }
     }
 
@@ -141,7 +132,8 @@ class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         update(delta)
 
-        loginStage.act(delta)
-        loginStage.draw()
+        lobbyStage.act(delta)
+        lobbyStage.draw()
+
     }
 }

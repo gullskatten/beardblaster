@@ -6,14 +6,14 @@ import ktx.app.KtxScreen
 abstract class AbstractScreen(
         val game: BeardBlasterGame,
         val batch: Batch = game.batch
-        )
-    : KtxScreen {
+) : KtxScreen {
     val cam = game.cam
     val viewport = game.viewport
 
     override fun show() {
 
     }
+
     abstract fun update(delta: Float)
 
 
