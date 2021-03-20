@@ -9,15 +9,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
-import com.badlogic.gdx.utils.viewport.FitViewport
 import ktx.actors.onClick
 import ktx.log.debug
 import ktx.log.logger
-import no.ntnu.beardblaster.AbstractScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
-import no.ntnu.beardblaster.worldHeight
-import no.ntnu.beardblaster.worldWidth
+import no.ntnu.beardblaster.utils.AbstractScreen
+import no.ntnu.beardblaster.utils.BeardBlasterStage
 
 private val LOG = logger<LoginMenuScreen>()
 
@@ -31,7 +29,7 @@ class LoginMenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var registerBtn: TextButton
 
     private val loginMenuStage: Stage by lazy {
-        val result = Stage(FitViewport(worldWidth, worldHeight))
+        val result = BeardBlasterStage()
         Gdx.input.inputProcessor = result
         result
     }

@@ -1,7 +1,9 @@
-package no.ntnu.beardblaster
+package no.ntnu.beardblaster.utils
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import ktx.app.KtxScreen
+import no.ntnu.beardblaster.BeardBlasterGame
+
 
 interface IBeardBlasterScreen {
     fun setBtnEventListeners()

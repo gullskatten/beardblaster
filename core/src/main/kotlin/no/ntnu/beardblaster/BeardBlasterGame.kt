@@ -11,6 +11,7 @@ import ktx.log.debug
 import ktx.log.logger
 import no.ntnu.beardblaster.assets.Assets
 import no.ntnu.beardblaster.user.UserAuth
+import no.ntnu.beardblaster.utils.AbstractScreen
 import no.ntnu.beardblaster.view.*
 
 private val LOG = logger<BeardBlasterGame>()

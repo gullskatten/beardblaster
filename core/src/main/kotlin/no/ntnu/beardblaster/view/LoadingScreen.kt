@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import ktx.graphics.use
 import ktx.log.debug
 import ktx.log.logger
-import no.ntnu.beardblaster.AbstractScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
 import no.ntnu.beardblaster.user.UserAuth
+import no.ntnu.beardblaster.utils.AbstractScreen
 import kotlin.math.roundToInt
 
 private val LOG = logger<LoadingScreen>()
