@@ -69,6 +69,7 @@ class MenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         tutorialBtn = TextButton("TUTORIAL", buttonStyle)
         logoutBtn = TextButton("LOGOUT", buttonStyle)
         exitBtn = TextButton("EXIT GAME", buttonStyle)
+        setBtnEventListeners()
 
         val textInputStyle = TextField.TextFieldStyle()
 
@@ -97,11 +98,14 @@ class MenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
 
         // Adding actors to the stage
         menuStage.addActor(table)
-
         Gdx.input.inputProcessor = menuStage
     }
 
     override fun update(delta: Float) {
+
+    }
+
+    override fun setBtnEventListeners() {
         createGameBtn.onClick {
             // Handle creation of game, and then go to Lobby screen to display code and wait for player 2
             game.setScreen<LobbyScreen>()

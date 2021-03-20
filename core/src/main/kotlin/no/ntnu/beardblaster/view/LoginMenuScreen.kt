@@ -58,6 +58,7 @@ class LoginMenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         exitBtn = TextButton("EXIT GAME", textButtonStyle)
         loginBtn = TextButton("LOGIN", textButtonStyle)
         registerBtn = TextButton("REGISTER", textButtonStyle)
+        setBtnEventListeners()
 
         // Creating heading
         val headingStyle = Label.LabelStyle(standardFont, Color.BLACK).also {
@@ -87,6 +88,10 @@ class LoginMenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun update(delta: Float) {
+
+    }
+
+    override fun setBtnEventListeners() {
         loginBtn.onClick {
             game.setScreen<LoginScreen>()
         }

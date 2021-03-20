@@ -35,7 +35,7 @@ class HighscoreScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         Gdx.input.inputProcessor = result
         result
     }
-    
+
     override fun show() {
         LOG.debug { "HIGHSCORE Screen" }
 
@@ -60,7 +60,8 @@ class HighscoreScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         }
 
         closeBtn = TextButton("CLOSE", buttonStyle)
-
+        setBtnEventListeners()
+        
         // Creating table
         table.apply {
             this.defaults().pad(30f)
@@ -77,6 +78,9 @@ class HighscoreScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun update(delta: Float) {
+    }
+
+    override fun setBtnEventListeners() {
         closeBtn.onClick {
             game.setScreen<MenuScreen>()
         }

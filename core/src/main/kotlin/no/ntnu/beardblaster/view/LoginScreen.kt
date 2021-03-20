@@ -75,6 +75,8 @@ class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
 
         loginButton = TextButton("LOGIN", buttonStyle)
         backButton = Button(backButtonStyle)
+        setBtnEventListeners()
+
         val textInputStyle = TextField.TextFieldStyle()
 
         textInputStyle.also {
@@ -125,10 +127,14 @@ class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun update(delta: Float) {
+    }
+
+    override fun setBtnEventListeners() {
         loginButton.onClick {
             if (!UserAuth().isLoggedIn() && emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty()) {
                 UserAuth().signIn(emailInput.text, passwordInput.text)
             }
+            // TODO: Future: Don't proceed unless login actually successful
             game.setScreen<MenuScreen>()
         }
         backButton.onClick {

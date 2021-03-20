@@ -72,6 +72,8 @@ class JoinLobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
 
         submitCodeBtn = TextButton("SUBMIT", buttonStyle)
         backBtn = Button(backBtnStyle)
+        setBtnEventListeners()
+
         val textInputStyle = TextField.TextFieldStyle()
 
         textInputStyle.also {
@@ -116,6 +118,9 @@ class JoinLobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun update(delta: Float) {
+    }
+
+    override fun setBtnEventListeners() {
         submitCodeBtn.onClick {
             // TODO: Set off handling if code is valid. If so, join lobby (go to lobby screen)
             // but if not, show feedback to user that the code is not connected to an active game

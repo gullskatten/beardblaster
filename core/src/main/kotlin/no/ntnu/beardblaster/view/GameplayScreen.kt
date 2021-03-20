@@ -58,7 +58,8 @@ class GameplayScreen(game: BeardBlasterGame) : AbstractScreen(game) {
 
         btnAttack = TextButton("ATTACK", textButtonStyle)
         btnQuit = TextButton("QUIT", textButtonStyle)
-
+        setBtnEventListeners()
+        
         Label.LabelStyle(standardFont, Color.BLACK).also {
             heading = Label("Preparation phase", it)
             heading.setFontScale(2f)
@@ -76,11 +77,15 @@ class GameplayScreen(game: BeardBlasterGame) : AbstractScreen(game) {
 
         // Adding actors to the stage
         gameplayStage.addActor(table)
+
         Gdx.input.inputProcessor = gameplayStage
 
     }
 
     override fun update(delta: Float) {
+    }
+
+    override fun setBtnEventListeners() {
         btnAttack.onClick {
             LOG.debug { "Wizard 1 attacks" }
         }

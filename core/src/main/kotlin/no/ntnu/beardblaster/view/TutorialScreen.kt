@@ -60,6 +60,7 @@ class TutorialScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         }
 
         closeTutorialBtn = TextButton("CLOSE", buttonStyle)
+        setBtnEventListeners()
 
         // Creating table
         table.apply {
@@ -77,6 +78,9 @@ class TutorialScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun update(delta: Float) {
+    }
+
+    override fun setBtnEventListeners() {
         closeTutorialBtn.onClick {
             game.setScreen<MenuScreen>()
         }

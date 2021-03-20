@@ -28,7 +28,7 @@ class LobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
 
     private lateinit var codeLabel: Label
     private lateinit var infoLabel: Label
-    
+
     private lateinit var startGameBtn: TextButton
     private lateinit var backBtn: Button
 
@@ -83,6 +83,7 @@ class LobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         startGameBtn = TextButton("START GAME", buttonStyle)
         // startGameBtn.isDisabled = true // TODO: Disabled start button until two players in lobby (or remove start button altogether and just start automatically
         backBtn = Button(backBtnStyle)
+        setBtnEventListeners()
 
         // Creating table
         rightTable.apply {
@@ -96,6 +97,7 @@ class LobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             this.row()
             this.add(startGameBtn)
         }
+
 
         val stack = Stack()
         stack.add(backBtn)
@@ -117,6 +119,9 @@ class LobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun update(delta: Float) {
+    }
+
+    override fun setBtnEventListeners() {
         startGameBtn.onClick {
             // When two players have joined the game, the host can chose to start it
             // (or alternatively just start immediately (might be simpler))
