@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.view
+package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -11,12 +11,11 @@ import ktx.log.debug
 import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
-import no.ntnu.beardblaster.utils.AbstractScreen
-import no.ntnu.beardblaster.utils.BeardBlasterStage
+import no.ntnu.beardblaster.user.UserAuth
 
 private val LOG = logger<LoginScreen>()
 
-class JoinLobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
+class LoginScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var skin: Skin
     private lateinit var table: Table
     private lateinit var heading: Label
@@ -24,20 +23,22 @@ class JoinLobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var leftTable: Table
     private lateinit var rightTable: Table
 
-    private lateinit var codeInput: TextField
+    private lateinit var loginButton: TextButton
+    private lateinit var backButton: Button
 
-    private lateinit var submitCodeBtn: TextButton
-    private lateinit var backBtn: Button
+    private lateinit var emailInput: TextField
+    private lateinit var passwordInput: TextField
 
-    private val joinLobbyStage: Stage by lazy {
+    private val loginStage: Stage by lazy {
         val result = BeardBlasterStage()
         Gdx.input.inputProcessor = result
         result
     }
 
     override fun show() {
-        LOG.debug { "JOIN LOBBY Screen" }
+        LOG.debug { "LOGIN SCREEN" }
 
+        Gdx.input.inputProcessor = loginStage
         skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
         table.setBounds(0f, 0f, viewport.worldWidth, viewport.worldHeight)
@@ -49,7 +50,7 @@ class JoinLobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         val standardFont = Assets.assetManager.get(Assets.standardFont)
 
         Label.LabelStyle(standardFont, Color.BLACK).also {
-            heading = Label("Join Game", it)
+            heading = Label("Log in", it)
             heading.setFontScale(2f)
             it.background = skin.getDrawable("modal_fancy_header")
             heading.setAlignment(Align.center)
@@ -63,13 +64,13 @@ class JoinLobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             buttonStyle.font = this
         }
 
-        val backBtnStyle = Button.ButtonStyle()
-        skin.getDrawable("modal_fancy_header_button_red_cross_left").also { backBtnStyle.down = it }
-        skin.getDrawable("modal_fancy_header_button_red_cross_left").also { backBtnStyle.up = it }
+        val backButtonStyle = Button.ButtonStyle()
+        skin.getDrawable("modal_fancy_header_button_red_cross_left").also { backButtonStyle.down = it }
+        skin.getDrawable("modal_fancy_header_button_red_cross_left").also { backButtonStyle.up = it }
 
 
-        submitCodeBtn = TextButton("SUBMIT", buttonStyle)
-        backBtn = Button(backBtnStyle)
+        loginButton = TextButton("LOGIN", buttonStyle)
+        backButton = Button(backButtonStyle)
         setBtnEventListeners()
 
         val textInputStyle = TextField.TextFieldStyle()
@@ -81,23 +82,30 @@ class JoinLobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             it.messageFontColor = Color.GRAY
         }
 
-        codeInput = TextField("", textInputStyle)
-        codeInput.messageText = "Enter game code.."
+        emailInput = TextField("", textInputStyle)
+        emailInput.messageText = "Enter e-mail address.."
+        passwordInput = TextField("", textInputStyle)
+        passwordInput.setPasswordCharacter("*"[0])
+        passwordInput.isPasswordMode = true
+        passwordInput.messageText = "Enter password.."
 
 
+        // TODO: find out why input fields renders with wrong width
         // Creating table
         rightTable.apply {
             this.defaults().pad(30f)
             this.background = skin.getDrawable("modal_fancy")
             this.add(heading)
             this.row()
-            this.add(codeInput).width(570f)
+            this.add(emailInput).width(570f)
             this.row()
-            this.add(submitCodeBtn)
+            this.add(passwordInput).width(570f)
+            this.row()
+            this.add(loginButton)
         }
 
         val stack = Stack()
-        stack.add(backBtn)
+        stack.add(backButton)
         leftTable.apply {
             this.top()
             this.add(stack).fillY().align(Align.top).padTop(50f)
@@ -108,10 +116,9 @@ class JoinLobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             this.add(leftTable).width(91f).expandY().fillY()
             this.add(rightTable).width(viewport.worldWidth * 0.9f).fillY()
         }
-        // Adding actors to the stage
-        joinLobbyStage.addActor(table)
 
-        Gdx.input.inputProcessor = joinLobbyStage
+        // Adding actors to the stage
+        loginStage.addActor(table)
 
     }
 
@@ -119,13 +126,15 @@ class JoinLobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun setBtnEventListeners() {
-        submitCodeBtn.onClick {
-            // TODO: Set off handling if code is valid. If so, join lobby (go to lobby screen)
-            // but if not, show feedback to user that the code is not connected to an active game
-            game.setScreen<LobbyScreen>()
-        }
-        backBtn.onClick {
+        loginButton.onClick {
+            if (!UserAuth().isLoggedIn() && emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty()) {
+                UserAuth().signIn(emailInput.text, passwordInput.text)
+            }
+            // TODO: Future: Don't proceed unless login actually successful
             game.setScreen<MenuScreen>()
+        }
+        backButton.onClick {
+            game.setScreen<LoginMenuScreen>()
         }
     }
 
@@ -134,7 +143,7 @@ class JoinLobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         update(delta)
 
-        joinLobbyStage.act(delta)
-        joinLobbyStage.draw()
+        loginStage.act(delta)
+        loginStage.draw()
     }
 }

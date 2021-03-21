@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.view
+package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -11,12 +11,10 @@ import ktx.log.debug
 import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
-import no.ntnu.beardblaster.utils.AbstractScreen
-import no.ntnu.beardblaster.utils.BeardBlasterStage
 
 private val LOG = logger<LoginScreen>()
 
-class LobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
+class JoinLobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var skin: Skin
     private lateinit var table: Table
     private lateinit var heading: Label
@@ -24,20 +22,19 @@ class LobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var leftTable: Table
     private lateinit var rightTable: Table
 
-    private lateinit var codeLabel: Label
-    private lateinit var infoLabel: Label
+    private lateinit var codeInput: TextField
 
-    private lateinit var startGameBtn: TextButton
+    private lateinit var submitCodeBtn: TextButton
     private lateinit var backBtn: Button
 
-    private val lobbyStage: Stage by lazy {
+    private val joinLobbyStage: Stage by lazy {
         val result = BeardBlasterStage()
         Gdx.input.inputProcessor = result
         result
     }
 
     override fun show() {
-        LOG.debug { "LOBBY SCREEN SHOWN" }
+        LOG.debug { "JOIN LOBBY Screen" }
 
         skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
@@ -50,19 +47,10 @@ class LobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         val standardFont = Assets.assetManager.get(Assets.standardFont)
 
         Label.LabelStyle(standardFont, Color.BLACK).also {
-            heading = Label("Lobby", it)
+            heading = Label("Join Game", it)
             heading.setFontScale(2f)
             it.background = skin.getDrawable("modal_fancy_header")
             heading.setAlignment(Align.center)
-        }
-        Label.LabelStyle(standardFont, Color.BLACK).also {
-            codeLabel = Label("39281", it)
-            codeLabel.setFontScale(1.5f)
-            codeLabel.setAlignment(Align.center)
-
-            infoLabel = Label("Share this code with a friend to start playing", it)
-            infoLabel.setFontScale(1f)
-            infoLabel.setAlignment(Align.center)
         }
 
         val buttonStyle = TextButton.TextButtonStyle()
@@ -78,10 +66,22 @@ class LobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         skin.getDrawable("modal_fancy_header_button_red_cross_left").also { backBtnStyle.up = it }
 
 
-        startGameBtn = TextButton("START GAME", buttonStyle)
-        // startGameBtn.isDisabled = true // TODO: Disabled start button until two players in lobby (or remove start button altogether and just start automatically
+        submitCodeBtn = TextButton("SUBMIT", buttonStyle)
         backBtn = Button(backBtnStyle)
         setBtnEventListeners()
+
+        val textInputStyle = TextField.TextFieldStyle()
+
+        textInputStyle.also {
+            it.background = skin.getDrawable("input_texture_dark")
+            it.fontColor = Color.BROWN
+            it.font = standardFont
+            it.messageFontColor = Color.GRAY
+        }
+
+        codeInput = TextField("", textInputStyle)
+        codeInput.messageText = "Enter game code.."
+
 
         // Creating table
         rightTable.apply {
@@ -89,13 +89,10 @@ class LobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             this.background = skin.getDrawable("modal_fancy")
             this.add(heading)
             this.row()
-            this.add(codeLabel).pad((30f))
+            this.add(codeInput).width(570f)
             this.row()
-            this.add(infoLabel)
-            this.row()
-            this.add(startGameBtn)
+            this.add(submitCodeBtn)
         }
-
 
         val stack = Stack()
         stack.add(backBtn)
@@ -110,9 +107,9 @@ class LobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             this.add(rightTable).width(viewport.worldWidth * 0.9f).fillY()
         }
         // Adding actors to the stage
-        lobbyStage.addActor(table)
+        joinLobbyStage.addActor(table)
 
-        Gdx.input.inputProcessor = lobbyStage
+        Gdx.input.inputProcessor = joinLobbyStage
 
     }
 
@@ -120,10 +117,10 @@ class LobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun setBtnEventListeners() {
-        startGameBtn.onClick {
-            // When two players have joined the game, the host can chose to start it
-            // (or alternatively just start immediately (might be simpler))
-            game.setScreen<GameplayScreen>()
+        submitCodeBtn.onClick {
+            // TODO: Set off handling if code is valid. If so, join lobby (go to lobby screen)
+            // but if not, show feedback to user that the code is not connected to an active game
+            game.setScreen<LobbyScreen>()
         }
         backBtn.onClick {
             game.setScreen<MenuScreen>()
@@ -135,8 +132,7 @@ class LobbyScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         update(delta)
 
-        lobbyStage.act(delta)
-        lobbyStage.draw()
-
+        joinLobbyStage.act(delta)
+        joinLobbyStage.draw()
     }
 }

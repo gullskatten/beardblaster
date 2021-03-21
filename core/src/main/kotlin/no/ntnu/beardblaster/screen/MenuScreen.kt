@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.view
+package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -12,8 +12,6 @@ import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
 import no.ntnu.beardblaster.user.UserAuth
-import no.ntnu.beardblaster.utils.AbstractScreen
-import no.ntnu.beardblaster.utils.BeardBlasterStage
 
 
 private val LOG = logger<MenuScreen>()

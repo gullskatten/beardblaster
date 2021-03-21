@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.view
+package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -14,28 +14,26 @@ import ktx.log.debug
 import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
-import no.ntnu.beardblaster.utils.AbstractScreen
-import no.ntnu.beardblaster.utils.BeardBlasterStage
 
 
-private val LOG = logger<TutorialScreen>()
+private val LOG = logger<HighscoreScreen>()
 
 
-class TutorialScreen(game: BeardBlasterGame) : AbstractScreen(game) {
+class HighscoreScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var skin: Skin
     private lateinit var table: Table
     private lateinit var heading: Label
 
-    private lateinit var closeTutorialBtn: TextButton
+    private lateinit var closeBtn: TextButton
 
-    private val tutorialStage: Stage by lazy {
+    private val highscoreStage: Stage by lazy {
         val result = BeardBlasterStage()
         Gdx.input.inputProcessor = result
         result
     }
 
     override fun show() {
-        LOG.debug { "TUTORIAL Screen" }
+        LOG.debug { "HIGHSCORE Screen" }
 
         skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
@@ -44,7 +42,7 @@ class TutorialScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         val standardFont = Assets.assetManager.get(Assets.standardFont)
 
         Label.LabelStyle(standardFont, Color.BLACK).also {
-            heading = Label("Tutorial", it)
+            heading = Label("Leaderbeard", it)
             heading.setFontScale(2f)
             it.background = skin.getDrawable("modal_fancy_header")
             heading.setAlignment(Align.center)
@@ -57,7 +55,7 @@ class TutorialScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             buttonStyle.font = this
         }
 
-        closeTutorialBtn = TextButton("CLOSE", buttonStyle)
+        closeBtn = TextButton("CLOSE", buttonStyle)
         setBtnEventListeners()
 
         // Creating table
@@ -66,20 +64,20 @@ class TutorialScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             this.background = skin.getDrawable("background")
             this.add(heading)
             this.row()
-            this.add(closeTutorialBtn)
+            this.add(closeBtn)
         }
 
         // Adding actors to the stage
-        tutorialStage.addActor(table)
+        highscoreStage.addActor(table)
 
-        Gdx.input.inputProcessor = tutorialStage
+        Gdx.input.inputProcessor = highscoreStage
     }
 
     override fun update(delta: Float) {
     }
 
     override fun setBtnEventListeners() {
-        closeTutorialBtn.onClick {
+        closeBtn.onClick {
             game.setScreen<MenuScreen>()
         }
     }
@@ -89,7 +87,7 @@ class TutorialScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         update(delta)
 
-        tutorialStage.act(delta)
-        tutorialStage.draw()
+        highscoreStage.act(delta)
+        highscoreStage.draw()
     }
 }

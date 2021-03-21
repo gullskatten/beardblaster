@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.utils
+package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.graphics.g2d.Batch
 import ktx.app.KtxScreen
