@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.view
+package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -6,16 +6,12 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.Align
-import com.badlogic.gdx.utils.viewport.FitViewport
 import ktx.actors.onClick
 import ktx.log.debug
 import ktx.log.logger
-import no.ntnu.beardblaster.AbstractScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
 import no.ntnu.beardblaster.user.UserAuth
-import no.ntnu.beardblaster.worldHeight
-import no.ntnu.beardblaster.worldWidth
 
 
 private val LOG = logger<MenuScreen>()
@@ -34,7 +30,7 @@ class MenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var exitBtn: TextButton
 
     private val menuStage: Stage by lazy {
-        val result = Stage(FitViewport(worldWidth, worldHeight))
+        val result = BeardBlasterStage()
         Gdx.input.inputProcessor = result
         result
     }
@@ -69,6 +65,7 @@ class MenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         tutorialBtn = TextButton("TUTORIAL", buttonStyle)
         logoutBtn = TextButton("LOGOUT", buttonStyle)
         exitBtn = TextButton("EXIT GAME", buttonStyle)
+        setBtnEventListeners()
 
         val textInputStyle = TextField.TextFieldStyle()
 
@@ -97,11 +94,14 @@ class MenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
 
         // Adding actors to the stage
         menuStage.addActor(table)
-
         Gdx.input.inputProcessor = menuStage
     }
 
     override fun update(delta: Float) {
+
+    }
+
+    override fun setBtnEventListeners() {
         createGameBtn.onClick {
             // Handle creation of game, and then go to Lobby screen to display code and wait for player 2
             game.setScreen<LobbyScreen>()

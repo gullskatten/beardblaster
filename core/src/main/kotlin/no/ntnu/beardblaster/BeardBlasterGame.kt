@@ -10,7 +10,7 @@ import ktx.app.KtxGame
 import ktx.log.debug
 import ktx.log.logger
 import no.ntnu.beardblaster.assets.Assets
-import no.ntnu.beardblaster.view.*
+import no.ntnu.beardblaster.screen.*
 
 private val LOG = logger<BeardBlasterGame>()
 const val worldWidth = 1920f
@@ -26,6 +26,7 @@ class BeardBlasterGame : KtxGame<AbstractScreen>() {
         // Set debug level
         Gdx.app.logLevel = Application.LOG_DEBUG
         LOG.debug { "Create game instance" }
+        
         initScreens()
     }
 

@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.view
+package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import ktx.graphics.use
 import ktx.log.debug
 import ktx.log.logger
-import no.ntnu.beardblaster.AbstractScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
 import no.ntnu.beardblaster.user.UserAuth
@@ -43,7 +42,7 @@ class LoadingScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     override fun render(delta: Float) {
         update(delta)
 
-        //Draw the progress bar
+        // Draw the progress bar
         shapeRenderer.use(ShapeRenderer.ShapeType.Filled, cam.combined)
         {
             it.rect(50f, (cam.viewportHeight / 2) - 12f, cam.viewportWidth - 50, 25f)
@@ -51,7 +50,7 @@ class LoadingScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             it.rect(50f, (cam.viewportHeight / 2) - 12f, progress * (cam.viewportWidth - 50), 25f)
         }
 
-        //Draw the progress text
+        // Draw the progress text
         batch.use(cam.combined)
         {
             font.draw(it, (100 * progress).toString() + "% Loading Assets", 100f, 200f)
@@ -69,6 +68,9 @@ class LoadingScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     override fun dispose() {
         super.dispose()
         Assets.dispose()
+    }
+
+    override fun setBtnEventListeners() {
     }
 }
 

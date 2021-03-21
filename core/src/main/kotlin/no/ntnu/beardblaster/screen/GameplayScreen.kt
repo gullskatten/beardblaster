@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.view
+package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -9,35 +9,32 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
-import com.badlogic.gdx.utils.viewport.FitViewport
 import ktx.actors.onClick
 import ktx.log.debug
 import ktx.log.logger
-import no.ntnu.beardblaster.AbstractScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
-import no.ntnu.beardblaster.worldHeight
-import no.ntnu.beardblaster.worldWidth
 
-private val LOG = logger<LoginMenuScreen>()
 
-class LoginMenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
+private val LOG = logger<GameplayScreen>()
+
+
+class GameplayScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var skin: Skin
     private lateinit var table: Table
     private lateinit var heading: Label
 
-    private lateinit var exitBtn: TextButton
-    private lateinit var loginBtn: TextButton
-    private lateinit var registerBtn: TextButton
+    private lateinit var btnAttack: TextButton
+    private lateinit var btnQuit: TextButton
 
-    private val loginMenuStage: Stage by lazy {
-        val result = Stage(FitViewport(worldWidth, worldHeight))
+    private val gameplayStage: Stage by lazy {
+        val result = BeardBlasterStage()
         Gdx.input.inputProcessor = result
         result
     }
 
     override fun show() {
-        LOG.debug { "LOGIN MENU Screen" }
+        LOG.debug { "GAMEPLAY Screen" }
 
         skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
@@ -55,46 +52,43 @@ class LoginMenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         textButtonStyle.pressedOffsetY = -4f
         textButtonStyle.font = standardFont
 
-        exitBtn = TextButton("EXIT GAME", textButtonStyle)
-        loginBtn = TextButton("LOGIN", textButtonStyle)
-        registerBtn = TextButton("REGISTER", textButtonStyle)
+        btnAttack = TextButton("ATTACK", textButtonStyle)
+        btnQuit = TextButton("QUIT", textButtonStyle)
+        setBtnEventListeners()
 
-        // Creating heading
-        val headingStyle = Label.LabelStyle(standardFont, Color.BLACK).also {
-            heading = Label("BeardBlaster", it)
+        Label.LabelStyle(standardFont, Color.BLACK).also {
+            heading = Label("Preparation phase", it)
             heading.setFontScale(2f)
             it.background = skin.getDrawable("modal_fancy_header")
             heading.setAlignment(Align.center)
         }
 
         // Creating table
-        table.apply {
-            this.background = skin.getDrawable("modal_fancy")
-            this.add(heading).pad(50f)
-            this.row()
-            this.add(loginBtn).pad(40f)
-            this.row()
-            this.add(registerBtn).pad(40f)
-            this.row()
-            this.add(exitBtn).pad(40f)
-        }
+        table.add(heading).pad(50f)
+        table.row()
+        table.add(btnAttack).pad(40f)
+        table.row()
+        table.add(btnQuit).pad(40f)
+        table.row()
 
         // Adding actors to the stage
-        loginMenuStage.addActor(table)
+        gameplayStage.addActor(table)
 
-        Gdx.input.inputProcessor = loginMenuStage
+        Gdx.input.inputProcessor = gameplayStage
 
     }
 
     override fun update(delta: Float) {
-        loginBtn.onClick {
-            game.setScreen<LoginScreen>()
+    }
+
+    override fun setBtnEventListeners() {
+        btnAttack.onClick {
+            LOG.debug { "Wizard 1 attacks" }
         }
-        registerBtn.onClick {
-            game.setScreen<RegisterScreen>()
-        }
-        exitBtn.onClick {
-            Gdx.app.exit()
+        btnQuit.onClick {
+            game.removeScreen<GameplayScreen>()
+            game.addScreen(GameplayScreen(game))
+            game.setScreen<MenuScreen>()
         }
     }
 
@@ -103,8 +97,8 @@ class LoginMenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         update(delta)
 
-        loginMenuStage.act(delta)
-        loginMenuStage.draw()
+        gameplayStage.act(delta)
+        gameplayStage.draw()
     }
 
 

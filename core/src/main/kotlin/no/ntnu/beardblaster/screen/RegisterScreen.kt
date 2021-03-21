@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.view
+package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -6,21 +6,17 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.Align
-import com.badlogic.gdx.utils.viewport.FitViewport
 import ktx.actors.onClick
 import ktx.log.debug
 import ktx.log.logger
-import no.ntnu.beardblaster.AbstractScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
-import no.ntnu.beardblaster.worldHeight
-import no.ntnu.beardblaster.worldWidth
+import no.ntnu.beardblaster.user.UserAuth
+
 
 private val LOG = logger<RegisterScreen>()
 
 class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
-    private var hasRegistered = false
-
     private lateinit var skin: Skin
 
     private lateinit var table: Table
@@ -37,7 +33,7 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var rePasswordInput: TextField
 
     private val registrationStage: Stage by lazy {
-        val result = Stage(FitViewport(worldWidth, worldHeight))
+        val result = BeardBlasterStage()
         Gdx.input.inputProcessor = result
         result
     }
@@ -75,6 +71,7 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         }
         backBtn = Button(backBtnStyle)
         createBtn = TextButton("CREATE WIZARD", createUserButtonStyle)
+        setBtnEventListeners()
 
         val textInputStyle = TextField.TextFieldStyle()
 
@@ -132,12 +129,16 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun update(delta: Float) {
+
+    }
+
+    override fun setBtnEventListeners() {
         createBtn.onClick {
-            /*if(!hasRegistered) {
+            if (emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty() && userNameInput.text.isNotEmpty()) {
                 UserAuth().createUser(emailInput.text, passwordInput.text, userNameInput.text)
-                hasRegistered = true
-            }*/
-            game.setScreen<LoginMenuScreen>()
+            }
+            // TODO: Future: Don't proceed unless signup actually successful
+            game.setScreen<MenuScreen>()
         }
         backBtn.onClick {
             game.setScreen<LoginMenuScreen>()

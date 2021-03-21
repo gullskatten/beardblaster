@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.view
+package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
@@ -9,15 +9,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
-import com.badlogic.gdx.utils.viewport.FitViewport
 import ktx.actors.onClick
 import ktx.log.debug
 import ktx.log.logger
-import no.ntnu.beardblaster.AbstractScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
-import no.ntnu.beardblaster.worldHeight
-import no.ntnu.beardblaster.worldWidth
 
 
 private val LOG = logger<HighscoreScreen>()
@@ -31,11 +27,11 @@ class HighscoreScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private lateinit var closeBtn: TextButton
 
     private val highscoreStage: Stage by lazy {
-        val result = Stage(FitViewport(worldWidth, worldHeight))
+        val result = BeardBlasterStage()
         Gdx.input.inputProcessor = result
         result
     }
-    
+
     override fun show() {
         LOG.debug { "HIGHSCORE Screen" }
 
@@ -60,6 +56,7 @@ class HighscoreScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         }
 
         closeBtn = TextButton("CLOSE", buttonStyle)
+        setBtnEventListeners()
 
         // Creating table
         table.apply {
@@ -77,6 +74,9 @@ class HighscoreScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun update(delta: Float) {
+    }
+
+    override fun setBtnEventListeners() {
         closeBtn.onClick {
             game.setScreen<MenuScreen>()
         }
