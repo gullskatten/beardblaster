@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 object Assets {
 
     // Define all assets that must be loaded during loading screen
-    var assetManager = AssetManager()
+    lateinit var assetManager: AssetManager
     val loadBar = AssetDescriptor<Texture>("graphics/load_bar.png", Texture::class.java)
     val loginImg = AssetDescriptor<Texture>("graphics/login.png", Texture::class.java)
     val test1 = AssetDescriptor<Texture>("bar_container.png", Texture::class.java)

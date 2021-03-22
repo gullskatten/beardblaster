@@ -2,6 +2,7 @@ package no.ntnu.beardblaster
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -26,7 +27,7 @@ class BeardBlasterGame : KtxGame<AbstractScreen>() {
         // Set debug level
         Gdx.app.logLevel = Application.LOG_DEBUG
         LOG.debug { "Create game instance" }
-        
+        Assets.assetManager = AssetManager()
         initScreens()
     }
 
