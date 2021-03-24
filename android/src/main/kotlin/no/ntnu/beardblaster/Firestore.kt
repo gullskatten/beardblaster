@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import ktx.log.debug
 import no.ntnu.beardblaster.commons.AbstractFirestore
 import no.ntnu.beardblaster.commons.DocumentType
 import no.ntnu.beardblaster.commons.FirestoreDocumentFailureException
@@ -14,13 +15,11 @@ import no.ntnu.beardblaster.commons.User
 class Firestore<T : DocumentType>(private val db: FirebaseFirestore = Firebase.firestore) : AbstractFirestore<T> {
     val TAG = "Firestore"
 
-    override fun getDocument(id: String, collection: String, fromHashMap: (data: HashMap<String, Any>) -> DocumentType): T? {
-        println("hei")
+    override fun getDocument(id: String, collection: String, fromHashMap: (data: HashMap<String, Any>) -> T): T? {
         var c: T? = null
         if (id.isEmpty() || collection.isEmpty()) {
             Log.e(TAG, "Document/collection cannot be empty. Was collection: $collection , document: $id")
         }
-        print("kommer vi oss hit?")
         db
                 .collection(collection)
                 .document(id)
@@ -29,17 +28,15 @@ class Firestore<T : DocumentType>(private val db: FirebaseFirestore = Firebase.f
                     if (document != null) {
                         // TODO: 3/18/2021 - Throws exception
                         //  java.util.HashMap cannot be cast to no.ntnu.beardblaster.commons.DocumentType
-
                         val data = document.toObject<Any>() as HashMap<String, Any>
                         c = fromHashMap(data) as T
-                        print(c)
+                        Log.i(TAG, c.toString())
                     } else {
                         c = null
                     }
                 }
                 .addOnCanceledListener { print("canceled") }
                 .addOnFailureListener { print("failed")  }
-
         return c
     }
 

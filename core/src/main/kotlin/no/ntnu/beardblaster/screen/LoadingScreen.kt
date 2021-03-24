@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.delay
+import ktx.async.newAsyncContext
 import ktx.graphics.use
 import ktx.log.debug
 import ktx.log.logger
@@ -37,7 +39,7 @@ class LoadingScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         if (Assets.assetManager.update()) {
             // Go to correct menu screen when done loading
             if (UserAuth().isLoggedIn()) {
-                val currentUser = GdxFIRAuth.inst().currentUser?.userInfo?.uid?.
+                val currentUser =  GdxFIRAuth.inst().currentUser?.userInfo?.uid?.
                 let { Firestore<User>().getDocument(it, "users", User.Companion::fromHashMap) }
                 if (currentUser != null) {
                     LOG.debug { currentUser.displayName }
