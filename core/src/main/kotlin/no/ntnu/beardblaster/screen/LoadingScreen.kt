@@ -9,7 +9,10 @@ import ktx.log.debug
 import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
+import no.ntnu.beardblaster.commons.User
+import no.ntnu.beardblaster.firestore.Firestore
 import no.ntnu.beardblaster.user.UserAuth
+import pl.mk5.gdx.fireapp.GdxFIRAuth
 import kotlin.math.roundToInt
 
 private val LOG = logger<LoadingScreen>()
@@ -34,6 +37,13 @@ class LoadingScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         if (Assets.assetManager.update()) {
             // Go to correct menu screen when done loading
             if (UserAuth().isLoggedIn()) {
+                val currentUser = GdxFIRAuth.inst().currentUser?.userInfo?.uid?.
+                let { Firestore<User>().getDocument(it, "users", User.Companion::fromHashMap) }
+                if (currentUser != null) {
+                    LOG.debug { currentUser.displayName }
+                } else {
+                    LOG.debug { "User not found" }
+                }
                 game.setScreen<MenuScreen>()
             } else game.setScreen<LoginMenuScreen>()
         }
