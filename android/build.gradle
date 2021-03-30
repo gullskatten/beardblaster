@@ -84,6 +84,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation "pl.mk5.gdx-fireapp:gdx-fireapp-android:$gdxFireappVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2"
     implementation project(':commons')
 }
 

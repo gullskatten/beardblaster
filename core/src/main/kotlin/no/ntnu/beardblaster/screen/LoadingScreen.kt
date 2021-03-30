@@ -5,6 +5,10 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import ktx.async.newAsyncContext
 import ktx.graphics.use
 import ktx.log.debug
@@ -28,21 +32,24 @@ class LoadingScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     private var font: BitmapFont = BitmapFont(Gdx.files.internal("font_nevis/nevis.fnt"))
     private val shapeRenderer = ShapeRenderer()
     private var progress = 0f
+    private var getUserJob: Job? = null
+    private var currentUser: User?  = null
 
     override fun show() {
         LOG.debug { "LOADING Screen" }
+        getUserJob = GlobalScope.launch {
+           currentUser = GdxFIRAuth.inst().currentUser?.userInfo?.uid?.let { Firestore<User>().getDocument(it, "users", User.Companion::fromHashMap) }
+        }
     }
 
     override fun update(delta: Float) {
         progress = Assets.assetManager.progress.roundToInt().toFloat()
         // Check if assetManager is done loading
-        if (Assets.assetManager.update()) {
+        if (Assets.assetManager.update() && getUserJob?.isCompleted == true) {
             // Go to correct menu screen when done loading
             if (UserAuth().isLoggedIn()) {
-                val currentUser =  GdxFIRAuth.inst().currentUser?.userInfo?.uid?.
-                let { Firestore<User>().getDocument(it, "users", User.Companion::fromHashMap) }
                 if (currentUser != null) {
-                    LOG.debug { currentUser.displayName }
+                    LOG.debug { currentUser!!.displayName }
                 } else {
                     LOG.debug { "User not found" }
                 }

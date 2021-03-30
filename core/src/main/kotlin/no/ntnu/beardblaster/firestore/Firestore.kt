@@ -22,7 +22,7 @@ class Firestore<T : DocumentType> : PlatformDistributor<AbstractFirestore<T>>(),
         return platformObject.create(doc, collection)
     }
 
-    override fun getDocument(id: String, collection: String, fromHashMap: (data: HashMap<String, Any>) -> T): T? {
+    override suspend fun getDocument(id: String, collection: String, fromHashMap: (data: HashMap<String, Any>) -> T): T? {
         return platformObject.getDocument(id, collection, fromHashMap)
     }
 
