@@ -12,6 +12,7 @@ import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Atlas
 import no.ntnu.beardblaster.assets.Font
 import no.ntnu.beardblaster.assets.load
+import no.ntnu.beardblaster.ui.createSkin
 import no.ntnu.beardblaster.user.UserAuth
 import kotlin.math.roundToInt
 
@@ -49,6 +50,7 @@ class LoadingScreen(
         }
 
         if (assets.isFinished) {
+            createSkin(assets)
             addGameScreens()
             when (UserAuth().isLoggedIn()) {
                 true -> game.setScreen<MenuScreen>()
