@@ -43,6 +43,7 @@ fun createSkin(assets: AssetManager): Skin {
 
         label {
             font = skin.getFont(FontType.Default.key)
+            fontColor = Color.BLACK
         }
 
         label("heading") {
