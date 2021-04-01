@@ -39,7 +39,7 @@ class LoginScreen(
         setBtnEventListeners()
         val heading = scene2d.label("Login", "heading") {
             setAlignment(Align.center)
-            setScale(2f)
+            setFontScale(2f)
         }
         val left = scene2d.table(skin) {
             add(backBtn).expandY().align(Align.top).padTop(50f)
