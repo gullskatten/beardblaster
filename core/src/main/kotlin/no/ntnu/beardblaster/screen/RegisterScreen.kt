@@ -71,8 +71,6 @@ class RegisterScreen(
         Gdx.input.inputProcessor = stage
     }
 
-    override fun update(delta: Float) {}
-
     override fun setBtnEventListeners() {
         createBtn.onClick {
             if (emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty() && userNameInput.text.isNotEmpty()) {
@@ -85,6 +83,8 @@ class RegisterScreen(
             game.setScreen<LoginMenuScreen>()
         }
     }
+
+    override fun update(delta: Float) {}
 
     override fun render(delta: Float) {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)

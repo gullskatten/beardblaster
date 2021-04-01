@@ -13,7 +13,6 @@ import ktx.scene2d.*
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
-import no.ntnu.beardblaster.ui.Image
 
 class LoginMenuScreen(
     game: BeardBlasterGame,
@@ -53,16 +52,6 @@ class LoginMenuScreen(
         Gdx.input.inputProcessor = stage
     }
 
-    override fun update(delta: Float) {}
-
-    override fun render(delta: Float) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        update(delta)
-        stage.act(delta)
-        stage.draw()
-    }
-
     override fun setBtnEventListeners() {
         loginBtn.onClick {
             game.setScreen<LoginScreen>()
@@ -73,5 +62,15 @@ class LoginMenuScreen(
         exitBtn.onClick {
             Gdx.app.exit()
         }
+    }
+
+    override fun update(delta: Float) {}
+
+    override fun render(delta: Float) {
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+        update(delta)
+        stage.act(delta)
+        stage.draw()
     }
 }
