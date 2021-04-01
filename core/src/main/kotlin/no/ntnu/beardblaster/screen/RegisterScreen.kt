@@ -7,13 +7,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
-import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
 import ktx.actors.onClick
 import ktx.scene2d.*
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.ui.inputField
+import no.ntnu.beardblaster.ui.passwordField
 import no.ntnu.beardblaster.user.UserAuth
 
 class RegisterScreen(
@@ -27,19 +28,8 @@ class RegisterScreen(
     private val createBtn = scene2d.textButton("Create Wizard")
     private val userNameInput = inputField("Wizard name")
     private val emailInput = inputField("Email address")
-    private val passwordInput = inputField("Password", true)
-    private val rePasswordInput = inputField("Re-enter password", true)
-
-    private fun inputField(messageText: String, password: Boolean = false): TextField {
-        return scene2d.textField {
-            this.text = ""
-            this.messageText = messageText
-            if (password) {
-                isPasswordMode = true
-                setPasswordCharacter("*"[0])
-            }
-        }
-    }
+    private val passwordInput = passwordField("Password")
+    private val rePasswordInput = passwordField("Re-enter password")
 
     private val stage: Stage by lazy {
         val result = BeardBlasterStage()
@@ -69,7 +59,7 @@ class RegisterScreen(
             row()
             add(rePasswordInput).width(570f)
             row()
-            add(createBtn).width(370f)
+            add(createBtn).center()
         }
         val table = scene2d.table(skin) {
             setBounds(0f, 0f, WIDTH, HEIGHT)
