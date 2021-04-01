@@ -5,26 +5,30 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import ktx.scene2d.Scene2DSkin
-import ktx.style.label
-import ktx.style.skin
-import ktx.style.textButton
-import ktx.style.textField
+import ktx.style.*
 import no.ntnu.beardblaster.assets.Atlas
 import no.ntnu.beardblaster.assets.Font
 import no.ntnu.beardblaster.assets.get
 
 enum class Image(val region: String) {
+    // Buttons
     Button("button_default"),
     ButtonHover("button_default_hover"),
     ButtonPressed("button_default_pressed"),
 
+    // Dialog buttons
+    DialogButtonOK("modal_fancy_header_button_green_check"),
+    DialogButtonCancel("modal_fancy_header_button_red_cross_left"),
+
+    // Input elements
+    InputDark("input_texture_dark"),
+    InputLight("input_texture_light"),
+
+    // Backgrounds
+    Background("background"),
     Modal("modal_fancy"),
     ModalSkull("modal_fancy_skull"),
     ModalHeader("modal_fancy_header"),
-
-    Background("background"),
-
-    InputDark("input_texture_dark"),
 }
 
 enum class FontType(val key: String) {
@@ -47,6 +51,16 @@ fun createSkin(assets: AssetManager): Skin {
             background = skin[Image.ModalHeader]
         }
 
+        button("ok") {
+            up = skin[Image.DialogButtonOK]
+            down = skin[Image.DialogButtonOK]
+        }
+
+        button("cancel") {
+            up = skin[Image.DialogButtonCancel]
+            down = skin[Image.DialogButtonCancel]
+        }
+
         textButton {
             font = skin.getFont(FontType.Default.key)
             up = skin[Image.Button]
@@ -61,6 +75,7 @@ fun createSkin(assets: AssetManager): Skin {
             fontColor = Color.BROWN
             messageFontColor = Color.GRAY
             background = skin[Image.InputDark]
+            focusedBackground = skin[Image.InputLight]
         }
     }
     return Scene2DSkin.defaultSkin

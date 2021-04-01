@@ -2,25 +2,19 @@ package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
 import ktx.actors.onClick
-import ktx.log.debug
-import ktx.log.logger
+import ktx.scene2d.*
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
-import no.ntnu.beardblaster.assets.Atlas
-import no.ntnu.beardblaster.assets.Font
-import no.ntnu.beardblaster.assets.get
 import no.ntnu.beardblaster.user.UserAuth
-
-private val log = logger<RegisterScreen>()
 
 class RegisterScreen(
     game: BeardBlasterGame,
@@ -28,113 +22,63 @@ class RegisterScreen(
     assets: AssetManager,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    private val skin = Skin(assets[Atlas.Game])
-    private val font = assets[Font.Standard]
+    private val skin: Skin = Scene2DSkin.defaultSkin
+    private val backBtn = scene2d.button("cancel")
+    private val createBtn = scene2d.textButton("Create Wizard")
+    private val userNameInput = inputField("Wizard name")
+    private val emailInput = inputField("Email address")
+    private val passwordInput = inputField("Password", true)
+    private val rePasswordInput = inputField("Re-enter password", true)
 
-    private lateinit var table: Table
-    private lateinit var leftTable: Table
-    private lateinit var rightTable: Table
-    private lateinit var heading: Label
+    private fun inputField(messageText: String, password: Boolean = false): TextField {
+        return scene2d.textField {
+            this.text = ""
+            this.messageText = messageText
+            if (password) {
+                isPasswordMode = true
+                setPasswordCharacter("*"[0])
+            }
+        }
+    }
 
-    private lateinit var backBtn: Button
-    private lateinit var createBtn: TextButton
-
-    private lateinit var userNameInput: TextField
-    private lateinit var emailInput: TextField
-    private lateinit var passwordInput: TextField
-    private lateinit var rePasswordInput: TextField
-
-    private val registrationStage: Stage by lazy {
+    private val stage: Stage by lazy {
         val result = BeardBlasterStage()
         Gdx.input.inputProcessor = result
         result
     }
 
     override fun show() {
-        log.debug { "REGISTRATION Screen" }
-        Gdx.input.inputProcessor = registrationStage
-        table = Table(skin)
-        table.setBounds(0f, 0f, WIDTH, HEIGHT)
-        rightTable = Table(skin)
-        leftTable = Table(skin)
-
-        Label.LabelStyle(font, Color.BLACK).also {
-            heading = Label("Create Wizard", it)
-            heading.setFontScale(2f)
-            it.background = skin.getDrawable("modal_fancy_header")
-            heading.setAlignment(Align.center)
-        }
-
-        val createUserButtonStyle = TextButton.TextButtonStyle()
-        skin.getDrawable("button_default_pressed").also { createUserButtonStyle.down = it }
-        skin.getDrawable("button_default").also { createUserButtonStyle.up = it }
-
-        val backBtnStyle = Button.ButtonStyle()
-        skin.getDrawable("modal_fancy_header_button_red_cross_left").also {
-            backBtnStyle.down = it
-            backBtnStyle.up = it
-        }
-
-        font.apply {
-            createUserButtonStyle.font = this
-        }
-        backBtn = Button(backBtnStyle)
-        createBtn = TextButton("CREATE WIZARD", createUserButtonStyle)
         setBtnEventListeners()
-
-        val textInputStyle = TextField.TextFieldStyle()
-
-        textInputStyle.also {
-            it.background = skin.getDrawable("input_texture_dark")
-            it.fontColor = Color.BROWN
-            it.font = font
-            it.messageFontColor = Color.GRAY
+        val heading = scene2d.label("Create Wizard", "heading") {
+            setAlignment(Align.center)
+            setFontScale(2f)
         }
-
-        userNameInput = TextField("", textInputStyle)
-        userNameInput.messageText = "Enter wizard name.."
-        emailInput = TextField("", textInputStyle)
-        emailInput.messageText = "Enter e-mail address.."
-        passwordInput = TextField("", textInputStyle)
-        passwordInput.setPasswordCharacter("*"[0])
-        passwordInput.isPasswordMode = true
-        passwordInput.messageText = "Enter password.."
-        rePasswordInput = TextField("", textInputStyle)
-        rePasswordInput.setPasswordCharacter("*"[0])
-        rePasswordInput.messageText = "Re-enter password.."
-        rePasswordInput.isPasswordMode = true
-
-        rightTable.apply {
-            this.defaults().pad(30f)
-            this.background = skin.getDrawable("modal_fancy")
-            this.add(heading)
-            this.row()
-            this.add(userNameInput).width(570f)
-            this.row()
-            this.add(emailInput).width(570f)
-            this.row()
-            this.add(passwordInput).width(570f)
-            this.row()
-            this.add(rePasswordInput).width(570f)
-            this.row()
-            this.add(createBtn).width(370f)
+        val left = scene2d.table(skin) {
+            add(backBtn).expandY().align(Align.top).padTop(50f)
         }
-
-        val stack = Stack()
-        stack.add(backBtn)
-
-        leftTable.apply {
-            this.top()
-            this.add(stack).fillY().align(Align.top).padTop(50f)
+        val right = scene2d.table(skin) {
+            defaults().pad(30f)
+            background = skin.getDrawable("modal_fancy")
+            add(heading)
+            row()
+            add(userNameInput).width(570f)
+            row()
+            add(emailInput).width(570f)
+            row()
+            add(passwordInput).width(570f)
+            row()
+            add(rePasswordInput).width(570f)
+            row()
+            add(createBtn).width(370f)
         }
-
-        table.apply {
-            this.background = skin.getDrawable("background")
-            this.add(leftTable).width(91f).expandY().fillY()
-            this.add(rightTable).width(WIDTH * 0.9f).fillY()
+        val table = scene2d.table(skin) {
+            setBounds(0f, 0f, WIDTH, HEIGHT)
+            background = skin.getDrawable("background")
+            add(left).width(91f).expandY().fillY()
+            add(right).width(WIDTH * 0.9f).fillY()
         }
-
-        registrationStage.addActor(table)
+        stage.addActor(table)
+        Gdx.input.inputProcessor = stage
     }
 
     override fun update(delta: Float) {}
@@ -156,9 +100,7 @@ class RegisterScreen(
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         update(delta)
-
-        registrationStage.act(delta)
-        registrationStage.draw()
-
+        stage.act(delta)
+        stage.draw()
     }
 }
