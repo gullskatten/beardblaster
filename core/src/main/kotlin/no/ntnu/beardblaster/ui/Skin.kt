@@ -15,6 +15,7 @@ import no.ntnu.beardblaster.assets.get
 
 enum class Image(val region: String) {
     Button("button_default"),
+    ButtonHover("button_default_hover"),
     ButtonPressed("button_default_pressed"),
 
     Modal("modal_fancy"),
@@ -47,9 +48,12 @@ fun createSkin(assets: AssetManager): Skin {
         }
 
         textButton {
-            down = skin[Image.ButtonPressed]
-            up = skin[Image.Button]
             font = skin.getFont(FontType.Default.key)
+            up = skin[Image.Button]
+            over = skin[Image.ButtonHover]
+            down = skin[Image.ButtonPressed]
+            pressedOffsetX = 4f
+            pressedOffsetY = 4f
         }
 
         textField {
