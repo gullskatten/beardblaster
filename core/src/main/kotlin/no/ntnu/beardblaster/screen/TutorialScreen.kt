@@ -1,8 +1,11 @@
 package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
@@ -13,14 +16,23 @@ import ktx.actors.onClick
 import ktx.log.debug
 import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
-import no.ntnu.beardblaster.assets.Assets
+import no.ntnu.beardblaster.HEIGHT
+import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.assets.Atlas
+import no.ntnu.beardblaster.assets.Font
+import no.ntnu.beardblaster.assets.get
 
+private val log = logger<TutorialScreen>()
 
-private val LOG = logger<TutorialScreen>()
+class TutorialScreen(
+    game: BeardBlasterGame,
+    batch: Batch,
+    assets: AssetManager,
+    camera: OrthographicCamera,
+) : BaseScreen(game, batch, assets, camera) {
+    private val skin = Skin(assets[Atlas.Game])
+    private val font = assets[Font.Standard]
 
-
-class TutorialScreen(game: BeardBlasterGame) : AbstractScreen(game) {
-    private lateinit var skin: Skin
     private lateinit var table: Table
     private lateinit var heading: Label
 
@@ -33,15 +45,12 @@ class TutorialScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun show() {
-        LOG.debug { "TUTORIAL Screen" }
+        log.debug { "TUTORIAL Screen" }
 
-        skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
-        table.setBounds(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+        table.setBounds(0f, 0f, WIDTH, HEIGHT)
 
-        val standardFont = Assets.assetManager.get(Assets.standardFont)
-
-        Label.LabelStyle(standardFont, Color.BLACK).also {
+        Label.LabelStyle(font, Color.BLACK).also {
             heading = Label("Tutorial", it)
             heading.setFontScale(2f)
             it.background = skin.getDrawable("modal_fancy_header")
@@ -51,7 +60,7 @@ class TutorialScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         val buttonStyle = TextButton.TextButtonStyle()
         skin.getDrawable("button_default_pressed").also { buttonStyle.down = it }
         skin.getDrawable("button_default").also { buttonStyle.up = it }
-        standardFont.apply {
+        font.apply {
             buttonStyle.font = this
         }
 
@@ -73,8 +82,7 @@ class TutorialScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         Gdx.input.inputProcessor = tutorialStage
     }
 
-    override fun update(delta: Float) {
-    }
+    override fun update(delta: Float) {}
 
     override fun setBtnEventListeners() {
         closeTutorialBtn.onClick {

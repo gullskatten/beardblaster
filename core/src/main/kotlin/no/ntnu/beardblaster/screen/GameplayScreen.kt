@@ -1,8 +1,11 @@
 package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
@@ -13,19 +16,28 @@ import ktx.actors.onClick
 import ktx.log.debug
 import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
-import no.ntnu.beardblaster.assets.Assets
-
+import no.ntnu.beardblaster.HEIGHT
+import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.assets.Atlas
+import no.ntnu.beardblaster.assets.Font
+import no.ntnu.beardblaster.assets.get
 
 private val LOG = logger<GameplayScreen>()
 
-
-class GameplayScreen(game: BeardBlasterGame) : AbstractScreen(game) {
-    private lateinit var skin: Skin
+class GameplayScreen(
+    game: BeardBlasterGame,
+    batch: Batch,
+    assets: AssetManager,
+    camera: OrthographicCamera,
+) : BaseScreen(game, batch, assets, camera) {
     private lateinit var table: Table
     private lateinit var heading: Label
 
     private lateinit var btnAttack: TextButton
     private lateinit var btnQuit: TextButton
+
+    private val skin = Skin(assets[Atlas.Game])
+    private val font = assets[Font.Standard]
 
     private val gameplayStage: Stage by lazy {
         val result = BeardBlasterStage()
@@ -36,12 +48,8 @@ class GameplayScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     override fun show() {
         LOG.debug { "GAMEPLAY Screen" }
 
-        skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
-        table.setBounds(0f, 0f, viewport.worldWidth, viewport.worldHeight)
-
-        // Fonts
-        val standardFont = Assets.assetManager.get(Assets.standardFont)
+        table.setBounds(0f, 0f, WIDTH, HEIGHT)
 
         // Creating buttons
         val textButtonStyle = TextButton.TextButtonStyle()
@@ -50,13 +58,13 @@ class GameplayScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         skin.getDrawable("button_default_pressed").also { textButtonStyle.down = it }
         textButtonStyle.pressedOffsetX = 4f
         textButtonStyle.pressedOffsetY = -4f
-        textButtonStyle.font = standardFont
+        textButtonStyle.font = font
 
         btnAttack = TextButton("ATTACK", textButtonStyle)
         btnQuit = TextButton("QUIT", textButtonStyle)
         setBtnEventListeners()
 
-        Label.LabelStyle(standardFont, Color.BLACK).also {
+        Label.LabelStyle(font, Color.BLACK).also {
             heading = Label("Preparation phase", it)
             heading.setFontScale(2f)
             it.background = skin.getDrawable("modal_fancy_header")
@@ -75,11 +83,9 @@ class GameplayScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         gameplayStage.addActor(table)
 
         Gdx.input.inputProcessor = gameplayStage
-
     }
 
-    override fun update(delta: Float) {
-    }
+    override fun update(delta: Float) {}
 
     override fun setBtnEventListeners() {
         btnAttack.onClick {
@@ -87,7 +93,8 @@ class GameplayScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         }
         btnQuit.onClick {
             game.removeScreen<GameplayScreen>()
-            game.addScreen(GameplayScreen(game))
+            // XXX Really needed to add a new game play screen here?
+            //game.addScreen(GameplayScreen(game, batch, assets, camera))
             game.setScreen<MenuScreen>()
         }
     }
@@ -100,6 +107,4 @@ class GameplayScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         gameplayStage.act(delta)
         gameplayStage.draw()
     }
-
-
 }

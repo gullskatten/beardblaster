@@ -3,10 +3,10 @@ package no.ntnu.beardblaster.screen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
-import no.ntnu.beardblaster.worldHeight
-import no.ntnu.beardblaster.worldWidth
+import no.ntnu.beardblaster.HEIGHT
+import no.ntnu.beardblaster.WIDTH
 
-class BeardBlasterStage : Stage(FitViewport(worldWidth, worldHeight)) {
+class BeardBlasterStage : Stage(FitViewport(WIDTH, HEIGHT)) {
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         // A just good-enough solution to hide keyboard when not in use.

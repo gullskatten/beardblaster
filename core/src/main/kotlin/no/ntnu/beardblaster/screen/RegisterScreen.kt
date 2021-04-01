@@ -1,8 +1,11 @@
 package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.Align
@@ -10,14 +13,23 @@ import ktx.actors.onClick
 import ktx.log.debug
 import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
-import no.ntnu.beardblaster.assets.Assets
+import no.ntnu.beardblaster.HEIGHT
+import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.assets.Atlas
+import no.ntnu.beardblaster.assets.Font
+import no.ntnu.beardblaster.assets.get
 import no.ntnu.beardblaster.user.UserAuth
 
+private val log = logger<RegisterScreen>()
 
-private val LOG = logger<RegisterScreen>()
-
-class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
-    private lateinit var skin: Skin
+class RegisterScreen(
+    game: BeardBlasterGame,
+    batch: Batch,
+    assets: AssetManager,
+    camera: OrthographicCamera,
+) : BaseScreen(game, batch, assets, camera) {
+    private val skin = Skin(assets[Atlas.Game])
+    private val font = assets[Font.Standard]
 
     private lateinit var table: Table
     private lateinit var leftTable: Table
@@ -39,17 +51,14 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun show() {
-        LOG.debug { "REGISTRATION Screen" }
+        log.debug { "REGISTRATION Screen" }
         Gdx.input.inputProcessor = registrationStage
-        skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
-        table.setBounds(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+        table.setBounds(0f, 0f, WIDTH, HEIGHT)
         rightTable = Table(skin)
         leftTable = Table(skin)
 
-        val standardFont = Assets.assetManager.get(Assets.standardFont)
-
-        Label.LabelStyle(standardFont, Color.BLACK).also {
+        Label.LabelStyle(font, Color.BLACK).also {
             heading = Label("Create Wizard", it)
             heading.setFontScale(2f)
             it.background = skin.getDrawable("modal_fancy_header")
@@ -66,7 +75,7 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
             backBtnStyle.up = it
         }
 
-        standardFont.apply {
+        font.apply {
             createUserButtonStyle.font = this
         }
         backBtn = Button(backBtnStyle)
@@ -78,7 +87,7 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         textInputStyle.also {
             it.background = skin.getDrawable("input_texture_dark")
             it.fontColor = Color.BROWN
-            it.font = standardFont
+            it.font = font
             it.messageFontColor = Color.GRAY
         }
 
@@ -122,15 +131,13 @@ class RegisterScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         table.apply {
             this.background = skin.getDrawable("background")
             this.add(leftTable).width(91f).expandY().fillY()
-            this.add(rightTable).width(viewport.worldWidth * 0.9f).fillY()
+            this.add(rightTable).width(WIDTH * 0.9f).fillY()
         }
 
         registrationStage.addActor(table)
     }
 
-    override fun update(delta: Float) {
-
-    }
+    override fun update(delta: Float) {}
 
     override fun setBtnEventListeners() {
         createBtn.onClick {

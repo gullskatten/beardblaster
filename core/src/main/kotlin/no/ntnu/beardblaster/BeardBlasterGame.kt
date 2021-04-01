@@ -1,54 +1,35 @@
 package no.ntnu.beardblaster
 
-import com.badlogic.gdx.Application
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.utils.viewport.FitViewport
 import ktx.app.KtxGame
+import ktx.app.KtxScreen
+import ktx.inject.Context
+import ktx.inject.register
 import ktx.log.debug
 import ktx.log.logger
-import no.ntnu.beardblaster.assets.Assets
 import no.ntnu.beardblaster.screen.*
 
-private val LOG = logger<BeardBlasterGame>()
-const val worldWidth = 1920f
-const val worldHeight = 1080f
+const val WIDTH = 1920f
+const val HEIGHT = 1080f
 
-// Game class that extends KTX game with an abstract screen
-class BeardBlasterGame : KtxGame<AbstractScreen>() {
-    val batch: Batch by lazy { SpriteBatch() }
-    val cam: OrthographicCamera = OrthographicCamera()
-    val viewport: FitViewport = FitViewport(worldWidth, worldHeight, cam)
+private val log = logger<BeardBlasterGame>()
+
+class BeardBlasterGame : KtxGame<KtxScreen>() {
+    private val context = Context()
 
     override fun create() {
-        // Set debug level
-        Gdx.app.logLevel = Application.LOG_DEBUG
-        LOG.debug { "Create game instance" }
-        Assets.assetManager = AssetManager()
-        initScreens()
-    }
-
-    // Add all screens and set loading screen
-    private fun initScreens() {
-        addScreen(LoadingScreen(this))
-        addScreen(LoginMenuScreen(this))
-        addScreen(LoginScreen(this))
-        addScreen(RegisterScreen(this))
-        addScreen(MenuScreen(this))
-        addScreen(TutorialScreen(this))
-        addScreen(HighscoreScreen(this))
-        addScreen(LobbyScreen(this))
-        addScreen(JoinLobbyScreen(this))
-        addScreen(GameplayScreen(this))
-
+        log.debug { "Creating BeardBlaster game" }
+        context.register {
+            bindSingleton<Batch>(SpriteBatch())
+            bindSingleton(AssetManager())
+            bindSingleton(OrthographicCamera().apply { setToOrtho(false, WIDTH, HEIGHT) })
+            addScreen(LoadingScreen(this@BeardBlasterGame, inject(), inject(), inject()))
+        }
+        log.debug { "Setting LoadingScreen" }
         setScreen<LoadingScreen>()
-    }
-
-    override fun dispose() {
-        super.dispose()
-        Assets.dispose()
+        super.create()
     }
 }

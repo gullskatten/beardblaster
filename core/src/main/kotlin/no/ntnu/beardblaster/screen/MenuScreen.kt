@@ -1,8 +1,11 @@
 package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.Align
@@ -10,15 +13,24 @@ import ktx.actors.onClick
 import ktx.log.debug
 import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
-import no.ntnu.beardblaster.assets.Assets
+import no.ntnu.beardblaster.HEIGHT
+import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.assets.Atlas
+import no.ntnu.beardblaster.assets.Font
+import no.ntnu.beardblaster.assets.get
 import no.ntnu.beardblaster.user.UserAuth
 
+private val log = logger<LoadingScreen>()
 
-private val LOG = logger<MenuScreen>()
+class MenuScreen(
+    game: BeardBlasterGame,
+    batch: Batch,
+    assets: AssetManager,
+    camera: OrthographicCamera,
+) : BaseScreen(game, batch, assets, camera) {
+    private val skin = Skin(assets[Atlas.Game])
+    private val font = assets[Font.Standard]
 
-
-class MenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
-    private lateinit var skin: Skin
     private lateinit var table: Table
     private lateinit var heading: Label
 
@@ -36,15 +48,12 @@ class MenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
     }
 
     override fun show() {
-        LOG.debug { "MENU Screen" }
+        log.debug { "MENU Screen" }
 
-        skin = Skin(Assets.assetManager.get(Assets.atlas))
         table = Table(skin)
-        table.setBounds(0f, 0f, viewport.worldWidth, viewport.worldHeight)
+        table.setBounds(0f, 0f, WIDTH, HEIGHT)
 
-        val standardFont = Assets.assetManager.get(Assets.standardFont)
-
-        Label.LabelStyle(standardFont, Color.BLACK).also {
+        Label.LabelStyle(font, Color.BLACK).also {
             heading = Label("Welcome Wizard", it)
             heading.setFontScale(2f)
             it.background = skin.getDrawable("modal_fancy_header")
@@ -55,7 +64,7 @@ class MenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         skin.getDrawable("button_default_pressed").also { buttonStyle.down = it }
         skin.getDrawable("button_default").also { buttonStyle.up = it }
 
-        standardFont.apply {
+        font.apply {
             buttonStyle.font = this
         }
 
@@ -72,7 +81,7 @@ class MenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         textInputStyle.also {
             it.background = skin.getDrawable("input_texture_dark")
             it.fontColor = Color.BROWN
-            it.font = standardFont
+            it.font = font
             it.messageFontColor = Color.GRAY
         }
 
@@ -97,8 +106,15 @@ class MenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         Gdx.input.inputProcessor = menuStage
     }
 
-    override fun update(delta: Float) {
+    override fun update(delta: Float) {}
 
+    override fun render(delta: Float) {
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+        update(delta)
+
+        menuStage.act(delta)
+        menuStage.draw()
     }
 
     override fun setBtnEventListeners() {
@@ -124,14 +140,5 @@ class MenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         exitBtn.onClick {
             Gdx.app.exit()
         }
-    }
-
-    override fun render(delta: Float) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        update(delta)
-
-        menuStage.act(delta)
-        menuStage.draw()
     }
 }
