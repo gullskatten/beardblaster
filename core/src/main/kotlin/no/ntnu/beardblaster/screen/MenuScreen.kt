@@ -68,7 +68,7 @@ class MenuScreen(
             game.setScreen<JoinLobbyScreen>()
         }
         highScoreBtn.onClick {
-            game.setScreen<HighscoreScreen>()
+            game.setScreen<HighScoreScreen>()
         }
         tutorialBtn.onClick {
             game.setScreen<TutorialScreen>()

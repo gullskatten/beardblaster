@@ -17,7 +17,7 @@ import no.ntnu.beardblaster.ui.Image
 import no.ntnu.beardblaster.ui.get
 import no.ntnu.beardblaster.ui.headingLabel
 
-class HighscoreScreen(
+class HighScoreScreen(
     game: BeardBlasterGame,
     batch: Batch,
     assets: AssetManager,
