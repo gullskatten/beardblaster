@@ -6,13 +6,16 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
-import com.badlogic.gdx.utils.Align
 import ktx.actors.onClick
-import ktx.scene2d.*
+import ktx.scene2d.scene2d
+import ktx.scene2d.table
+import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.ui.Image
+import no.ntnu.beardblaster.ui.get
+import no.ntnu.beardblaster.ui.headingLabel
 import no.ntnu.beardblaster.user.UserAuth
 
 class MenuScreen(
@@ -21,7 +24,6 @@ class MenuScreen(
     assets: AssetManager,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    private val skin: Skin = Scene2DSkin.defaultSkin
     private val createGameBtn = scene2d.textButton("Create Game")
     private val joinGameBtn = scene2d.textButton("Join Game")
     private val highScoreBtn = scene2d.textButton("LeaderBeard")
@@ -37,15 +39,11 @@ class MenuScreen(
 
     override fun show() {
         setBtnEventListeners()
-        val heading = scene2d.label("Welcome Wizard", "heading") {
-            setAlignment(Align.center)
-            setFontScale(2f)
-        }
-        val table = scene2d.table(skin) {
+        val table = scene2d.table {
             setBounds(0f, 0f, WIDTH, HEIGHT)
             defaults().pad(20f)
-            background = skin.getDrawable("background")
-            add(heading).colspan(4).center()
+            background = skin[Image.Background]
+            add(headingLabel("Welcome Wizard")).colspan(4).center()
             row()
             add(createGameBtn).colspan(4).center()
             row()

@@ -7,13 +7,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
-import com.badlogic.gdx.utils.Align
 import ktx.actors.onClick
 import ktx.scene2d.*
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.ui.Image
+import no.ntnu.beardblaster.ui.get
 import no.ntnu.beardblaster.ui.headingLabel
 
 class LobbyScreen(
@@ -22,7 +22,6 @@ class LobbyScreen(
     assets: AssetManager,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    private val skin: Skin = Scene2DSkin.defaultSkin
     private lateinit var codeLabel: Label
     private val infoLabel = scene2d.label("Share this code with a friend to start playing")
     private val startGameBtn = scene2d.textButton("Start Game")
@@ -41,12 +40,9 @@ class LobbyScreen(
         codeLabel = scene2d.label(code) {
             setFontScale(1.5f)
         }
-        val left = scene2d.table(skin) {
-            add(backBtn).expandY().align(Align.top).padTop(50f)
-        }
-        val right = scene2d.table(skin) {
+        val content = scene2d.table {
             defaults().pad(30f)
-            background = skin.getDrawable("modal_fancy")
+            background = skin[Image.Modal]
             add(headingLabel("Lobby"))
             row()
             add(codeLabel)
@@ -55,15 +51,13 @@ class LobbyScreen(
             row()
             add(startGameBtn)
         }
-        val table = scene2d.table(skin) {
+        val table = scene2d.table {
             setBounds(0f, 0f, WIDTH, HEIGHT)
-            background = skin.getDrawable("background")
-            add(left).width(91f).expandY().fillY()
-            add(right).width(WIDTH * 0.9f).fillY()
+            background = skin[Image.Background]
+            add(backBtn).expandY().top().padTop(50f).width(91f)
+            add(content).width(WIDTH * 0.9f).fillY()
         }
-        // Adding actors to the stage
         stage.addActor(table)
-
         Gdx.input.inputProcessor = stage
     }
 

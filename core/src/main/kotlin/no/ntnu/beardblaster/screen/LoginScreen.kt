@@ -6,15 +6,15 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
-import com.badlogic.gdx.utils.Align
 import ktx.actors.onClick
-import ktx.scene2d.*
+import ktx.scene2d.button
+import ktx.scene2d.scene2d
+import ktx.scene2d.table
+import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
-import no.ntnu.beardblaster.ui.inputField
-import no.ntnu.beardblaster.ui.passwordField
+import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 
 class LoginScreen(
@@ -23,7 +23,6 @@ class LoginScreen(
     assets: AssetManager,
     camera: OrthographicCamera
 ) : BaseScreen(game, batch, assets, camera) {
-    private val skin: Skin = Scene2DSkin.defaultSkin
     private val loginBtn = scene2d.textButton("Login")
     private val backBtn = scene2d.button("cancel")
     private val emailInput = inputField("Email address")
@@ -37,18 +36,11 @@ class LoginScreen(
 
     override fun show() {
         setBtnEventListeners()
-        val heading = scene2d.label("Login", "heading") {
-            setAlignment(Align.center)
-            setFontScale(2f)
-        }
-        val left = scene2d.table(skin) {
-            add(backBtn).expandY().align(Align.top).padTop(50f)
-        }
         // TODO: find out why input fields renders with wrong width
-        val right = scene2d.table(skin) {
+        val content = scene2d.table {
             defaults().pad(30f)
-            background = skin.getDrawable("modal_fancy")
-            add(heading)
+            background = skin[Image.Modal]
+            add(headingLabel("Login"))
             row()
             add(emailInput).width(570f)
             row()
@@ -56,11 +48,11 @@ class LoginScreen(
             row()
             add(loginBtn).center()
         }
-        val table = scene2d.table(skin) {
+        val table = scene2d.table {
             setBounds(0f, 0f, WIDTH, HEIGHT)
-            background = skin.getDrawable("background")
-            add(left).width(91f).expandY().fillY()
-            add(right).width(WIDTH * 0.9f).fillY()
+            background = skin[Image.Background]
+            add(backBtn).expandY().top().padTop(50f).width(91f)
+            add(content).width(WIDTH * 0.9f).fillY()
         }
         stage.addActor(table)
         Gdx.input.inputProcessor = stage

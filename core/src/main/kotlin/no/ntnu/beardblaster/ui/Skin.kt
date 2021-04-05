@@ -2,6 +2,7 @@ package no.ntnu.beardblaster.ui
 
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import ktx.scene2d.Scene2DSkin
@@ -10,7 +11,7 @@ import no.ntnu.beardblaster.assets.Atlas
 import no.ntnu.beardblaster.assets.Font
 import no.ntnu.beardblaster.assets.get
 
-enum class Image(val region: String) {
+enum class Image(val atlasKey: String) {
     // Buttons
     Button("button_default"),
     ButtonHover("button_default_hover"),
@@ -31,24 +32,26 @@ enum class Image(val region: String) {
     ModalHeader("modal_fancy_header"),
 }
 
-enum class FontType(val key: String) {
-    Default("default"),
+operator fun Skin.get(image: Image): Drawable = this.getDrawable(image.atlasKey)
+
+enum class FontType {
+    Default
 }
 
-operator fun Skin.get(image: Image): Drawable = this.getDrawable(image.region)
+operator fun Skin.get(font: Font): BitmapFont = this.getFont(font.name)
 
 fun createSkin(assets: AssetManager): Skin {
     Scene2DSkin.defaultSkin = skin(assets[Atlas.Game]) { skin ->
-        add(FontType.Default.key, assets[Font.Standard])
+        add(FontType.Default.name, assets[Font.Standard])
 
         label {
-            font = skin.getFont(FontType.Default.key)
+            font = skin[FontType.Default]
             fontColor = Color.BLACK
         }
 
         label("heading") {
-            font = skin.getFont(FontType.Default.key)
-            fontColor = Color.BLACK
+            font = skin[FontType.Default]
+            fontColor = Color.BROWN
             background = skin[Image.ModalHeader]
         }
 
@@ -63,7 +66,7 @@ fun createSkin(assets: AssetManager): Skin {
         }
 
         textButton {
-            font = skin.getFont(FontType.Default.key)
+            font = skin[FontType.Default]
             up = skin[Image.Button]
             over = skin[Image.ButtonHover]
             down = skin[Image.ButtonPressed]
@@ -72,7 +75,7 @@ fun createSkin(assets: AssetManager): Skin {
         }
 
         textField {
-            font = skin.getFont(FontType.Default.key)
+            font = skin[FontType.Default]
             fontColor = Color.BROWN
             messageFontColor = Color.GRAY
             background = skin[Image.InputDark]
