@@ -14,6 +14,7 @@ import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 
@@ -23,10 +24,10 @@ class LoginScreen(
     assets: AssetManager,
     camera: OrthographicCamera
 ) : BaseScreen(game, batch, assets, camera) {
-    private val loginBtn = scene2d.textButton("Login")
+    private val loginBtn = scene2d.textButton(Nls.logIn())
     private val backBtn = scene2d.button("cancel")
-    private val emailInput = inputField("Email address")
-    private val passwordInput = passwordField("Password")
+    private val emailInput = inputField(Nls.emailAddress())
+    private val passwordInput = passwordField(Nls.password())
 
     private val stage: Stage by lazy {
         val result = BeardBlasterStage()
@@ -40,7 +41,7 @@ class LoginScreen(
         val content = scene2d.table {
             defaults().pad(30f)
             background = skin[Image.Modal]
-            add(headingLabel("Login"))
+            add(headingLabel(Nls.login()))
             row()
             add(emailInput).width(570f)
             row()

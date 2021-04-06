@@ -13,6 +13,7 @@ import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.Image
 import no.ntnu.beardblaster.ui.get
 import no.ntnu.beardblaster.ui.headingLabel
@@ -23,7 +24,7 @@ class TutorialScreen(
     assets: AssetManager,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    private val closeBtn = scene2d.textButton("Close")
+    private val closeBtn = scene2d.textButton(Nls.close())
 
     private val stage: Stage by lazy {
         val result = BeardBlasterStage()
@@ -37,7 +38,7 @@ class TutorialScreen(
             setBounds(0f, 0f, WIDTH, HEIGHT)
             defaults().pad(30f)
             background = skin[Image.Background]
-            add(headingLabel("Tutorial"))
+            add(headingLabel(Nls.tutorial()))
             row()
             add(closeBtn)
         }

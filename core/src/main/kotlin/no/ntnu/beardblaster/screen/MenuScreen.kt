@@ -13,6 +13,7 @@ import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.Image
 import no.ntnu.beardblaster.ui.get
 import no.ntnu.beardblaster.ui.headingLabel
@@ -24,12 +25,12 @@ class MenuScreen(
     assets: AssetManager,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    private val createGameBtn = scene2d.textButton("Create Game")
-    private val joinGameBtn = scene2d.textButton("Join Game")
-    private val highScoreBtn = scene2d.textButton("LeaderBeard")
-    private val tutorialBtn = scene2d.textButton("Tutorial")
-    private val logoutBtn = scene2d.textButton("Log Out")
-    private val exitBtn = scene2d.textButton("Exit Game")
+    private val createGameBtn = scene2d.textButton(Nls.createGame())
+    private val joinGameBtn = scene2d.textButton(Nls.joinGame())
+    private val highScoreBtn = scene2d.textButton(Nls.leaderBeard())
+    private val tutorialBtn = scene2d.textButton(Nls.tutorial())
+    private val logoutBtn = scene2d.textButton(Nls.logOut())
+    private val exitBtn = scene2d.textButton(Nls.exitGame())
 
     private val stage: Stage by lazy {
         val result = BeardBlasterStage()
@@ -43,7 +44,7 @@ class MenuScreen(
             setBounds(0f, 0f, WIDTH, HEIGHT)
             defaults().pad(20f)
             background = skin[Image.Background]
-            add(headingLabel("Welcome Wizard")).colspan(4).center()
+            add(headingLabel(Nls.welcomeWizard())).colspan(4).center()
             row()
             add(createGameBtn).colspan(4).center()
             row()

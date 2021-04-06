@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import ktx.actors.onClick
-import ktx.log.debug
+import ktx.log.info
 import ktx.log.logger
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
@@ -15,6 +15,7 @@ import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.headingLabel
 
 private val log = logger<GameplayScreen>()
@@ -25,8 +26,8 @@ class GameplayScreen(
     assets: AssetManager,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    private val attackBtn = scene2d.textButton("Attack")
-    private val quiteBtn = scene2d.textButton("Quit")
+    private val attackBtn = scene2d.textButton(Nls.attack())
+    private val quiteBtn = scene2d.textButton(Nls.quit())
 
     private val stage: Stage by lazy {
         val result = BeardBlasterStage()
@@ -38,7 +39,7 @@ class GameplayScreen(
         setBtnEventListeners()
         val table = scene2d.table {
             setBounds(0f, 0f, WIDTH, HEIGHT)
-            add(headingLabel("Preparation Phase")).pad(50f)
+            add(headingLabel(Nls.preparationPhase())).pad(50f)
             row()
             add(attackBtn).pad(40f)
             row()
@@ -51,7 +52,7 @@ class GameplayScreen(
 
     override fun setBtnEventListeners() {
         attackBtn.onClick {
-            log.debug { "Wizard 1 attacks" }
+            log.info { Nls.wizardNAttacks(1) }
         }
         quiteBtn.onClick {
             game.removeScreen<GameplayScreen>()

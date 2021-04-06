@@ -3,6 +3,7 @@ package no.ntnu.beardblaster.assets
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.utils.I18NBundle
 import ktx.assets.getAsset
 import ktx.assets.load
 
@@ -19,3 +20,10 @@ enum class Atlas(val path: String) {
 
 fun AssetManager.load(asset: Atlas) = load<TextureAtlas>(asset.path)
 operator fun AssetManager.get(asset: Atlas) = getAsset<TextureAtlas>(asset.path)
+
+enum class I18N(val path: String) {
+    Default("i18n/nls"),
+}
+
+fun AssetManager.load(asset: I18N) = load<I18NBundle>(asset.path)
+operator fun AssetManager.get(asset: I18N) = getAsset<I18NBundle>(asset.path)

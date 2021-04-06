@@ -13,6 +13,7 @@ import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.Image
 import no.ntnu.beardblaster.ui.get
 import no.ntnu.beardblaster.ui.headingLabel
@@ -23,9 +24,9 @@ class LoginMenuScreen(
     assets: AssetManager,
     camera: OrthographicCamera
 ) : BaseScreen(game, batch, assets, camera) {
-    private val exitBtn = scene2d.textButton("Exit Game")
-    private val loginBtn = scene2d.textButton("Log In")
-    private val registerBtn = scene2d.textButton("Register")
+    private val exitBtn = scene2d.textButton(Nls.exitGame())
+    private val loginBtn = scene2d.textButton(Nls.logIn())
+    private val registerBtn = scene2d.textButton(Nls.register())
 
     private val stage: Stage by lazy {
         val result = BeardBlasterStage()
@@ -38,7 +39,7 @@ class LoginMenuScreen(
         val table = scene2d.table {
             setBounds(0f, 0f, WIDTH, HEIGHT)
             background = skin[Image.Modal]
-            add(headingLabel("BeardBlaster")).pad(50f)
+            add(headingLabel(Nls.appName())).pad(50f)
             row()
             add(loginBtn).pad(40f)
             row()

@@ -9,9 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import ktx.app.KtxScreen
 import ktx.graphics.use
 import no.ntnu.beardblaster.BeardBlasterGame
-import no.ntnu.beardblaster.assets.Atlas
-import no.ntnu.beardblaster.assets.Font
-import no.ntnu.beardblaster.assets.load
+import no.ntnu.beardblaster.assets.*
 import no.ntnu.beardblaster.ui.createSkin
 import no.ntnu.beardblaster.user.UserAuth
 import kotlin.math.roundToInt
@@ -28,6 +26,7 @@ class LoadingScreen(
     override fun show() {
         Font.values().forEach { assets.load(it) }
         Atlas.values().forEach { assets.load(it) }
+        I18N.values().forEach { assets.load(it) }
         font.data.scale(1.5f)
     }
 
@@ -50,6 +49,7 @@ class LoadingScreen(
         }
 
         if (assets.isFinished) {
+            Nls.i18nBundle = assets[I18N.Default]
             createSkin(assets)
             addGameScreens()
             when (UserAuth().isLoggedIn()) {

@@ -14,6 +14,7 @@ import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 
@@ -24,11 +25,11 @@ class RegisterScreen(
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
     private val backBtn = scene2d.button("cancel")
-    private val createBtn = scene2d.textButton("Create Wizard")
-    private val userNameInput = inputField("Wizard name")
-    private val emailInput = inputField("Email address")
-    private val passwordInput = passwordField("Password")
-    private val rePasswordInput = passwordField("Re-enter password")
+    private val createBtn = scene2d.textButton(Nls.createWizard())
+    private val userNameInput = inputField(Nls.wizardName())
+    private val emailInput = inputField(Nls.emailAddress())
+    private val passwordInput = passwordField(Nls.password())
+    private val rePasswordInput = passwordField(Nls.confirmPassword())
 
     private val stage: Stage by lazy {
         val result = BeardBlasterStage()
@@ -41,7 +42,7 @@ class RegisterScreen(
         val content = scene2d.table {
             defaults().pad(30f)
             background = skin[Image.Modal]
-            add(headingLabel("Create Wizard"))
+            add(headingLabel(Nls.createWizard()))
             row()
             add(userNameInput).width(570f)
             row()

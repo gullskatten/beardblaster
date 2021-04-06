@@ -12,6 +12,7 @@ import ktx.scene2d.*
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.Image
 import no.ntnu.beardblaster.ui.get
 import no.ntnu.beardblaster.ui.headingLabel
@@ -23,8 +24,8 @@ class LobbyScreen(
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
     private lateinit var codeLabel: Label
-    private val infoLabel = scene2d.label("Share this code with a friend to start playing")
-    private val startGameBtn = scene2d.textButton("Start Game")
+    private val infoLabel = scene2d.label(Nls.shareGameCodeMessage())
+    private val startGameBtn = scene2d.textButton(Nls.startGame())
     private val backBtn = scene2d.button("cancel")
 
     private val stage: Stage by lazy {
@@ -43,7 +44,7 @@ class LobbyScreen(
         val content = scene2d.table {
             defaults().pad(30f)
             background = skin[Image.Modal]
-            add(headingLabel("Lobby"))
+            add(headingLabel(Nls.lobby()))
             row()
             add(codeLabel)
             row()
