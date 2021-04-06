@@ -24,9 +24,9 @@ class LoadingScreen(
     private val font = BitmapFont()
 
     override fun show() {
-        Font.values().forEach { assets.load(it) }
-        Atlas.values().forEach { assets.load(it) }
-        I18N.values().forEach { assets.load(it) }
+        FontAsset.values().forEach { assets.load(it) }
+        AtlasAsset.values().forEach { assets.load(it) }
+        I18NAsset.values().forEach { assets.load(it) }
         font.data.scale(1.5f)
     }
 
@@ -49,7 +49,7 @@ class LoadingScreen(
         }
 
         if (assets.isFinished) {
-            Nls.i18nBundle = assets[I18N.Default]
+            Nls.i18nBundle = assets[I18NAsset.Default]
             createSkin(assets)
             addGameScreens()
             when (UserAuth().isLoggedIn()) {

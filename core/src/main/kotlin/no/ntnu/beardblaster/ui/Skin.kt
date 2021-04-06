@@ -7,8 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import ktx.scene2d.Scene2DSkin
 import ktx.style.*
-import no.ntnu.beardblaster.assets.Atlas
-import no.ntnu.beardblaster.assets.Font
+import no.ntnu.beardblaster.assets.AtlasAsset
+import no.ntnu.beardblaster.assets.FontAsset
 import no.ntnu.beardblaster.assets.get
 
 enum class Image(val atlasKey: String) {
@@ -50,8 +50,8 @@ enum class ButtonStyle {
 }
 
 fun createSkin(assets: AssetManager): Skin {
-    Scene2DSkin.defaultSkin = skin(assets[Atlas.Game]) { skin ->
-        add(FontStyle.Default.name, assets[Font.Standard])
+    Scene2DSkin.defaultSkin = skin(assets[AtlasAsset.Game]) { skin ->
+        add(FontStyle.Default.name, assets[FontAsset.Standard])
 
         label {
             font = skin[FontStyle.Default]
