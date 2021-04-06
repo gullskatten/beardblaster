@@ -28,4 +28,9 @@ class BeardBlasterGame : KtxGame<KtxScreen>() {
         setScreen<LoadingScreen>()
         super.create()
     }
+
+    override fun dispose() {
+        context.dispose()
+        super.dispose()
+    }
 }
