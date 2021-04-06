@@ -46,6 +46,7 @@ class GameplayScreen(
             add(quiteBtn).pad(40f)
             row()
         }
+        stage.clear()
         stage.addActor(table)
         Gdx.input.inputProcessor = stage
     }
@@ -56,8 +57,9 @@ class GameplayScreen(
         }
         quiteBtn.onClick {
             game.removeScreen<GameplayScreen>()
-            // XXX Really needed to add a new game play screen here?
-            //game.addScreen(GameplayScreen(game, batch, assets, camera))
+            // FIXME Really needed to add a new game play screen here?
+            // Might be better to add it when joining/starting a new game.
+            game.addScreen(GameplayScreen(game, batch, assets, camera))
             game.setScreen<MenuScreen>()
         }
     }
