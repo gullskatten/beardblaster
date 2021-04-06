@@ -8,14 +8,14 @@ import ktx.assets.getAsset
 import ktx.assets.load
 
 enum class FontAsset(val path: String) {
-    Standard("font_nevis/nevis.fnt"),
+    Default("font_nevis/nevis.fnt"),
 }
 
 fun AssetManager.load(asset: FontAsset) = load<BitmapFont>(asset.path)
 operator fun AssetManager.get(asset: FontAsset) = getAsset<BitmapFont>(asset.path)
 
 enum class AtlasAsset(val path: String) {
-    Game("bb_gui.atlas"),
+    UI("bb_gui.atlas"),
 }
 
 fun AssetManager.load(asset: AtlasAsset) = load<TextureAtlas>(asset.path)

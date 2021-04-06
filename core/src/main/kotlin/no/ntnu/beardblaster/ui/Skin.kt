@@ -50,8 +50,8 @@ enum class ButtonStyle {
 }
 
 fun createSkin(assets: AssetManager): Skin {
-    Scene2DSkin.defaultSkin = skin(assets[AtlasAsset.Game]) { skin ->
-        add(FontStyle.Default.name, assets[FontAsset.Standard])
+    Scene2DSkin.defaultSkin = skin(assets[AtlasAsset.UI]) { skin ->
+        add(FontStyle.Default.name, assets[FontAsset.Default])
 
         label {
             font = skin[FontStyle.Default]
