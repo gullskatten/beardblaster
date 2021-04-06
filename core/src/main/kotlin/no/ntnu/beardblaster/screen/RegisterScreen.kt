@@ -24,7 +24,7 @@ class RegisterScreen(
     assets: AssetManager,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    private val backBtn = scene2d.button("cancel")
+    private val backBtn = scene2d.button(ButtonStyle.Cancel.name)
     private val createBtn = scene2d.textButton(Nls.createWizard())
     private val userNameInput = inputField(Nls.wizardName())
     private val emailInput = inputField(Nls.emailAddress())

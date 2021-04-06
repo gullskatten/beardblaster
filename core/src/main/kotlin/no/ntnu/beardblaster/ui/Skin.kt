@@ -34,39 +34,48 @@ enum class Image(val atlasKey: String) {
 
 operator fun Skin.get(image: Image): Drawable = this.getDrawable(image.atlasKey)
 
-enum class FontType {
+enum class FontStyle {
     Default
 }
 
-operator fun Skin.get(font: Font): BitmapFont = this.getFont(font.name)
+operator fun Skin.get(font: FontStyle): BitmapFont = this.getFont(font.name)
+
+enum class LabelStyle {
+    Heading,
+}
+
+enum class ButtonStyle {
+    OK,
+    Cancel,
+}
 
 fun createSkin(assets: AssetManager): Skin {
     Scene2DSkin.defaultSkin = skin(assets[Atlas.Game]) { skin ->
-        add(FontType.Default.name, assets[Font.Standard])
+        add(FontStyle.Default.name, assets[Font.Standard])
 
         label {
-            font = skin[FontType.Default]
+            font = skin[FontStyle.Default]
             fontColor = Color.BLACK
         }
 
-        label("heading") {
-            font = skin[FontType.Default]
+        label(LabelStyle.Heading.name) {
+            font = skin[FontStyle.Default]
             fontColor = Color.BROWN
             background = skin[Image.ModalHeader]
         }
 
-        button("ok") {
+        button(ButtonStyle.OK.name) {
             up = skin[Image.DialogButtonOK]
             down = skin[Image.DialogButtonOK]
         }
 
-        button("cancel") {
+        button(ButtonStyle.Cancel.name) {
             up = skin[Image.DialogButtonCancel]
             down = skin[Image.DialogButtonCancel]
         }
 
         textButton {
-            font = skin[FontType.Default]
+            font = skin[FontStyle.Default]
             up = skin[Image.Button]
             over = skin[Image.ButtonHover]
             down = skin[Image.ButtonPressed]
@@ -75,7 +84,7 @@ fun createSkin(assets: AssetManager): Skin {
         }
 
         textField {
-            font = skin[FontType.Default]
+            font = skin[FontStyle.Default]
             fontColor = Color.BROWN
             messageFontColor = Color.GRAY
             background = skin[Image.InputDark]

@@ -23,7 +23,7 @@ fun passwordField(messageText: String): TextField {
 }
 
 fun headingLabel(text: String): Label {
-    return scene2d.label(text, "heading") {
+    return scene2d.label(text, LabelStyle.Heading.name) {
         setAlignment(Align.center)
         setFontScale(2f)
     }

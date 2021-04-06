@@ -15,10 +15,7 @@ import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
 import no.ntnu.beardblaster.assets.Nls
-import no.ntnu.beardblaster.ui.Image
-import no.ntnu.beardblaster.ui.get
-import no.ntnu.beardblaster.ui.headingLabel
-import no.ntnu.beardblaster.ui.inputField
+import no.ntnu.beardblaster.ui.*
 
 class JoinLobbyScreen(
     game: BeardBlasterGame,
@@ -28,7 +25,7 @@ class JoinLobbyScreen(
 ) : BaseScreen(game, batch, assets, camera) {
     private val codeInput = inputField(Nls.gameCode())
     private val submitCodeBtn = scene2d.textButton(Nls.submit())
-    private val backBtn = scene2d.button("cancel")
+    private val backBtn = scene2d.button(ButtonStyle.Cancel.name)
 
     private val stage: Stage by lazy {
         val result = BeardBlasterStage()

@@ -13,6 +13,7 @@ import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.HEIGHT
 import no.ntnu.beardblaster.WIDTH
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.ui.ButtonStyle
 import no.ntnu.beardblaster.ui.Image
 import no.ntnu.beardblaster.ui.get
 import no.ntnu.beardblaster.ui.headingLabel
@@ -26,7 +27,7 @@ class LobbyScreen(
     private lateinit var codeLabel: Label
     private val infoLabel = scene2d.label(Nls.shareGameCodeMessage())
     private val startGameBtn = scene2d.textButton(Nls.startGame())
-    private val backBtn = scene2d.button("cancel")
+    private val backBtn = scene2d.button(ButtonStyle.Cancel.name)
 
     private val stage: Stage by lazy {
         val result = BeardBlasterStage()

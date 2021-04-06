@@ -25,7 +25,7 @@ class LoginScreen(
     camera: OrthographicCamera
 ) : BaseScreen(game, batch, assets, camera) {
     private val loginBtn = scene2d.textButton(Nls.logIn())
-    private val backBtn = scene2d.button("cancel")
+    private val backBtn = scene2d.button(ButtonStyle.Cancel.name)
     private val emailInput = inputField(Nls.emailAddress())
     private val passwordInput = passwordField(Nls.password())
 
