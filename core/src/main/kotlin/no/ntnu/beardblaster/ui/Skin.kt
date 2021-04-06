@@ -1,10 +1,10 @@
 package no.ntnu.beardblaster.ui
 
-import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
+import ktx.assets.async.AssetStorage
 import ktx.scene2d.Scene2DSkin
 import ktx.style.*
 import no.ntnu.beardblaster.assets.AtlasAsset
@@ -49,7 +49,7 @@ enum class ButtonStyle {
     Cancel,
 }
 
-fun createSkin(assets: AssetManager): Skin {
+fun createSkin(assets: AssetStorage): Skin {
     Scene2DSkin.defaultSkin = skin(assets[AtlasAsset.UI]) { skin ->
         add(FontStyle.Default.name, assets[FontAsset.Default])
 

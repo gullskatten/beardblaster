@@ -1,12 +1,12 @@
 package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import ktx.actors.onClick
+import ktx.assets.async.AssetStorage
 import ktx.log.info
 import ktx.log.logger
 import ktx.scene2d.scene2d
@@ -23,7 +23,7 @@ private val log = logger<GameplayScreen>()
 class GameplayScreen(
     game: BeardBlasterGame,
     batch: Batch,
-    assets: AssetManager,
+    assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
     private val attackBtn = scene2d.textButton(Nls.attack())

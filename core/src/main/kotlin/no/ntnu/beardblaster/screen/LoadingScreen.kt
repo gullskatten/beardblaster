@@ -1,54 +1,57 @@
 package no.ntnu.beardblaster.screen
 
-import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import kotlinx.coroutines.launch
 import ktx.app.KtxScreen
+import ktx.assets.async.AssetStorage
+import ktx.async.KtxAsync
 import ktx.graphics.use
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.*
 import no.ntnu.beardblaster.ui.createSkin
 import no.ntnu.beardblaster.user.UserAuth
-import kotlin.math.roundToInt
 
 class LoadingScreen(
     private val game: BeardBlasterGame,
     private val batch: Batch,
-    private val assets: AssetManager,
+    private val assets: AssetStorage,
     private val camera: OrthographicCamera,
 ) : KtxScreen {
     private val renderer = ShapeRenderer()
     private val font = BitmapFont()
+    private val isFinishedLoading: Boolean
+        get() = assets.progress.percent >= 1f
 
     override fun show() {
-        FontAsset.values().forEach { assets.load(it) }
-        AtlasAsset.values().forEach { assets.load(it) }
-        I18NAsset.values().forEach { assets.load(it) }
+        KtxAsync.launch {
+            FontAsset.values().map { assets.loadAsync(it) }
+            AtlasAsset.values().map { assets.loadAsync(it) }
+            I18NAsset.values().map { assets.loadAsync(it) }
+        }
         font.data.scale(1.5f)
     }
 
     override fun render(delta: Float) {
-        assets.update()
-        camera.update()
-
         val x = 200f
         val height = 25f
         val width = camera.viewportWidth - (x * 2)
         val y = (camera.viewportHeight / 2) - (height / 2)
+        val progress = assets.progress.percent
 
         renderer.use(ShapeRenderer.ShapeType.Filled, camera.combined) {
             it.color = Color.PINK
-            it.rect(x, y, assets.progress * width, height)
+            it.rect(x, y, progress * width, height)
         }
 
         batch.use(camera.combined) {
-            font.draw(it, "Loading assets (${assets.progress.roundToInt() * 100}%)", x, y - 100f)
+            font.draw(it, "Loading assets (${progress * 100}%)", x, y - 100f)
         }
 
-        if (assets.isFinished) {
+        if (isFinishedLoading) {
             Nls.i18nBundle = assets[I18NAsset.Default]
             createSkin(assets)
             addGameScreens()
