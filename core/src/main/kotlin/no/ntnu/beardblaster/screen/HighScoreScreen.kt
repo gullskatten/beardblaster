@@ -16,15 +16,13 @@ import no.ntnu.beardblaster.ui.fullSizeTable
 import no.ntnu.beardblaster.ui.get
 import no.ntnu.beardblaster.ui.headingLabel
 
-class LoginMenuScreen(
+class HighScoreScreen(
     game: BeardBlasterGame,
     batch: Batch,
     assets: AssetStorage,
-    camera: OrthographicCamera
+    camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    private val exitBtn = scene2d.textButton(Nls.exitGame())
-    private val loginBtn = scene2d.textButton(Nls.logIn())
-    private val registerBtn = scene2d.textButton(Nls.register())
+    private val closeBtn = scene2d.textButton(Nls.close())
 
     private val stage: Stage by lazy {
         val result = BeardBlasterStage()
@@ -34,38 +32,29 @@ class LoginMenuScreen(
 
     override fun show() {
         setBtnEventListeners()
-        val table = fullSizeTable().apply {
-            background = skin[Image.Modal]
-            add(headingLabel(Nls.appName())).pad(50f)
+        val table = fullSizeTable(30f).apply {
+            background = skin[Image.Background]
+            add(headingLabel(Nls.leaderBeard()))
             row()
-            add(loginBtn).pad(40f)
-            row()
-            add(registerBtn).pad(40f)
-            row()
-            add(exitBtn).pad(40f)
+            add(closeBtn)
         }
         stage.addActor(table)
         Gdx.input.inputProcessor = stage
     }
 
+    override fun update(delta: Float) {}
+
     override fun setBtnEventListeners() {
-        loginBtn.onClick {
-            game.setScreen<LoginScreen>()
-        }
-        registerBtn.onClick {
-            game.setScreen<RegisterScreen>()
-        }
-        exitBtn.onClick {
-            Gdx.app.exit()
+        closeBtn.onClick {
+            game.setScreen<MenuScreen>()
         }
     }
-
-    override fun update(delta: Float) {}
 
     override fun render(delta: Float) {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         update(delta)
+
         stage.act(delta)
         stage.draw()
     }

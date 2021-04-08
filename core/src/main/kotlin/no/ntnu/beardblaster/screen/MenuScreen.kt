@@ -1,104 +1,59 @@
 package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.*
-import com.badlogic.gdx.utils.Align
 import ktx.actors.onClick
-import ktx.log.debug
-import ktx.log.logger
+import ktx.assets.async.AssetStorage
+import ktx.scene2d.scene2d
+import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
-import no.ntnu.beardblaster.assets.Assets
+import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.ui.Image
+import no.ntnu.beardblaster.ui.fullSizeTable
+import no.ntnu.beardblaster.ui.get
+import no.ntnu.beardblaster.ui.headingLabel
 import no.ntnu.beardblaster.user.UserAuth
 
+class MenuScreen(
+    game: BeardBlasterGame,
+    batch: Batch,
+    assets: AssetStorage,
+    camera: OrthographicCamera,
+) : BaseScreen(game, batch, assets, camera) {
+    private val createGameBtn = scene2d.textButton(Nls.createGame())
+    private val joinGameBtn = scene2d.textButton(Nls.joinGame())
+    private val highScoreBtn = scene2d.textButton(Nls.leaderBeard())
+    private val tutorialBtn = scene2d.textButton(Nls.tutorial())
+    private val logoutBtn = scene2d.textButton(Nls.logOut())
+    private val exitBtn = scene2d.textButton(Nls.exitGame())
 
-private val LOG = logger<MenuScreen>()
-
-
-class MenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
-    private lateinit var skin: Skin
-    private lateinit var table: Table
-    private lateinit var heading: Label
-
-    private lateinit var createGameBtn: TextButton
-    private lateinit var joinGameBtn: TextButton
-    private lateinit var highscoreBtn: TextButton
-    private lateinit var tutorialBtn: TextButton
-    private lateinit var logoutBtn: TextButton
-    private lateinit var exitBtn: TextButton
-
-    private val menuStage: Stage by lazy {
+    private val stage: Stage by lazy {
         val result = BeardBlasterStage()
         Gdx.input.inputProcessor = result
         result
     }
 
     override fun show() {
-        LOG.debug { "MENU Screen" }
-
-        skin = Skin(Assets.assetManager.get(Assets.atlas))
-        table = Table(skin)
-        table.setBounds(0f, 0f, viewport.worldWidth, viewport.worldHeight)
-
-        val standardFont = Assets.assetManager.get(Assets.standardFont)
-
-        Label.LabelStyle(standardFont, Color.BLACK).also {
-            heading = Label("Welcome Wizard", it)
-            heading.setFontScale(2f)
-            it.background = skin.getDrawable("modal_fancy_header")
-            heading.setAlignment(Align.center)
-        }
-
-        val buttonStyle = TextButton.TextButtonStyle()
-        skin.getDrawable("button_default_pressed").also { buttonStyle.down = it }
-        skin.getDrawable("button_default").also { buttonStyle.up = it }
-
-        standardFont.apply {
-            buttonStyle.font = this
-        }
-
-        createGameBtn = TextButton("CREATE GAME", buttonStyle)
-        joinGameBtn = TextButton("JOIN GAME", buttonStyle)
-        highscoreBtn = TextButton("LEADERBEARD", buttonStyle)
-        tutorialBtn = TextButton("TUTORIAL", buttonStyle)
-        logoutBtn = TextButton("LOGOUT", buttonStyle)
-        exitBtn = TextButton("EXIT GAME", buttonStyle)
         setBtnEventListeners()
-
-        val textInputStyle = TextField.TextFieldStyle()
-
-        textInputStyle.also {
-            it.background = skin.getDrawable("input_texture_dark")
-            it.fontColor = Color.BROWN
-            it.font = standardFont
-            it.messageFontColor = Color.GRAY
+        val table = fullSizeTable(20f).apply {
+            background = skin[Image.Background]
+            add(headingLabel(Nls.welcomeWizard())).colspan(4).center()
+            row()
+            add(createGameBtn).colspan(4).center()
+            row()
+            add(joinGameBtn).colspan(4).center()
+            row()
+            add(highScoreBtn).colspan(2).center()
+            add(tutorialBtn).colspan(2).center()
+            row()
+            add(logoutBtn).colspan(2).center()
+            add(exitBtn).colspan(2).center()
         }
-
-        table.apply {
-            this.defaults().pad(20f)
-            this.background = skin.getDrawable("background")
-            this.add(heading).colspan(4).center()
-            this.row()
-            this.add(createGameBtn).colspan(4).center()
-            this.row()
-            this.add(joinGameBtn).colspan(4).center()
-            this.row()
-            this.add(highscoreBtn).colspan(2).center()
-            this.add(tutorialBtn).colspan(2).center()
-            this.row()
-            this.add(logoutBtn).colspan(2).center()
-            this.add(exitBtn).colspan(2).center()
-        }
-
-        // Adding actors to the stage
-        menuStage.addActor(table)
-        Gdx.input.inputProcessor = menuStage
-    }
-
-    override fun update(delta: Float) {
-
+        stage.addActor(table)
+        Gdx.input.inputProcessor = stage
     }
 
     override fun setBtnEventListeners() {
@@ -109,8 +64,8 @@ class MenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         joinGameBtn.onClick {
             game.setScreen<JoinLobbyScreen>()
         }
-        highscoreBtn.onClick {
-            game.setScreen<HighscoreScreen>()
+        highScoreBtn.onClick {
+            game.setScreen<HighScoreScreen>()
         }
         tutorialBtn.onClick {
             game.setScreen<TutorialScreen>()
@@ -126,12 +81,13 @@ class MenuScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         }
     }
 
+    override fun update(delta: Float) {}
+
     override fun render(delta: Float) {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         update(delta)
-
-        menuStage.act(delta)
-        menuStage.draw()
+        stage.act(delta)
+        stage.draw()
     }
 }
