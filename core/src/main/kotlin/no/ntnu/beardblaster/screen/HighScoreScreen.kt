@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.scenes.scene2d.Stage
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.scene2d
@@ -24,14 +23,7 @@ class HighScoreScreen(
 ) : BaseScreen(game, batch, assets, camera) {
     private val closeBtn = scene2d.textButton(Nls.close())
 
-    private val stage: Stage by lazy {
-        val result = BeardBlasterStage()
-        Gdx.input.inputProcessor = result
-        result
-    }
-
-    override fun show() {
-        setBtnEventListeners()
+    override fun initScreen() {
         val table = fullSizeTable(30f).apply {
             background = skin[Image.Background]
             add(headingLabel(Nls.leaderBeard()))
@@ -39,7 +31,6 @@ class HighScoreScreen(
             add(closeBtn)
         }
         stage.addActor(table)
-        Gdx.input.inputProcessor = stage
     }
 
     override fun update(delta: Float) {}

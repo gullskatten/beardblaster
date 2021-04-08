@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.scenes.scene2d.Stage
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.button
@@ -30,14 +29,7 @@ class RegisterScreen(
     private val passwordInput = passwordField(Nls.password())
     private val rePasswordInput = passwordField(Nls.confirmPassword())
 
-    private val stage: Stage by lazy {
-        val result = BeardBlasterStage()
-        Gdx.input.inputProcessor = result
-        result
-    }
-
-    override fun show() {
-        setBtnEventListeners()
+    override fun initScreen() {
         val content = scene2d.table {
             defaults().pad(30f)
             background = skin[Image.Modal]
@@ -59,7 +51,6 @@ class RegisterScreen(
             add(content).width(WORLD_WIDTH * 0.9f).fillY()
         }
         stage.addActor(table)
-        Gdx.input.inputProcessor = stage
     }
 
     override fun setBtnEventListeners() {

@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.scenes.scene2d.Stage
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.button
@@ -28,13 +27,7 @@ class LoginScreen(
     private val emailInput = inputField(Nls.emailAddress())
     private val passwordInput = passwordField(Nls.password())
 
-    private val stage: Stage by lazy {
-        val result = BeardBlasterStage()
-        Gdx.input.inputProcessor = result
-        result
-    }
-
-    override fun show() {
+    override fun initScreen() {
         setBtnEventListeners()
         // TODO: find out why input fields renders with wrong width
         val content = scene2d.table {
@@ -54,7 +47,6 @@ class LoginScreen(
             add(content).width(WORLD_WIDTH * 0.9f).fillY()
         }
         stage.addActor(table)
-        Gdx.input.inputProcessor = stage
     }
 
     override fun setBtnEventListeners() {
