@@ -10,12 +10,10 @@ import ktx.assets.async.AssetStorage
 import ktx.log.info
 import ktx.log.logger
 import ktx.scene2d.scene2d
-import ktx.scene2d.table
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
-import no.ntnu.beardblaster.WORLD_HEIGHT
-import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.ui.fullSizeTable
 import no.ntnu.beardblaster.ui.headingLabel
 
 private val log = logger<GameplayScreen>()
@@ -37,8 +35,7 @@ class GameplayScreen(
 
     override fun show() {
         setBtnEventListeners()
-        val table = scene2d.table {
-            setBounds(0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
+        val table = fullSizeTable().apply {
             add(headingLabel(Nls.preparationPhase())).pad(50f)
             row()
             add(attackBtn).pad(40f)
