@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.scenes.scene2d.Stage
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.scene2d
@@ -30,14 +29,7 @@ class MenuScreen(
     private val logoutBtn = scene2d.textButton(Nls.logOut())
     private val exitBtn = scene2d.textButton(Nls.exitGame())
 
-    private val stage: Stage by lazy {
-        val result = BeardBlasterStage()
-        Gdx.input.inputProcessor = result
-        result
-    }
-
-    override fun show() {
-        setBtnEventListeners()
+    override fun initScreen() {
         val table = fullSizeTable(20f).apply {
             background = skin[Image.Background]
             add(headingLabel(Nls.welcomeWizard())).colspan(4).center()
@@ -53,7 +45,6 @@ class MenuScreen(
             add(exitBtn).colspan(2).center()
         }
         stage.addActor(table)
-        Gdx.input.inputProcessor = stage
     }
 
     override fun setBtnEventListeners() {

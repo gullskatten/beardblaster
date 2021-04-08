@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.*
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.log.info
@@ -25,37 +25,27 @@ class GameplayScreen(
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
     private val attackBtn = scene2d.textButton(Nls.attack())
-    private val quiteBtn = scene2d.textButton(Nls.quit())
+    private val quitBtn = scene2d.textButton(Nls.quit())
 
-    private val stage: Stage by lazy {
-        val result = BeardBlasterStage()
-        Gdx.input.inputProcessor = result
-        result
-    }
-
-    override fun show() {
-        setBtnEventListeners()
+    override fun initScreen() {
         val table = fullSizeTable().apply {
             add(headingLabel(Nls.preparationPhase())).pad(50f)
             row()
             add(attackBtn).pad(40f)
             row()
-            add(quiteBtn).pad(40f)
+            add(quitBtn).pad(40f)
             row()
         }
         stage.clear()
         stage.addActor(table)
-        Gdx.input.inputProcessor = stage
     }
 
     override fun setBtnEventListeners() {
         attackBtn.onClick {
             log.info { Nls.wizardNAttacks(1) }
         }
-        quiteBtn.onClick {
+        quitBtn.onClick {
             game.removeScreen<GameplayScreen>()
-            // FIXME Really needed to add a new game play screen here?
-            // Might be better to add it when joining/starting a new game.
             game.addScreen(GameplayScreen(game, batch, assets, camera))
             game.setScreen<MenuScreen>()
         }

@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
@@ -25,14 +24,7 @@ class LobbyScreen(
     private val startGameBtn = scene2d.textButton(Nls.startGame())
     private val backBtn = scene2d.button(ButtonStyle.Cancel.name)
 
-    private val stage: Stage by lazy {
-        val result = BeardBlasterStage()
-        Gdx.input.inputProcessor = result
-        result
-    }
-
-    override fun show() {
-        setBtnEventListeners()
+    override fun initScreen() {
         // TODO This code should be generated
         val code = "39281"
         codeLabel = scene2d.label(code) {
@@ -55,7 +47,6 @@ class LobbyScreen(
             add(content).width(WORLD_WIDTH * 0.9f).fillY()
         }
         stage.addActor(table)
-        Gdx.input.inputProcessor = stage
     }
 
     override fun setBtnEventListeners() {
