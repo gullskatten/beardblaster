@@ -3,42 +3,34 @@ package no.ntnu.beardblaster
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import ktx.log.debug
-import no.ntnu.beardblaster.commons.AbstractFirestore
-import no.ntnu.beardblaster.commons.DocumentType
-import no.ntnu.beardblaster.commons.FirestoreDocumentFailureException
-import no.ntnu.beardblaster.commons.User
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
+import no.ntnu.beardblaster.commons.*
 
 
 class Firestore<T : DocumentType>(private val db: FirebaseFirestore = Firebase.firestore) : AbstractFirestore<T> {
     val TAG = "Firestore"
 
-    override fun getDocument(id: String, collection: String, fromHashMap: (data: HashMap<String, Any>) -> T): T? {
-        var c: T? = null
+    override fun getDocument(id: String, collection: String): Flow<State<T>> = flow {
+        emit(State.loading())
+
         if (id.isEmpty() || collection.isEmpty()) {
             Log.e(TAG, "Document/collection cannot be empty. Was collection: $collection , document: $id")
         }
-        db
+        val snapshot = db
                 .collection(collection)
                 .document(id)
                 .get()
-                .addOnSuccessListener { document ->
-                    if (document != null) {
-                        // TODO: 3/18/2021 - Throws exception
-                        //  java.util.HashMap cannot be cast to no.ntnu.beardblaster.commons.DocumentType
-                        val data = document.toObject<Any>() as HashMap<String, Any>
-                        c = fromHashMap(data) as T
-                        Log.i(TAG, c.toString())
-                    } else {
-                        c = null
-                    }
-                }
-                .addOnCanceledListener { print("canceled") }
-                .addOnFailureListener { print("failed")  }
-        return c
-    }
+                .await()
+
+        emit(State.success(doc))
+    }.catch {
+        // If exception is thrown, emit failed state along with message.
+        emit(State.failed(it.message.toString()))
+    }.flowOn(Dispatchers.IO)
 
 
     override fun create(doc: T, collection: String): T {

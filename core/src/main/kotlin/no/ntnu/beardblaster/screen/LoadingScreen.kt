@@ -4,13 +4,15 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.scenes.scene2d.actions.Actions.delay
-import ktx.async.newAsyncContext
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import ktx.graphics.use
 import ktx.log.debug
 import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
+import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.User
 import no.ntnu.beardblaster.firestore.Firestore
 import no.ntnu.beardblaster.user.UserAuth
@@ -39,17 +41,29 @@ class LoadingScreen(game: BeardBlasterGame) : AbstractScreen(game) {
         if (Assets.assetManager.update()) {
             // Go to correct menu screen when done loading
             if (UserAuth().isLoggedIn()) {
-                val currentUser =  GdxFIRAuth.inst().currentUser?.userInfo?.uid?.
-                let { Firestore<User>().getDocument(it, "users", User.Companion::fromHashMap) }
-                if (currentUser != null) {
-                    LOG.debug { currentUser.displayName }
-                } else {
-                    LOG.debug { "User not found" }
-                }
+                GlobalScope.launch { loadUserProfile() }
+
                 game.setScreen<MenuScreen>()
             } else game.setScreen<LoginMenuScreen>()
         }
     }
+
+
+    suspend fun loadUserProfile() {
+        return Firestore<User>().getDocument(GdxFIRAuth.inst().currentUser.userInfo.uid, "users").collect {
+            when(it) {
+                is State.Success<User> -> {
+                    LOG.debug {it.data.displayName}
+                }
+                is State.Loading<User> -> {
+                    LOG.debug {"Loading"}
+                }
+                is State.Failed<User> -> {
+                    LOG.debug {it.message}
+                }
+            }
+        }
+        }
 
     override fun render(delta: Float) {
         update(delta)

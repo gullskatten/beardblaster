@@ -12,5 +12,4 @@ data class User(val displayName: String = "Stranger", var beardLength: Number = 
             )
         }
     }
-
 }
