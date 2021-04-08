@@ -11,8 +11,8 @@ import ktx.scene2d.scene2d
 import ktx.scene2d.table
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
-import no.ntnu.beardblaster.HEIGHT
-import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.WORLD_HEIGHT
+import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.Image
 import no.ntnu.beardblaster.ui.get
@@ -35,7 +35,7 @@ class TutorialScreen(
     override fun show() {
         setBtnEventListeners()
         val table = scene2d.table {
-            setBounds(0f, 0f, WIDTH, HEIGHT)
+            setBounds(0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
             defaults().pad(30f)
             background = skin[Image.Background]
             add(headingLabel(Nls.tutorial()))

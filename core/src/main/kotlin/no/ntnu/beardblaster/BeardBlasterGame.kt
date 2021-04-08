@@ -9,10 +9,10 @@ import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
 import ktx.inject.Context
 import ktx.inject.register
-import no.ntnu.beardblaster.screen.*
+import no.ntnu.beardblaster.screen.LoadingScreen
 
-const val WIDTH = 1920f
-const val HEIGHT = 1080f
+const val WORLD_WIDTH = 1920f
+const val WORLD_HEIGHT = 1080f
 
 class BeardBlasterGame : KtxGame<KtxScreen>() {
     private val context = Context()
@@ -23,7 +23,7 @@ class BeardBlasterGame : KtxGame<KtxScreen>() {
             bindSingleton<Batch>(SpriteBatch())
             bindSingleton(AssetStorage())
             bindSingleton(OrthographicCamera().apply {
-                setToOrtho(false, WIDTH, HEIGHT)
+                setToOrtho(false, WORLD_WIDTH, WORLD_HEIGHT)
             })
             addScreen(LoadingScreen(this@BeardBlasterGame, inject(), inject(), inject()))
         }

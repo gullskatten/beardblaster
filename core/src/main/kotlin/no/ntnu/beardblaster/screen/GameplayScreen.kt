@@ -13,8 +13,8 @@ import ktx.scene2d.scene2d
 import ktx.scene2d.table
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
-import no.ntnu.beardblaster.HEIGHT
-import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.WORLD_HEIGHT
+import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.headingLabel
 
@@ -38,7 +38,7 @@ class GameplayScreen(
     override fun show() {
         setBtnEventListeners()
         val table = scene2d.table {
-            setBounds(0f, 0f, WIDTH, HEIGHT)
+            setBounds(0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
             add(headingLabel(Nls.preparationPhase())).pad(50f)
             row()
             add(attackBtn).pad(40f)

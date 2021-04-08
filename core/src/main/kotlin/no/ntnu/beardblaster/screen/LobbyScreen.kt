@@ -10,8 +10,8 @@ import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.*
 import no.ntnu.beardblaster.BeardBlasterGame
-import no.ntnu.beardblaster.HEIGHT
-import no.ntnu.beardblaster.WIDTH
+import no.ntnu.beardblaster.WORLD_HEIGHT
+import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.ButtonStyle
 import no.ntnu.beardblaster.ui.Image
@@ -54,10 +54,10 @@ class LobbyScreen(
             add(startGameBtn)
         }
         val table = scene2d.table {
-            setBounds(0f, 0f, WIDTH, HEIGHT)
+            setBounds(0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
             background = skin[Image.Background]
             add(backBtn).expandY().top().padTop(50f).width(91f)
-            add(content).width(WIDTH * 0.9f).fillY()
+            add(content).width(WORLD_WIDTH * 0.9f).fillY()
         }
         stage.addActor(table)
         Gdx.input.inputProcessor = stage
