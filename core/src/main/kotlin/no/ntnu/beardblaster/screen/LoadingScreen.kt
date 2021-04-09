@@ -1,104 +1,84 @@
 package no.ntnu.beardblaster.screen
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import ktx.app.KtxScreen
+import ktx.assets.async.AssetStorage
+import ktx.async.KtxAsync
 import ktx.graphics.use
-import ktx.log.debug
-import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
-import no.ntnu.beardblaster.assets.Assets
-import no.ntnu.beardblaster.commons.State
-import no.ntnu.beardblaster.commons.User
-import no.ntnu.beardblaster.firestore.UserRepository
+import no.ntnu.beardblaster.assets.*
+import no.ntnu.beardblaster.ui.createSkin
 import no.ntnu.beardblaster.user.UserAuth
-import pl.mk5.gdx.fireapp.GdxFIRAuth
-import kotlin.math.roundToInt
 
-private val LOG = logger<LoadingScreen>()
-
-class LoadingScreen(game: BeardBlasterGame) : AbstractScreen(game) {
-    init {
-        // Load assets
-        queueAsset()
-    }
-
-    private var font: BitmapFont = BitmapFont(Gdx.files.internal("font_nevis/nevis.fnt"))
-    private val shapeRenderer = ShapeRenderer()
-    private var progress = 0f
+class LoadingScreen(
+    private val game: BeardBlasterGame,
+    private val batch: Batch,
+    private val assets: AssetStorage,
+    private val camera: OrthographicCamera,
+) : KtxScreen {
+    private val renderer = ShapeRenderer()
+    private val font = BitmapFont()
+    private val isFinishedLoading: Boolean
+        get() = assets.progress.percent >= 1f
 
     override fun show() {
-        LOG.debug { "LOADING Screen" }
+        KtxAsync.launch {
+            FontAsset.values().map { assets.loadAsync(it) }
+            AtlasAsset.values().map { assets.loadAsync(it) }
+            I18NAsset.values().map { assets.loadAsync(it) }
+        }
+        font.data.scale(1.5f)
     }
-
-    override fun update(delta: Float) {
-        progress = Assets.assetManager.progress.roundToInt().toFloat()
-        // Check if assetManager is done loading
-        if (Assets.assetManager.update()) {
-            // Go to correct menu screen when done loading
-            if (UserAuth().isLoggedIn()) {
-                GlobalScope.launch { loadUserProfile() }
-
-                game.setScreen<MenuScreen>()
-            } else game.setScreen<LoginMenuScreen>()
-        }
-    }
-
-
-    suspend fun loadUserProfile() {
-        return UserRepository().getDocument(GdxFIRAuth.inst().currentUser.userInfo.uid, "users").collect {
-            when(it) {
-                is State.Success -> {
-                    LOG.debug {it.data.displayName}
-                }
-                is State.Loading -> {
-                    LOG.debug {"Loading"}
-                }
-                is State.Failed -> {
-                    LOG.debug {it.message}
-                }
-            }
-        }
-        }
 
     override fun render(delta: Float) {
-        update(delta)
+        val x = 200f
+        val height = 25f
+        val width = camera.viewportWidth - (x * 2)
+        val y = (camera.viewportHeight / 2) - (height / 2)
+        val progress = assets.progress.percent
 
-        // Draw the progress bar
-        shapeRenderer.use(ShapeRenderer.ShapeType.Filled, cam.combined)
-        {
-            it.rect(50f, (cam.viewportHeight / 2) - 12f, cam.viewportWidth - 50, 25f)
-            it.color = Color.RED
-            it.rect(50f, (cam.viewportHeight / 2) - 12f, progress * (cam.viewportWidth - 50), 25f)
+        renderer.use(ShapeRenderer.ShapeType.Filled, camera.combined) {
+            it.color = Color.PINK
+            it.rect(x, y, progress * width, height)
         }
 
-        // Draw the progress text
-        batch.use(cam.combined)
-        {
-            font.draw(it, (100 * progress).toString() + "% Loading Assets", 100f, 200f)
+        batch.use(camera.combined) {
+            font.draw(it, "Loading assets (${progress * 100}%)", x, y - 100f)
+        }
+
+        if (isFinishedLoading) {
+            Nls.i18nBundle = assets[I18NAsset.Default]
+            createSkin(assets)
+            addGameScreens()
+            when (UserAuth().isLoggedIn()) {
+                true -> game.setScreen<MenuScreen>()
+                false -> game.setScreen<LoginMenuScreen>()
+            }
+            game.removeScreen<LoadingScreen>()
+            dispose()
         }
     }
 
-    override fun resize(width: Int, height: Int) {
-        viewport.update(width, height, true)
-    }
-
-    fun queueAsset() {
-        Assets.loadTextures()
+    private fun addGameScreens() {
+        game.addScreen(LoginMenuScreen(game, batch, assets, camera))
+        game.addScreen(LoginScreen(game, batch, assets, camera))
+        game.addScreen(RegisterScreen(game, batch, assets, camera))
+        game.addScreen(MenuScreen(game, batch, assets, camera))
+        game.addScreen(TutorialScreen(game, batch, assets, camera))
+        game.addScreen(HighScoreScreen(game, batch, assets, camera))
+        game.addScreen(LobbyScreen(game, batch, assets, camera))
+        game.addScreen(JoinLobbyScreen(game, batch, assets, camera))
+        game.addScreen(GameplayScreen(game, batch, assets, camera))
     }
 
     override fun dispose() {
+        renderer.dispose()
+        font.dispose()
         super.dispose()
-        Assets.dispose()
-    }
-
-    override fun setBtnEventListeners() {
     }
 }
-
-
-

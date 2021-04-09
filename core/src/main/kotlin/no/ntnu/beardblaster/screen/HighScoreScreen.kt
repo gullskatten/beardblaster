@@ -15,7 +15,7 @@ import no.ntnu.beardblaster.ui.fullSizeTable
 import no.ntnu.beardblaster.ui.get
 import no.ntnu.beardblaster.ui.headingLabel
 
-class TutorialScreen(
+class HighScoreScreen(
     game: BeardBlasterGame,
     batch: Batch,
     assets: AssetStorage,
@@ -24,16 +24,16 @@ class TutorialScreen(
     private val closeBtn = scene2d.textButton(Nls.close())
 
     override fun initScreen() {
-        setBtnEventListeners()
         val table = fullSizeTable(30f).apply {
             background = skin[Image.Background]
-            add(headingLabel(Nls.tutorial()))
+            add(headingLabel(Nls.leaderBeard()))
             row()
             add(closeBtn)
         }
         stage.addActor(table)
-        Gdx.input.inputProcessor = stage
     }
+
+    override fun update(delta: Float) {}
 
     override fun setBtnEventListeners() {
         closeBtn.onClick {
@@ -41,12 +41,11 @@ class TutorialScreen(
         }
     }
 
-    override fun update(delta: Float) {}
-
     override fun render(delta: Float) {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         update(delta)
+
         stage.act(delta)
         stage.draw()
     }

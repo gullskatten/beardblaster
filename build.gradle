@@ -44,3 +44,52 @@ subprojects {
 }
 
 eclipse.project.name = 'beardblaster' + '-parent'
+
+task nsl {
+    def src = "core/src/main/kotlin"
+    def pkg = "no.ntnu.beardblaster.assets"
+    def enumName = "Nls"
+    def fileName = "${enumName}.kt"
+    def bundleFile = "assets/i18n/nls.properties"
+    def newLine = System.getProperty("line.separator")
+
+    println("Processing i18n bundle file at ${bundleFile}")
+    def keys = []
+    file(bundleFile).eachLine {
+        def line = it.trim()
+        def sep = line.indexOf("=")
+        if (!line.startsWith("#") && !line.isEmpty() && sep > 0) {
+            keys.add(line.substring(0, sep))
+        }
+    }
+
+    def template = """package ${pkg}
+
+/** Generated from ${bundleFile}. Do not edit! */
+
+import com.badlogic.gdx.utils.I18NBundle
+import ktx.i18n.BundleLine
+
+@Suppress("EnumEntryName")
+enum class ${enumName} : BundleLine {
+    ${keys.join(",\n    ")};
+
+    override val bundle: I18NBundle
+        get() = i18nBundle
+
+    companion object {
+        lateinit var i18nBundle: I18NBundle
+    }
+}
+"""
+    src = src.replace("/", File.separator)
+    pkg = pkg.replace(".", File.separator)
+    def path = [src, pkg, fileName].join(File.separator)
+    println("Writing nls enum class at ${path}")
+    def outFile = file(path)
+    delete outFile
+    outFile.getParentFile().mkdirs()
+    outFile.createNewFile()
+    outFile << template << newLine
+    println("Done generating nls enum class.")
+}
