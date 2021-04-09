@@ -14,7 +14,7 @@ import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Assets
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.User
-import no.ntnu.beardblaster.firestore.Firestore
+import no.ntnu.beardblaster.firestore.UserRepository
 import no.ntnu.beardblaster.user.UserAuth
 import pl.mk5.gdx.fireapp.GdxFIRAuth
 import kotlin.math.roundToInt
@@ -50,15 +50,15 @@ class LoadingScreen(game: BeardBlasterGame) : AbstractScreen(game) {
 
 
     suspend fun loadUserProfile() {
-        return Firestore<User>().getDocument(GdxFIRAuth.inst().currentUser.userInfo.uid, "users").collect {
+        return UserRepository().getDocument(GdxFIRAuth.inst().currentUser.userInfo.uid, "users").collect {
             when(it) {
-                is State.Success<User> -> {
+                is State.Success -> {
                     LOG.debug {it.data.displayName}
                 }
-                is State.Loading<User> -> {
+                is State.Loading -> {
                     LOG.debug {"Loading"}
                 }
-                is State.Failed<User> -> {
+                is State.Failed -> {
                     LOG.debug {it.message}
                 }
             }

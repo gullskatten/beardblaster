@@ -4,7 +4,7 @@ import ktx.log.debug
 import ktx.log.error
 import ktx.log.logger
 import no.ntnu.beardblaster.commons.User
-import no.ntnu.beardblaster.firestore.Firestore
+import no.ntnu.beardblaster.firestore.UserRepository
 import pl.mk5.gdx.fireapp.GdxFIRAuth
 import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
 
@@ -26,7 +26,7 @@ class UserAuth : IUserAuth {
                     LOG.debug { "Created user: $displayName, ${it.userInfo.email}" }
 
                     val user = User(displayName, id=it.userInfo.uid)
-                    Firestore<User>().create(user, "users")
+                    UserRepository().create(user, "users")
                 }
                 .fail { s, _ ->
                     if (s.contains("The email address is already in use by another account")) {
