@@ -7,10 +7,11 @@ import no.ntnu.beardblaster.commons.User
 import no.ntnu.beardblaster.firestore.UserRepository
 import pl.mk5.gdx.fireapp.GdxFIRAuth
 import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
+import pl.mk5.gdx.fireapp.promises.Promise
 
 interface IUserAuth {
     fun createUser(email: String, password: String, displayName: String)
-    fun signIn(email: String, password: String)
+    fun signIn(email: String, password: String): Promise<GdxFirebaseUser>
     fun signOut()
     fun isLoggedIn(): Boolean
 }
@@ -37,15 +38,8 @@ class UserAuth : IUserAuth {
                 }
     }
 
-    override fun signIn(email: String, password: String) {
-        GdxFIRAuth.inst()
-                .signInWithEmailAndPassword(email, password.toCharArray())
-                .then<GdxFirebaseUser> { gdxFirebaseUser ->
-                    LOG.debug { "Signed in. currentUser: ${GdxFIRAuth.inst().currentUser?.userInfo?.email}" }
-                }
-                .fail { s, _ ->
-                    LOG.debug { "Login failed: $s" }
-                }
+    override fun signIn(email: String, password: String): Promise<GdxFirebaseUser> {
+       return GdxFIRAuth.inst().signInWithEmailAndPassword(email, password.toCharArray())
     }
 
     override fun signOut() {

@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
+import ktx.log.info
+import ktx.log.logger
 import ktx.scene2d.button
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
@@ -15,6 +17,9 @@ import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
+import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
+
+private val LOG = logger<LoginScreen>()
 
 class LoginScreen(
     game: BeardBlasterGame,
@@ -53,9 +58,16 @@ class LoginScreen(
         loginBtn.onClick {
             if (!UserAuth().isLoggedIn() && emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty()) {
                 UserAuth().signIn(emailInput.text, passwordInput.text)
+                    .then<GdxFirebaseUser> { gdxFirebaseUser ->
+                        game.setScreen<MenuScreen>()
+                    }
+                    .fail { s, _ ->
+                        // TODO: Inform user that the username and password combination failed
+                        LOG.info {s}
+                    }
+            } else {
+                LOG.info {"Login failed"}
             }
-            // TODO: Future: Don't proceed unless login actually successful
-            game.setScreen<MenuScreen>()
         }
         backBtn.onClick {
             game.setScreen<LoginMenuScreen>()

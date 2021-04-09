@@ -25,13 +25,13 @@ class UserRepository(private val db: FirebaseFirestore = Firebase.firestore) : A
             emit(State.failed(message))
         }
         val snapshot = db
-                .collection(collection)
-                .document(id)
-                .get()
-                .await()
-        if(snapshot.exists()) {
+            .collection(collection)
+            .document(id)
+            .get()
+            .await()
+        if (snapshot.exists()) {
             val doc = snapshot.toObject<User>()
-            if(doc != null) {
+            if (doc != null) {
                 emit(State.success(doc))
             }
         } else {
@@ -49,7 +49,7 @@ class UserRepository(private val db: FirebaseFirestore = Firebase.firestore) : A
                 Log.d(TAG, "Updating document with id ${doc.id}")
 
                 val task = db.collection(collection).document(doc.id).set(doc)
-                if(task.isSuccessful) {
+                if (task.isSuccessful) {
                     emit(State.success(doc))
                 } else if (task.isComplete && task.exception != null) {
                     emit(State.failed(task.exception?.message!!))
