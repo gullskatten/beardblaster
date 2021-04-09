@@ -38,10 +38,6 @@ class LoadingScreen(
 
     override fun show() {
         KtxAsync.launch {
-            FontAsset.values().map { assets.loadAsync(it) }
-            AtlasAsset.values().map { assets.loadAsync(it) }
-            I18NAsset.values().map { assets.loadAsync(it) }
-
             if (UserAuth().isLoggedIn()) {
                 UserRepository().getDocument(GdxFIRAuth.inst().currentUser.userInfo.uid, "users").collect {
                     when (it) {
@@ -60,6 +56,10 @@ class LoadingScreen(
             } else {
                 LOG.info { "User is not logged in!" }
             }
+
+            FontAsset.values().map { assets.loadAsync(it) }
+            AtlasAsset.values().map { assets.loadAsync(it) }
+            I18NAsset.values().map { assets.loadAsync(it) }
         }
         font.data.scale(1.5f)
     }
@@ -84,9 +84,10 @@ class LoadingScreen(
             Nls.i18nBundle = assets[I18NAsset.Default]
             createSkin(assets)
             addGameScreens()
-            when (currentUser != null) {
-                true -> game.setScreen<MenuScreen>()
-                false -> game.setScreen<LoginMenuScreen>()
+            if (currentUser == null) {
+                game.setScreen<LoginMenuScreen>()
+            } else {
+                game.setScreen<MenuScreen>()
             }
             game.removeScreen<LoadingScreen>()
             dispose()
