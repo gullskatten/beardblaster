@@ -11,7 +11,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
-import no.ntnu.beardblaster.commons.*
+import no.ntnu.beardblaster.commons.AbstractGameRepository
+import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
 
 class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) : AbstractGameRepository<Game> {
@@ -68,7 +69,10 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) : A
         }
     }
 
-    override fun validateLobbyCode(id: String, collection: String): Flow<State<Game>> {
+    override fun joinLobbyWithId(id: String): Flow<State<Game>> {
+
+
+
         TODO("Not yet implemented")
     }
 
