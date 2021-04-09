@@ -24,6 +24,7 @@ enum class Nls : BundleLine {
     logOut,
     password,
     preparationPhase,
+    actionPhase,
     quit,
     register,
     shareGameCodeMessage,

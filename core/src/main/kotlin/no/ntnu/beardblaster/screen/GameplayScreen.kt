@@ -9,8 +9,7 @@ import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.log.info
 import ktx.log.logger
-import ktx.scene2d.scene2d
-import ktx.scene2d.textButton
+import ktx.scene2d.*
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.fullSizeTable
@@ -26,7 +25,9 @@ class GameplayScreen(
 ) : BaseScreen(game, batch, assets, camera) {
     private val attackBtn = scene2d.textButton(Nls.attack())
     private val quitBtn = scene2d.textButton(Nls.quit())
-
+    // CountDown
+    private var countDownTimer = 10f
+    //private var countDown = scene2d.textArea(countDownTimer.toString())
     override fun initScreen() {
         val table = fullSizeTable().apply {
             add(headingLabel(Nls.preparationPhase())).pad(50f)
@@ -35,6 +36,16 @@ class GameplayScreen(
             row()
             add(quitBtn).pad(40f)
             row()
+
+        }
+        stage.clear()
+        stage.addActor(table)
+    }
+
+    fun initActionPhase() {
+        val table = fullSizeTable().apply {
+            add(headingLabel(Nls.actionPhase())).pad(50f)
+
         }
         stage.clear()
         stage.addActor(table)
@@ -51,7 +62,19 @@ class GameplayScreen(
         }
     }
 
-    override fun update(delta: Float) {}
+    override fun update(delta: Float) {
+        countDownTimer -= delta
+
+        if (countDownTimer <= 10)
+        {
+            stage.addActor(headingLabel(countDownTimer.toInt().toString()))
+        }
+
+        if (countDownTimer <= 0)
+        {
+            initActionPhase()
+        }
+    }
 
     override fun render(delta: Float) {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
