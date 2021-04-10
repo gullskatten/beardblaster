@@ -5,24 +5,18 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
 import ktx.graphics.use
-import ktx.log.info
 import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.*
-import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.User
-import no.ntnu.beardblaster.firestore.UserRepository
 import no.ntnu.beardblaster.ui.createSkin
 import no.ntnu.beardblaster.user.UserAuth
-import pl.mk5.gdx.fireapp.GdxFIRAuth
 
-private val LOG = logger<LoadingScreen>()
 
 class LoadingScreen(
     private val game: BeardBlasterGame,
@@ -38,25 +32,6 @@ class LoadingScreen(
 
     override fun show() {
         KtxAsync.launch {
-            if (UserAuth().isLoggedIn()) {
-                UserRepository().getDocument(GdxFIRAuth.inst().currentUser.userInfo.uid, "users").collect {
-                    when (it) {
-                        is State.Success -> {
-                            currentUser = it.data
-                            LOG.info { "Found Current User (!): ${it.data.displayName}" }
-                        }
-                        is State.Loading -> {
-                            LOG.info { "Loading user data!" }
-                        }
-                        is State.Failed -> {
-                            LOG.info { "Loading user FAILED: ${it.message}" }
-                        }
-                    }
-                }
-            } else {
-                LOG.info { "User is not logged in!" }
-            }
-
             FontAsset.values().map { assets.loadAsync(it) }
             AtlasAsset.values().map { assets.loadAsync(it) }
             I18NAsset.values().map { assets.loadAsync(it) }
@@ -84,10 +59,10 @@ class LoadingScreen(
             Nls.i18nBundle = assets[I18NAsset.Default]
             createSkin(assets)
             addGameScreens()
-            if (currentUser == null) {
-                game.setScreen<LoginMenuScreen>()
-            } else {
+            if (UserAuth().isLoggedIn()) {
                 game.setScreen<MenuScreen>()
+            } else {
+                game.setScreen<LoginMenuScreen>()
             }
             game.removeScreen<LoadingScreen>()
             dispose()

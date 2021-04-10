@@ -2,10 +2,10 @@ package no.ntnu.beardblaster.commons
 
 import kotlinx.coroutines.flow.Flow
 
-interface AbstractGameRepository<T> {
+interface AbstractLobbyRepository<T> {
     fun joinLobbyWithId(id: String) : Flow<State<T>>
     fun createLobby(): Flow<State<T>>
-    fun cancelLobbyWithId(id: String)
+    fun cancelLobbyWithId(id: String) : Flow<State<Boolean>>
     fun startGame(): Flow<State<Boolean>>
     fun endGame(): Flow<State<Boolean>>
 }

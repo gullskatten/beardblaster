@@ -4,7 +4,6 @@ import ktx.log.debug
 import ktx.log.error
 import ktx.log.logger
 import no.ntnu.beardblaster.commons.User
-import no.ntnu.beardblaster.firestore.UserRepository
 import pl.mk5.gdx.fireapp.GdxFIRAuth
 import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
 import pl.mk5.gdx.fireapp.promises.Promise

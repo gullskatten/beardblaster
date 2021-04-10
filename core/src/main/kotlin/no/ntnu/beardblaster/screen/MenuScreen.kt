@@ -4,35 +4,49 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
+import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
+import ktx.async.KtxAsync
+import ktx.log.info
+import ktx.log.logger
 import ktx.scene2d.scene2d
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
-import no.ntnu.beardblaster.ui.Image
-import no.ntnu.beardblaster.ui.fullSizeTable
-import no.ntnu.beardblaster.ui.get
-import no.ntnu.beardblaster.ui.headingLabel
+import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
+import no.ntnu.beardblaster.user.UserData
+import java.util.*
+
+private val LOG = logger<MenuScreen>()
 
 class MenuScreen(
     game: BeardBlasterGame,
     batch: Batch,
     assets: AssetStorage,
     camera: OrthographicCamera,
-) : BaseScreen(game, batch, assets, camera) {
+) : BaseScreen(game, batch, assets, camera), Observer {
     private val createGameBtn = scene2d.textButton(Nls.createGame())
     private val joinGameBtn = scene2d.textButton(Nls.joinGame())
     private val highScoreBtn = scene2d.textButton(Nls.leaderBeard())
     private val tutorialBtn = scene2d.textButton(Nls.tutorial())
     private val logoutBtn = scene2d.textButton(Nls.logOut())
     private val exitBtn = scene2d.textButton(Nls.exitGame())
+    private val currentWizardLabel = bodyLabel("")
+    private val wizardHeading = headingLabel("BeardBlaster")
 
     override fun initScreen() {
+        KtxAsync.launch {
+            UserData.instance.loadUserData()
+        }
+        UserData.instance.addObserver(this)
+
         val table = fullSizeTable(20f).apply {
             background = skin[Image.Background]
-            add(headingLabel(Nls.welcomeWizard())).colspan(4).center()
+            add(wizardHeading).colspan(4).center()
+            row()
+            add(currentWizardLabel).colspan(4).center()
             row()
             add(createGameBtn).colspan(4).center()
             row()
@@ -72,7 +86,9 @@ class MenuScreen(
         }
     }
 
-    override fun update(delta: Float) {}
+    override fun update(delta: Float) {
+
+    }
 
     override fun render(delta: Float) {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
@@ -80,5 +96,15 @@ class MenuScreen(
         update(delta)
         stage.act(delta)
         stage.draw()
+    }
+
+    override fun update(p0: Observable?, p1: Any?) {
+        LOG.info { p1.toString() }
+        currentWizardLabel.setText(p1.toString())
+    }
+
+    override fun dispose() {
+        super.dispose()
+        UserData.instance.deleteObserver(this)
     }
 }

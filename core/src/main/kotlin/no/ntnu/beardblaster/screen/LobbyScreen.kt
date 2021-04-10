@@ -5,31 +5,41 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
+import ktx.async.KtxAsync
+import ktx.log.info
 import ktx.scene2d.*
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.lobby.LobbyData
 import no.ntnu.beardblaster.ui.*
+import java.util.*
 
 class LobbyScreen(
     game: BeardBlasterGame,
     batch: Batch,
     assets: AssetStorage,
     camera: OrthographicCamera,
-) : BaseScreen(game, batch, assets, camera) {
+) : BaseScreen(game, batch, assets, camera), Observer {
     private lateinit var codeLabel: Label
     private val infoLabel = scene2d.label(Nls.shareGameCodeMessage())
     private val startGameBtn = scene2d.textButton(Nls.startGame())
     private val backBtn = scene2d.button(ButtonStyle.Cancel.name)
 
     override fun initScreen() {
-        // TODO This code should be generated
-        val code = "39281"
-        codeLabel = scene2d.label(code) {
+        LobbyData.instance.addObserver(this)
+
+        codeLabel = scene2d.label("Creating game..") {
             setFontScale(1.5f)
         }
+
+        KtxAsync.launch {
+            LobbyData.instance.createLobby()
+        }
+
         val content = scene2d.table {
             defaults().pad(30f)
             background = skin[Image.Modal]
@@ -68,5 +78,9 @@ class LobbyScreen(
         update(delta)
         stage.act(delta)
         stage.draw()
+    }
+
+    override fun update(p0: Observable?, p1: Any?) {
+        codeLabel.setText(p1.toString())
     }
 }
