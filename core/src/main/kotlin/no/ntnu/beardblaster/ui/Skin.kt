@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.Scene2DSkin
 import ktx.style.*
+import no.ntnu.beardblaster.ElementType
 import no.ntnu.beardblaster.assets.AtlasAsset
 import no.ntnu.beardblaster.assets.FontAsset
 import no.ntnu.beardblaster.assets.get
@@ -30,6 +31,12 @@ enum class Image(val atlasKey: String) {
     Modal("modal_fancy"),
     ModalSkull("modal_fancy_skull"),
     ModalHeader("modal_fancy_header"),
+
+    // Spellbar and Elements
+    ElementFire("element_fire"),
+    ElementIce("element_ice"),
+    ElementNature("element_nature"),
+    SpellBarSlot("button_icon"),
 }
 
 operator fun Skin.get(image: Image): Drawable = this.getDrawable(image.atlasKey)
@@ -72,6 +79,21 @@ fun createSkin(assets: AssetStorage): Skin {
         button(ButtonStyle.Cancel.name) {
             up = skin[Image.DialogButtonCancel]
             down = skin[Image.DialogButtonCancel]
+        }
+
+        button(ElementType.Fire.name) {
+            up = skin[Image.ElementFire]
+            down = skin[Image.ElementFire]
+        }
+
+        button(ElementType.Ice.name) {
+            up = skin[Image.ElementIce]
+            down = skin[Image.ElementIce]
+        }
+
+        button(ElementType.Nature.name) {
+            up = skin[Image.ElementNature]
+            down = skin[Image.ElementNature]
         }
 
         textButton {

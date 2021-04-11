@@ -1,5 +1,7 @@
 package no.ntnu.beardblaster
 
+import com.badlogic.gdx.Application
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -18,6 +20,7 @@ class BeardBlasterGame : KtxGame<KtxScreen>() {
     private val context = Context()
 
     override fun create() {
+        Gdx.app.logLevel = Application.LOG_DEBUG
         KtxAsync.initiate()
         context.register {
             bindSingleton<Batch>(SpriteBatch())
