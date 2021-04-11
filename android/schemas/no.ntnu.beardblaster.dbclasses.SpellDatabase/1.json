@@ -1,0 +1,90 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "a23e7dafd525ce56f3add54d1e56c915",
+    "entities": [
+      {
+        "tableName": "spell_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`elementName1` TEXT NOT NULL, `elementName2` TEXT NOT NULL, `elementName3` TEXT NOT NULL, `spellDescription` TEXT NOT NULL, `spellID` INTEGER NOT NULL, `spellName` TEXT NOT NULL, PRIMARY KEY(`spellID`))",
+        "fields": [
+          {
+            "fieldPath": "elementName1",
+            "columnName": "elementName1",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "elementName2",
+            "columnName": "elementName2",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "elementName3",
+            "columnName": "elementName3",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spellDescription",
+            "columnName": "spellDescription",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spellID",
+            "columnName": "spellID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spellName",
+            "columnName": "spellName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "spellID"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "element_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`elementID` INTEGER NOT NULL, `elementName` TEXT NOT NULL, PRIMARY KEY(`elementID`))",
+        "fields": [
+          {
+            "fieldPath": "elementID",
+            "columnName": "elementID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "elementName",
+            "columnName": "elementName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "elementID"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a23e7dafd525ce56f3add54d1e56c915')"
+    ]
+  }
+}
