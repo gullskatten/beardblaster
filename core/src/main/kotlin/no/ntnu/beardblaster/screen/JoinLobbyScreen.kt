@@ -1,9 +1,10 @@
 package no.ntnu.beardblaster.screen
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.scenes.scene2d.ui.Button
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.button
@@ -21,11 +22,15 @@ class JoinLobbyScreen(
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    private val codeInput = inputField(Nls.gameCode())
-    private val submitCodeBtn = scene2d.textButton(Nls.submit())
-    private val backBtn = scene2d.button(ButtonStyle.Cancel.name)
+    private lateinit var codeInput: TextField
+    private lateinit var submitCodeBtn: TextButton
+    private lateinit var backBtn: Button
 
     override fun initScreen() {
+        codeInput = inputField(Nls.gameCode())
+        submitCodeBtn = scene2d.textButton(Nls.submit())
+        backBtn = scene2d.button(ButtonStyle.Cancel.name)
+
         val content = scene2d.table {
             defaults().pad(30f)
             background = skin[Image.Modal]
@@ -55,12 +60,4 @@ class JoinLobbyScreen(
     }
 
     override fun update(delta: Float) {}
-
-    override fun render(delta: Float) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        update(delta)
-        stage.act(delta)
-        stage.draw()
-    }
 }

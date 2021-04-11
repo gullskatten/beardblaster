@@ -1,9 +1,9 @@
 package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.scene2d
@@ -21,9 +21,11 @@ class TutorialScreen(
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    private val closeBtn = scene2d.textButton(Nls.close())
+    private lateinit var closeBtn: TextButton
 
     override fun initScreen() {
+        closeBtn = scene2d.textButton(Nls.close())
+
         setBtnEventListeners()
         val table = fullSizeTable(30f).apply {
             background = skin[Image.Background]
@@ -42,12 +44,4 @@ class TutorialScreen(
     }
 
     override fun update(delta: Float) {}
-
-    override fun render(delta: Float) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        update(delta)
-        stage.act(delta)
-        stage.draw()
-    }
 }

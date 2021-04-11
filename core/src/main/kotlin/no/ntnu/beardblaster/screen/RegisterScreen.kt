@@ -1,9 +1,10 @@
 package no.ntnu.beardblaster.screen
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.scenes.scene2d.ui.Button
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.button
@@ -22,14 +23,21 @@ class RegisterScreen(
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    private val backBtn = scene2d.button(ButtonStyle.Cancel.name)
-    private val createBtn = scene2d.textButton(Nls.createWizard())
-    private val userNameInput = inputField(Nls.wizardName())
-    private val emailInput = inputField(Nls.emailAddress())
-    private val passwordInput = passwordField(Nls.password())
-    private val rePasswordInput = passwordField(Nls.confirmPassword())
+    private lateinit var backBtn: Button
+    private lateinit var createBtn: TextButton
+    private lateinit var userNameInput: TextField
+    private lateinit var emailInput: TextField
+    private lateinit var passwordInput: TextField
+    private lateinit var rePasswordInput: TextField
 
     override fun initScreen() {
+        backBtn = scene2d.button(ButtonStyle.Cancel.name)
+        createBtn = scene2d.textButton(Nls.createWizard())
+        userNameInput = inputField(Nls.wizardName())
+        emailInput = inputField(Nls.emailAddress())
+        passwordInput = passwordField(Nls.password())
+        rePasswordInput = passwordField(Nls.confirmPassword())
+
         val content = scene2d.table {
             defaults().pad(30f)
             background = skin[Image.Modal]
@@ -67,12 +75,4 @@ class RegisterScreen(
     }
 
     override fun update(delta: Float) {}
-
-    override fun render(delta: Float) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        update(delta)
-        stage.act(delta)
-        stage.draw()
-    }
 }

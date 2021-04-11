@@ -1,10 +1,10 @@
 package no.ntnu.beardblaster.screen
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.*
@@ -20,11 +20,15 @@ class LobbyScreen(
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
     private lateinit var codeLabel: Label
-    private val infoLabel = scene2d.label(Nls.shareGameCodeMessage())
-    private val startGameBtn = scene2d.textButton(Nls.startGame())
-    private val backBtn = scene2d.button(ButtonStyle.Cancel.name)
+    private lateinit var infoLabel: Label
+    private lateinit var startGameBtn: TextButton
+    private lateinit var backBtn: Button
 
     override fun initScreen() {
+        infoLabel = scene2d.label(Nls.shareGameCodeMessage())
+        startGameBtn = scene2d.textButton(Nls.startGame())
+        backBtn = scene2d.button(ButtonStyle.Cancel.name)
+
         // TODO This code should be generated
         val code = "39281"
         codeLabel = scene2d.label(code) {
@@ -61,12 +65,4 @@ class LobbyScreen(
     }
 
     override fun update(delta: Float) {}
-
-    override fun render(delta: Float) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        update(delta)
-        stage.act(delta)
-        stage.draw()
-    }
 }

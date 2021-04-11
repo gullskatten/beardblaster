@@ -1,9 +1,9 @@
 package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.scene2d
@@ -21,11 +21,15 @@ class LoginMenuScreen(
     assets: AssetStorage,
     camera: OrthographicCamera
 ) : BaseScreen(game, batch, assets, camera) {
-    private val exitBtn = scene2d.textButton(Nls.exitGame())
-    private val loginBtn = scene2d.textButton(Nls.logIn())
-    private val registerBtn = scene2d.textButton(Nls.register())
+    private lateinit var exitBtn: TextButton
+    private lateinit var loginBtn: TextButton
+    private lateinit var registerBtn: TextButton
 
     override fun initScreen() {
+        exitBtn = scene2d.textButton(Nls.exitGame())
+        loginBtn = scene2d.textButton(Nls.logIn())
+        registerBtn = scene2d.textButton(Nls.register())
+
         val table = fullSizeTable().apply {
             background = skin[Image.Modal]
             add(headingLabel(Nls.appName())).pad(50f)
@@ -52,12 +56,4 @@ class LoginMenuScreen(
     }
 
     override fun update(delta: Float) {}
-
-    override fun render(delta: Float) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        update(delta)
-        stage.act(delta)
-        stage.draw()
-    }
 }

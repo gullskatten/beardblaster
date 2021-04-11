@@ -1,9 +1,10 @@
 package no.ntnu.beardblaster.screen
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.scenes.scene2d.ui.Button
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.button
@@ -22,12 +23,17 @@ class LoginScreen(
     assets: AssetStorage,
     camera: OrthographicCamera
 ) : BaseScreen(game, batch, assets, camera) {
-    private val loginBtn = scene2d.textButton(Nls.logIn())
-    private val backBtn = scene2d.button(ButtonStyle.Cancel.name)
-    private val emailInput = inputField(Nls.emailAddress())
-    private val passwordInput = passwordField(Nls.password())
+    private lateinit var loginBtn: TextButton
+    private lateinit var backBtn: Button
+    private lateinit var emailInput: TextField
+    private lateinit var passwordInput: TextField
 
     override fun initScreen() {
+        loginBtn = scene2d.textButton(Nls.logIn())
+        backBtn = scene2d.button(ButtonStyle.Cancel.name)
+        emailInput = inputField(Nls.emailAddress())
+        passwordInput = passwordField(Nls.password())
+
         setBtnEventListeners()
         // TODO: find out why input fields renders with wrong width
         val content = scene2d.table {
@@ -63,12 +69,4 @@ class LoginScreen(
     }
 
     override fun update(delta: Float) {}
-
-    override fun render(delta: Float) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        update(delta)
-        stage.act(delta)
-        stage.draw()
-    }
 }
