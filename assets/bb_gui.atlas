@@ -1,376 +1,397 @@
 
 bb_gui.png
-size: 2048,2048
+size: 2048, 2048
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Nearest, Nearest
 repeat: none
 background
   rotate: false
-  xy: 2, 1342
+  xy: 2, 1346
   size: 700, 700
   orig: 700, 700
   offset: 0, 0
   index: -1
 bar_container
   rotate: false
-  xy: 2, 2
+  xy: 2, 6
   size: 570, 81
   orig: 570, 81
   offset: 0, 0
   index: -1
 bg_modal_small
   rotate: false
-  xy: 823, 504
+  xy: 823, 508
   size: 508, 168
   orig: 508, 168
   offset: 0, 0
   index: -1
 bg_modal_wooden
   rotate: false
-  xy: 912, 1112
+  xy: 912, 1116
   size: 508, 278
   orig: 508, 278
   offset: 0, 0
   index: -1
 button_dark_long
   rotate: false
-  xy: 912, 767
+  xy: 912, 771
   size: 570, 154
   orig: 570, 154
   offset: 0, 0
   index: -1
 button_default
   rotate: false
-  xy: 1692, 379
+  xy: 1692, 383
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_default_disabled
   rotate: false
-  xy: 1525, 1394
+  xy: 1525, 1398
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_default_hover
   rotate: false
-  xy: 1333, 515
+  xy: 1333, 519
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_default_pressed
   rotate: false
-  xy: 1417, 243
+  xy: 1417, 247
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_green
   rotate: false
-  xy: 1714, 243
+  xy: 1714, 247
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_green_disabled
   rotate: false
-  xy: 1422, 1258
+  xy: 1422, 1262
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_green_hover
   rotate: false
-  xy: 1395, 379
+  xy: 1395, 383
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_green_pressed
   rotate: false
-  xy: 1719, 1258
+  xy: 1719, 1262
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_icon
   rotate: false
-  xy: 1113, 59
+  xy: 1932, 1479
   size: 53, 53
   orig: 53, 53
   offset: 0, 0
   index: -1
 button_orange
   rotate: false
-  xy: 1422, 1122
+  xy: 1422, 1126
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_orange_disabled
   rotate: false
-  xy: 1630, 515
+  xy: 1630, 519
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_orange_hover
   rotate: false
-  xy: 1492, 651
+  xy: 1492, 655
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_orange_pressed
   rotate: false
-  xy: 1120, 114
+  xy: 1120, 118
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_purple
   rotate: false
-  xy: 823, 114
+  xy: 823, 118
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_purple_disabled
   rotate: false
-  xy: 1417, 107
+  xy: 1417, 111
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_purple_hover
   rotate: false
-  xy: 1484, 787
+  xy: 1484, 791
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_purple_pressed
   rotate: false
-  xy: 1714, 107
+  xy: 1714, 111
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
+element_fire
+  rotate: false
+  xy: 1418, 1398
+  size: 85, 85
+  orig: 85, 85
+  offset: 0, 0
+  index: -1
+element_ice
+  rotate: false
+  xy: 574, 2
+  size: 85, 85
+  orig: 85, 85
+  offset: 0, 0
+  index: -1
+element_nature
+  rotate: false
+  xy: 661, 2
+  size: 85, 85
+  orig: 85, 85
+  offset: 0, 0
+  index: -1
 health_bar_indicator
   rotate: false
-  xy: 823, 301
+  xy: 823, 305
   size: 538, 49
   orig: 538, 49
   offset: 0, 0
   index: -1
 icon_accept_fancy
   rotate: false
-  xy: 1418, 1426
+  xy: 748, 34
   size: 57, 53
   orig: 57, 53
   offset: 0, 0
   index: -1
 icon_accept_gold
   rotate: false
-  xy: 1363, 332
+  xy: 1505, 1425
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 icon_cancel_gold
   rotate: false
-  xy: 704, 1372
+  xy: 1505, 1465
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 icon_exit_gold
   rotate: false
-  xy: 1333, 654
+  xy: 1505, 1445
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 input_texture_dark
   rotate: false
-  xy: 823, 425
+  xy: 823, 429
   size: 570, 77
   orig: 570, 77
   offset: 0, 0
   index: -1
 input_texture_light
   rotate: false
-  xy: 823, 352
+  xy: 823, 356
   size: 570, 71
   orig: 570, 71
   offset: 0, 0
   index: -1
 mana_bar_indicator
   rotate: false
-  xy: 823, 250
+  xy: 823, 254
   size: 538, 49
   orig: 538, 49
   offset: 0, 0
   index: -1
 minimalpixelfont
   rotate: false
-  xy: 574, 19
+  xy: 1113, 52
   size: 128, 64
   orig: 128, 64
   offset: 0, 0
   index: -1
 modal_fancy
   rotate: false
-  xy: 2, 833
+  xy: 2, 837
   size: 819, 507
   orig: 819, 507
   offset: 0, 0
   index: -1
 modal_fancy_dark
   rotate: false
-  xy: 2, 325
+  xy: 2, 329
   size: 819, 506
   orig: 819, 506
   offset: 0, 0
   index: -1
 modal_fancy_dark_small
   rotate: false
-  xy: 2, 85
+  xy: 2, 89
   size: 819, 238
   orig: 819, 238
   offset: 0, 0
   index: -1
 modal_fancy_header
   rotate: false
-  xy: 912, 923
+  xy: 912, 927
   size: 827, 187
   orig: 827, 187
   offset: 0, 0
   index: -1
 modal_fancy_header_button_green
   rotate: false
-  xy: 1781, 844
+  xy: 1781, 848
   size: 92, 136
   orig: 92, 136
   offset: 0, 0
   index: -1
 modal_fancy_header_button_green_check
   rotate: false
-  xy: 1741, 982
+  xy: 1741, 986
   size: 92, 136
   orig: 92, 136
   offset: 0, 0
   index: -1
 modal_fancy_header_button_green_check_left
   rotate: false
-  xy: 1813, 1120
+  xy: 1813, 1124
   size: 92, 136
   orig: 92, 136
   offset: 0, 0
   index: -1
 modal_fancy_header_button_green_left
   rotate: false
-  xy: 1907, 1120
+  xy: 1907, 1124
   size: 92, 136
   orig: 92, 136
   offset: 0, 0
   index: -1
 modal_fancy_header_button_red
   rotate: false
-  xy: 1719, 1120
+  xy: 1719, 1124
   size: 92, 136
   orig: 92, 136
   offset: 0, 0
   index: -1
 modal_fancy_header_button_red_cross
   rotate: false
-  xy: 1835, 982
+  xy: 1835, 986
   size: 92, 136
   orig: 92, 136
   offset: 0, 0
   index: -1
 modal_fancy_header_button_red_cross_left
   rotate: false
-  xy: 1929, 982
+  xy: 1929, 986
   size: 91, 136
   orig: 91, 136
   offset: 0, 0
   index: -1
 modal_fancy_header_button_red_left
   rotate: false
-  xy: 1875, 844
+  xy: 1875, 848
   size: 92, 136
   orig: 92, 136
   offset: 0, 0
   index: -1
 modal_fancy_skull
   rotate: false
-  xy: 704, 1481
+  xy: 704, 1485
   size: 819, 561
   orig: 819, 561
   offset: 0, 0
   index: -1
 nevis
   rotate: false
-  xy: 1525, 1530
+  xy: 1525, 1534
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
 scroll_indicator_fancy_arrows_horizontal
   rotate: false
-  xy: 704, 1392
+  xy: 704, 1396
   size: 712, 87
   orig: 712, 87
   offset: 0, 0
   index: -1
 scroll_indicator_fancy_arrows_vertical
   rotate: false
-  xy: 823, 677
+  xy: 823, 681
   size: 87, 713
   orig: 87, 713
   offset: 0, 0
   index: -1
 scroll_indicator_nugget
   rotate: false
-  xy: 1395, 357
+  xy: 1395, 361
   size: 20, 20
   orig: 20, 20
   offset: 0, 0
   index: -1
 scroll_indicator_nugget_fancy
   rotate: false
-  xy: 1822, 1417
+  xy: 1822, 1421
   size: 108, 111
   orig: 108, 111
   offset: 0, 0
   index: -1
 scroll_indicator_path
   rotate: false
-  xy: 2039, 1882
+  xy: 2039, 1886
   size: 6, 160
   orig: 6, 160
   offset: 0, 0
   index: -1
 scroll_indicator_path_fancy_horizontal
   rotate: false
-  xy: 912, 674
+  xy: 912, 678
   size: 578, 91
   orig: 578, 91
   offset: 0, 0
   index: -1
 scroll_indicator_path_fancy_vertical
   rotate: false
-  xy: 912, 674
+  xy: 912, 678
   size: 578, 91
   orig: 578, 91
   offset: 0, 0
   index: -1
 skull
   rotate: false
-  xy: 823, 8
+  xy: 823, 12
   size: 288, 104
   orig: 288, 104
   offset: 0, 0
