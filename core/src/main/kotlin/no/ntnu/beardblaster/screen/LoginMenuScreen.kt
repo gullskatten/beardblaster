@@ -4,16 +4,18 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import ktx.actors.onChange
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
+import ktx.log.debug
+import ktx.log.logger
 import ktx.scene2d.scene2d
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
-import no.ntnu.beardblaster.ui.Image
-import no.ntnu.beardblaster.ui.fullSizeTable
-import no.ntnu.beardblaster.ui.get
-import no.ntnu.beardblaster.ui.headingLabel
+import no.ntnu.beardblaster.ui.*
+
+private val log = logger<LoginMenuScreen>()
 
 class LoginMenuScreen(
     game: BeardBlasterGame,
@@ -45,10 +47,31 @@ class LoginMenuScreen(
 
     override fun setBtnEventListeners() {
         loginBtn.onClick {
-            game.setScreen<LoginScreen>()
+            InputDialog(Nls.login()).apply {
+                input("email", Nls.emailAddress())
+                input("password", Nls.password(), true)
+                okBtn.onChange {
+                    log.debug { "Got data from login dialog: $data" }
+                    hide()
+                    // TODO Actually try to login the user
+                    game.setScreen<MenuScreen>()
+                }
+                cancelBtn.onChange { hide() }
+            }.show(stage)
         }
         registerBtn.onClick {
-            game.setScreen<RegisterScreen>()
+            InputDialog(Nls.register()).apply {
+                input("username", Nls.wizardName())
+                input("email", Nls.emailAddress())
+                input("password", Nls.password(), true)
+                okBtn.onChange {
+                    log.debug { "Got data from register dialog: $data" }
+                    hide()
+                    // TODO Actually register the user
+                    game.setScreen<MenuScreen>()
+                }
+                cancelBtn.onChange { hide() }
+            }.show(stage)
         }
         exitBtn.onClick {
             Gdx.app.exit()

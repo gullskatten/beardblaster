@@ -1,9 +1,14 @@
 package no.ntnu.beardblaster.ui
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Pixmap
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.Scene2DSkin
 import ktx.style.*
@@ -20,7 +25,9 @@ enum class Image(val atlasKey: String) {
 
     // Dialog buttons
     DialogButtonOK("modal_fancy_header_button_green_check"),
+    DialogButtonOKDisabled("modal_fancy_header_button_green_check_disabled"),
     DialogButtonCancel("modal_fancy_header_button_red_cross_left"),
+    DialogButtonCancelDisabled("modal_fancy_header_button_red_cross_left_disabled"),
 
     // Input elements
     InputDark("input_texture_dark"),
@@ -58,6 +65,11 @@ enum class ButtonStyle {
     Cancel,
 }
 
+enum class Style {
+    Default,
+    Dialog,
+}
+
 fun createSkin(assets: AssetStorage): Skin {
     Scene2DSkin.defaultSkin = skin(assets[AtlasAsset.UI]) { skin ->
         add(FontStyle.Default.name, assets[FontAsset.Default])
@@ -85,11 +97,13 @@ fun createSkin(assets: AssetStorage): Skin {
         button(ButtonStyle.OK.name) {
             up = skin[Image.DialogButtonOK]
             down = skin[Image.DialogButtonOK]
+            disabled = skin[Image.DialogButtonOKDisabled]
         }
 
         button(ButtonStyle.Cancel.name) {
             up = skin[Image.DialogButtonCancel]
             down = skin[Image.DialogButtonCancel]
+            disabled = skin[Image.DialogButtonCancelDisabled]
         }
 
         button(ElementType.Fire.name) {
@@ -118,11 +132,37 @@ fun createSkin(assets: AssetStorage): Skin {
 
         textField {
             font = skin[FontStyle.Default]
-            fontColor = Color.BROWN
-            messageFontColor = Color.GRAY
-            background = skin[Image.InputDark]
-            focusedBackground = skin[Image.InputLight]
+            fontColor = Color.DARK_GRAY
+            messageFontColor = Color.BROWN
+            background = skin[Image.InputLight]
+            focusedBackground = skin[Image.InputDark]
+        }
+
+        window {
+            titleFont = skin[FontStyle.Default]
+        }
+
+        window(Style.Dialog.name) {
+            titleFont = skin[FontStyle.Default]
+            titleFontColor = Color.BROWN
+            stageBackground = dimmedBackground()
         }
     }
     return Scene2DSkin.defaultSkin
+}
+
+private fun dimmedBackground(): Drawable {
+    return SpriteDrawable(
+        Sprite(
+            Texture(
+                Pixmap(
+                    Gdx.graphics.width,
+                    Gdx.graphics.height,
+                    Pixmap.Format.RGB888
+                )
+            )
+        ).apply {
+            color = Color(1f, 1f, 1f, 0.85f)
+        }
+    )
 }
