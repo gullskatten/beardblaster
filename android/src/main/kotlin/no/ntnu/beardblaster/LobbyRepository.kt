@@ -91,6 +91,8 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
                         updatedGameObject.id = snapshot.id
                         offer(State.Success(updatedGameObject))
                     }
+                } else {
+                    offer(State.Failed<Game>("The lobby has been deleted."))
                 }
             }
 
@@ -156,6 +158,21 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
             emit(State.success(true))
         } catch (e: Exception) {
             emit(State.failed<Boolean>("Failed to end game!"))
+        }
+    }
+
+    override fun leaveLobbyWithId(id: String): Flow<State<Boolean>> = flow {
+        emit(State.loading<Boolean>())
+        try {
+            db.collection(GAME_COLLECTION)
+                .document(id)
+                .update(
+                    "opponent", null
+                )
+                .await()
+            emit(State.success(true))
+        } catch (e: Exception) {
+            emit(State.failed<Boolean>("Failed to leave lobby!"))
         }
     }
 }

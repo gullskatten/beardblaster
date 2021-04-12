@@ -13,4 +13,5 @@ interface AbstractLobbyRepository<T> {
     @ExperimentalCoroutinesApi
     fun subscribeToLobbyUpdates(id: String): Flow<State<Game>>
     fun joinLobbyWithCode(code: String, opponent: GameOpponent): Flow<State<Game>>
+    fun leaveLobbyWithId(id: String): Flow<State<Boolean>>
 }

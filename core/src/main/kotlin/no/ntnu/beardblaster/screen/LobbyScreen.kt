@@ -137,6 +137,9 @@ class LobbyScreen(
                                // Player may now start the game
                                opponentLabel.setText("${it.data.opponent?.displayName} - ${it.data.opponent?.beardLength}cm");
                                startGameBtn.isVisible = true
+                           } else {
+                               opponentLabel.setText("Waiting for opponent to join");
+                               startGameBtn.isVisible = false
                            }
                        }
                        is State.Loading -> {

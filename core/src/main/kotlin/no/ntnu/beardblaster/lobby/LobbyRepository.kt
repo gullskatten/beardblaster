@@ -44,4 +44,8 @@ class LobbyRepository : PlatformDistributor<AbstractLobbyRepository<Game>>(), Ab
     override fun subscribeToLobbyUpdates(id: String): Flow<State<Game>> {
        return platformObject.subscribeToLobbyUpdates(id)
     }
+
+    override fun leaveLobbyWithId(id: String): Flow<State<Boolean>> {
+        return platformObject.leaveLobbyWithId(id)
+    }
 }

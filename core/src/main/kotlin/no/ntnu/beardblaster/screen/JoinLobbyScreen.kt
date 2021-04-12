@@ -82,7 +82,27 @@ class JoinLobbyScreen(
             waitingLabel.isVisible = true
         }
         backBtn.onClick {
-            game.setScreen<MenuScreen>()
+            KtxAsync.launch {
+               if(LobbyData.instance.game != null) {
+                   LobbyData.instance.leaveLobby()?.collect {
+                       when (it) {
+                           is State.Success -> {
+                               game.setScreen<MenuScreen>()
+                           }
+                           is State.Failed -> {
+                               errorLabel.setText("Failed to leave lobby.. Please retry.")
+                               errorLabel.isVisible = true
+                               if(errorLabel.text.equals("Failed to leave lobby.. Please retry.")) {
+                                   // Just force quit if it fails once more.
+                                   game.setScreen<MenuScreen>()
+                               }
+                           }
+                       }
+                   }
+               } else {
+                   game.setScreen<MenuScreen>()
+               }
+            }
         }
     }
 

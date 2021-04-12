@@ -64,6 +64,7 @@ class LobbyData private constructor() : Observable() {
                     LOG.info { it.data.toString() }
                     LOG.info { "Joined lobby with id ${it.data.id}" }
                     notifyObservers(it.data)
+                    game = it.data
                     setChanged()
                     isLoading = false
                     subscribeToUpdatesOn(it.data.id)
@@ -87,6 +88,7 @@ class LobbyData private constructor() : Observable() {
         LobbyRepository().subscribeToLobbyUpdates(id).collect {
             when (it) {
                 is State.Success -> {
+                    game = it.data
                     notifyObservers(it.data)
                 }
                 is State.Loading -> {
@@ -98,6 +100,13 @@ class LobbyData private constructor() : Observable() {
             }
             setChanged()
         }
+    }
+
+    fun leaveLobby() : Flow<State<Boolean>>? {
+        if(game != null && game!!.id.isNotEmpty()) {
+            return LobbyRepository().leaveLobbyWithId(game!!.id)
+        }
+        return null;
     }
 
     fun cancelLobby() : Flow<State<Boolean>>? {
