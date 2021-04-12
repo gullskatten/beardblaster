@@ -27,7 +27,4 @@ class UserRepository : PlatformDistributor<AbstractRepository<User>>(), Abstract
     override fun getDocument(id: String, collection: String): Flow<State<User>> {
         return platformObject.getDocument(id, collection)
     }
-
-
-
 }

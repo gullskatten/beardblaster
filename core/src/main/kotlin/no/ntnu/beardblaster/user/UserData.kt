@@ -28,7 +28,6 @@ class UserData private constructor() : Observable() {
     suspend fun loadUserData() {
         if(user == null) {
             UserRepository().getDocument(GdxFIRAuth.inst().currentUser.userInfo.uid, "users").collect {
-                setChanged()
 
                 when (it) {
                     is State.Success -> {
@@ -51,6 +50,7 @@ class UserData private constructor() : Observable() {
                         error = it.message
                     }
                 }
+                setChanged()
             }
         }
 
