@@ -1,10 +1,18 @@
 package no.ntnu.beardblaster.lobby
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import ktx.async.KtxAsync
 import ktx.log.info
 import ktx.log.logger
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
+import no.ntnu.beardblaster.commons.game.GameOpponent
+import no.ntnu.beardblaster.screen.GameplayScreen
+import no.ntnu.beardblaster.user.UserData
 import java.util.*
 
 private val LOG = logger<LobbyData>()
@@ -23,24 +31,87 @@ class LobbyData private constructor() : Observable() {
         this.game = game
     }
 
-
     suspend fun createLobby() {
-            LobbyRepository().createLobby().collect {
-                setChanged()
-                when(it) {
-                    is State.Success -> {
-                        LOG.info { "Notifying observers of lobby with code ${it.data.lobbyCode}" }
-                        notifyObservers(it.data.lobbyCode)
-                        setGame(it.data)
-                    }
-                    is State.Loading -> {
-                        notifyObservers("Loading..")
-                    }
-                    is State.Failed -> {
-                        notifyObservers(it.message)
-                    }
+        LobbyRepository().createLobby().collect {
+            setChanged()
+            when (it) {
+                is State.Success -> {
+                    LOG.info { "Notifying observers of lobby with code ${it.data.code}" }
+                    notifyObservers(it.data)
+                    setGame(it.data)
+                }
+                is State.Loading -> {
+                    notifyObservers("Loading..")
+                }
+                is State.Failed -> {
+                    notifyObservers(it.message)
                 }
             }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun joinLobbyWithCode(code: String) {
+        KtxAsync.launch {
+            LobbyRepository()
+                .joinLobbyWithCode(
+                    code,
+                    GameOpponent.fromUser(UserData.instance.user!!)
+                )
+            .collect {
+            when (it) {
+                is State.Success -> {
+                    LOG.info { it.data.toString() }
+                    LOG.info { "Joined lobby with id ${it.data.id}" }
+                    notifyObservers(it.data)
+                    setChanged()
+                    isLoading = false
+                    subscribeToUpdatesOn(it.data.id)
+                }
+                is State.Failed -> {
+                    error = it.message
+                    isLoading = false
+                }
+                is State.Loading -> {
+                   isLoading = true
+                }
+            }
+        }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    private suspend fun subscribeToUpdatesOn(id: String) {
+        LOG.info { "Subscribing to updates on $id" }
+
+        LobbyRepository().subscribeToLobbyUpdates(id).collect {
+            when (it) {
+                is State.Success -> {
+                    notifyObservers(it.data)
+                }
+                is State.Loading -> {
+                }
+                is State.Failed -> {
+                    error = it.message
+                    notifyObservers(error)
+                }
+            }
+            setChanged()
+        }
+    }
+
+    fun cancelLobby() : Flow<State<Boolean>>? {
+        if(game != null && game!!.id.isNotEmpty()) {
+            return LobbyRepository().cancelLobbyWithId(game!!.id)
+        }
+        return null;
+    }
+
+    fun startGame() : Flow<State<Boolean>>? {
+        if(game != null && game!!.id.isNotEmpty()) {
+            return LobbyRepository().startGame(game!!.id)
+        }
+        return null;
     }
 
     companion object {

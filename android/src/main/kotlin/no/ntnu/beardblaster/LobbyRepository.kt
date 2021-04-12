@@ -1,7 +1,6 @@
 package no.ntnu.beardblaster
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
@@ -14,45 +13,55 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import ktx.async.KtxAsync
 import no.ntnu.beardblaster.commons.AbstractLobbyRepository
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
+import no.ntnu.beardblaster.commons.game.GameOpponent
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-import java.util.*
 
-private val availableCodeCharacters : List<Char> = ('0'..'9').toList()
+private val availableCodeCharacters: List<Char> = ('0'..'9').toList()
 
-class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) : AbstractLobbyRepository<Game> {
+class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
+    AbstractLobbyRepository<Game> {
     private val TAG = "LobbyRepository"
+    private val GAME_COLLECTION = "game"
 
-    override fun joinLobbyWithId(id: String): Flow<State<Game>> = flow {
+    override fun joinLobbyWithCode(code: String, opponent: GameOpponent): Flow<State<Game>> = flow {
         emit(State.loading())
 
-        if (id.isEmpty()) {
+        if (code.isEmpty()) {
             val message = "Lobby code cannot be empty"
             Log.e(TAG, message)
             emit(State.failed(message))
+            return@flow
         }
         val startOfToday: LocalDateTime = LocalDate.now(ZoneOffset.UTC).atStartOfDay()
 
         // Query for a game that has code XXX and was created today (to limit possibility for duplicate codes)
         val snapshot = db
-            .collection("game")
-            .whereEqualTo(id, "lobbyCode")
-            .whereGreaterThan("createdAt", startOfToday)
+            .collection(GAME_COLLECTION)
+            .whereEqualTo("code", code)
+            .whereGreaterThan("createdAt", startOfToday.toEpochSecond(ZoneOffset.UTC))
             .limit(1)
             .get()
             .await()
 
         if (!snapshot.isEmpty) {
-            val doc = snapshot.documents[0].toObject<Game>()
-            if (doc != null) {
-                emit(State.success(doc))
+            // Find first element (limit: 1)
+            val doc = snapshot.documents[0]
+            // Update the document with a new opponent
+            db.collection(GAME_COLLECTION).document(doc.id).update("opponent", opponent).await()
+
+            // Parse the document found
+            val game = doc.toObject<Game>()
+            if (game != null) {
+                // Id is set to document id
+                game.id = doc.id
+                // Emit the game
+                emit(State.success(game))
             }
         } else {
             emit(State.failed<Game>("Lobby not found"))
@@ -60,38 +69,53 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) : 
     }
 
     @ExperimentalCoroutinesApi
-    fun subscribeToOpponentUpdates(id: String, obs: Observer): Flow<State<String>> = callbackFlow {
+    override fun subscribeToLobbyUpdates(id: String): Flow<State<Game>> = callbackFlow {
         if (id.isEmpty()) {
-            val message = "Lobby code cannot be empty"
+            val message = "Id of document cannot be empty"
             Log.e(TAG, message)
             offer(State.failed(message))
+            awaitClose {  }
+            return@callbackFlow
         }
         val subscription = db
-            .collection("game")
+            .collection(GAME_COLLECTION)
             .document(id)
             .addSnapshotListener { snapshot, _ ->
-                if(snapshot!!.exists()){
-                    val gameObject = snapshot.get("opponent")
-                    offer(State.Success(gameObject!!.toString()))
+                Log.i(TAG, "Game was updated externally! Checking if snapshot exists")
+                if (snapshot!!.exists()) {
+                    Log.i(TAG, "Serializing Game object")
+                    val updatedGameObject = snapshot.toObject<Game>()
+                    if (updatedGameObject != null) {
+                        Log.i(TAG, "Pushing offer of new game object.")
+                        // Ensure id is set on game object
+                        updatedGameObject.id = snapshot.id
+                        offer(State.Success(updatedGameObject))
+                    }
                 }
             }
 
+        // Required: Else stream closes immediately!
         //Finally if collect is not in use or collecting any data we cancel this channel to prevent any leak and remove the subscription listener to the database
         awaitClose { subscription.remove() }
     }
 
     override fun createLobby(): Flow<State<Game>> = flow {
         emit(State.loading<Game>())
-        val lobbyCode = (1..6)
+        val code = (1..6)
             .map { i -> kotlin.random.Random.nextInt(0, availableCodeCharacters.size) }
             .map(availableCodeCharacters::get)
             .joinToString("");
 
-        Log.d(TAG, "Creating a new game (lobby) with code $lobbyCode")
+        Log.d(TAG, "Creating a new game (lobby) with code $code")
 
-        val doc = Game(lobbyCode, createdAt = LocalDateTime.now(ZoneOffset.UTC))
+        val doc = Game(
+            code,
+            createdAt = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC),
+            started = 0,
+            ended = 0,
+        )
 
-        val newDocRef = db.collection("game").add(doc).await()
+        val newDocRef = db.collection(GAME_COLLECTION).add(doc).await()
 
         Log.d(TAG, "Lobby created successfully")
 
@@ -101,22 +125,37 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) : 
 
     override fun cancelLobbyWithId(id: String): Flow<State<Boolean>> = flow {
         emit(State.loading<Boolean>())
-        Log.d(TAG, "Removing lobby with id $id")
-        db.collection("lobby").document(id).delete().await()
+        Log.d(TAG, "Removing game with id $id")
+        db.collection(GAME_COLLECTION).document(id).delete().await()
         emit(State.success(true))
     }
 
-    override fun startGame(): Flow<State<Boolean>> {
-        TODO("Not yet implemented")
+    override fun startGame(id: String): Flow<State<Boolean>> = flow {
+        emit(State.loading<Boolean>())
+        try {
+            db.collection(GAME_COLLECTION).document(id).update(
+                "started", LocalDateTime.now(ZoneOffset.UTC)
+                    .toEpochSecond(ZoneOffset.UTC)
+            ).await()
+            emit(State.success(true))
+        } catch (e: Exception) {
+            emit(State.failed<Boolean>("Failed to start game!"))
+        }
     }
 
-    override fun endGame(): Flow<State<Boolean>> {
-        TODO("Not yet implemented")
-    }
-}
-
-object Listener : EventListener<DocumentSnapshot> {
-    override fun onEvent(value: DocumentSnapshot?, error: FirebaseFirestoreException?) {
-        value?.get("opponent")
+    override fun endGame(id: String): Flow<State<Boolean>> = flow {
+        emit(State.loading<Boolean>())
+        try {
+            db.collection(GAME_COLLECTION)
+                .document(id)
+                .update(
+                    "ended", LocalDateTime.now(ZoneOffset.UTC)
+                        .toEpochSecond(ZoneOffset.UTC)
+                )
+                .await()
+            emit(State.success(true))
+        } catch (e: Exception) {
+            emit(State.failed<Boolean>("Failed to end game!"))
+        }
     }
 }

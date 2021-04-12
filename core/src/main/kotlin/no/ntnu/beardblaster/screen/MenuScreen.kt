@@ -77,6 +77,7 @@ class MenuScreen(
         }
         logoutBtn.onClick {
             if (UserAuth().isLoggedIn()) {
+                UserData.instance.setUserData(null)
                 UserAuth().signOut()
             }
             game.setScreen<LoginMenuScreen>()
