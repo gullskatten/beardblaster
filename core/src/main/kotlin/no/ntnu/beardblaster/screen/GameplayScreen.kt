@@ -27,7 +27,6 @@ class GameplayScreen(
     private val quitBtn = scene2d.textButton(Nls.quit())
     // CountDown
     private var countDownTimer = 10f
-    //private var countDown = scene2d.textArea(countDownTimer.toString())
     override fun initScreen() {
         val table = fullSizeTable().apply {
             add(headingLabel(Nls.preparationPhase())).pad(50f)
@@ -45,8 +44,9 @@ class GameplayScreen(
     fun initActionPhase() {
         val table = fullSizeTable().apply {
             add(headingLabel(Nls.actionPhase())).pad(50f)
-
+            row()
         }
+        //When prep. phase is done this needs to be updated to update and not clear the stage
         stage.clear()
         stage.addActor(table)
     }
