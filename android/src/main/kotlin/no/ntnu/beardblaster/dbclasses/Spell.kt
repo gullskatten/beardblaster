@@ -5,11 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "spell_table")
 data class Spell (
-        @PrimaryKey
+        @PrimaryKey(autoGenerate = false)
         val spellID : Int,
         val spellName : String,
-        val elementName1 : String,
-        val elementName2 : String,
-        val elementName3 : String,
+        val spellDamage : Int,
         val spellDescription : String
         )

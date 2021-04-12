@@ -2,28 +2,16 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a23e7dafd525ce56f3add54d1e56c915",
+    "identityHash": "d92d32181af2a9795f305bdc85308a22",
     "entities": [
       {
         "tableName": "spell_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`elementName1` TEXT NOT NULL, `elementName2` TEXT NOT NULL, `elementName3` TEXT NOT NULL, `spellDescription` TEXT NOT NULL, `spellID` INTEGER NOT NULL, `spellName` TEXT NOT NULL, PRIMARY KEY(`spellID`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`spellDamage` INTEGER NOT NULL, `spellDescription` TEXT NOT NULL, `spellID` INTEGER NOT NULL, `spellName` TEXT NOT NULL, PRIMARY KEY(`spellID`))",
         "fields": [
           {
-            "fieldPath": "elementName1",
-            "columnName": "elementName1",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "elementName2",
-            "columnName": "elementName2",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "elementName3",
-            "columnName": "elementName3",
-            "affinity": "TEXT",
+            "fieldPath": "spellDamage",
+            "columnName": "spellDamage",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -79,12 +67,133 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "wizard_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`element1` INTEGER NOT NULL, `element2` INTEGER NOT NULL, `element3` INTEGER NOT NULL, `hitPoints` INTEGER NOT NULL, `wizardID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `wizardName` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "element1",
+            "columnName": "element1",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "element2",
+            "columnName": "element2",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "element3",
+            "columnName": "element3",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hitPoints",
+            "columnName": "hitPoints",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wizardID",
+            "columnName": "wizardID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wizardName",
+            "columnName": "wizardName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "wizardID"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "composition_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`elementID` INTEGER NOT NULL, `spellID` INTEGER NOT NULL, PRIMARY KEY(`elementID`, `spellID`))",
+        "fields": [
+          {
+            "fieldPath": "elementID",
+            "columnName": "elementID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spellID",
+            "columnName": "spellID",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "elementID",
+            "spellID"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_composition_table_spellID",
+            "unique": false,
+            "columnNames": [
+              "spellID"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_composition_table_spellID` ON `${TABLE_NAME}` (`spellID`)"
+          },
+          {
+            "name": "index_composition_table_elementID",
+            "unique": false,
+            "columnNames": [
+              "elementID"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_composition_table_elementID` ON `${TABLE_NAME}` (`elementID`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "KnowsSpell",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`spellID` INTEGER NOT NULL, `wizardID` INTEGER NOT NULL, PRIMARY KEY(`wizardID`, `spellID`))",
+        "fields": [
+          {
+            "fieldPath": "spellID",
+            "columnName": "spellID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wizardID",
+            "columnName": "wizardID",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "wizardID",
+            "spellID"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a23e7dafd525ce56f3add54d1e56c915')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd92d32181af2a9795f305bdc85308a22')"
     ]
   }
 }
