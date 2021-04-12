@@ -28,6 +28,7 @@ abstract class SpellDatabase: RoomDatabase() {
                             SpellDatabase::class.java,
                             "beardblaster-db"
                     )
+                     //       .createFromAsset()
                             .fallbackToDestructiveMigration()
                             .build()
                     INSTANCE = instance
