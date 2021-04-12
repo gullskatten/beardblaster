@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ktx.async.KtxAsync
+import ktx.log.error
 import ktx.log.info
 import ktx.log.logger
 import no.ntnu.beardblaster.commons.State
@@ -61,7 +62,6 @@ class LobbyData private constructor() : Observable() {
             .collect {
             when (it) {
                 is State.Success -> {
-                    LOG.info { it.data.toString() }
                     LOG.info { "Joined lobby with id ${it.data.id}" }
                     notifyObservers(it.data)
                     game = it.data
@@ -71,10 +71,15 @@ class LobbyData private constructor() : Observable() {
                 }
                 is State.Failed -> {
                     error = it.message
+                    LOG.error { it.message }
+                    notifyObservers(it.message)
+                    setChanged()
                     isLoading = false
                 }
                 is State.Loading -> {
                    isLoading = true
+                   setChanged()
+
                 }
             }
         }
@@ -94,6 +99,7 @@ class LobbyData private constructor() : Observable() {
                 is State.Loading -> {
                 }
                 is State.Failed -> {
+                    LOG.error { it.message }
                     error = it.message
                     notifyObservers(error)
                 }

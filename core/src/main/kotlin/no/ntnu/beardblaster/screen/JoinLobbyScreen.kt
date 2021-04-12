@@ -10,6 +10,8 @@ import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
+import ktx.log.info
+import ktx.log.logger
 import ktx.scene2d.button
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
@@ -26,6 +28,8 @@ import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserData
 import pl.mk5.gdx.fireapp.GdxFIRAuth
 import java.util.*
+
+private val LOG = logger<JoinLobbyScreen>()
 
 class JoinLobbyScreen(
     game: BeardBlasterGame,
@@ -119,10 +123,12 @@ class JoinLobbyScreen(
     // Listens for changes on lobby -> when entering lobby and when lobby starts.
     override fun update(o: Observable?, arg: Any?) {
         if(o is LobbyData) {
+
             if(arg is String) {
                 errorLabel.setText(arg)
                 errorLabel.isVisible = true
                 waitingLabel.isVisible = false
+
             }
             if(arg is Game) {
                 if(arg.started > 0L) {
