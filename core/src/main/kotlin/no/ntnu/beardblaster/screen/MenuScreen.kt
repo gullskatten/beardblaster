@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
@@ -19,7 +21,7 @@ import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData
 import java.util.*
 
-private val LOG = logger<MenuScreen>()
+private val log = logger<MenuScreen>()
 
 class MenuScreen(
     game: BeardBlasterGame,
@@ -27,20 +29,29 @@ class MenuScreen(
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera), Observer {
-    private val createGameBtn = scene2d.textButton(Nls.createGame())
-    private val joinGameBtn = scene2d.textButton(Nls.joinGame())
-    private val highScoreBtn = scene2d.textButton(Nls.leaderBeard())
-    private val tutorialBtn = scene2d.textButton(Nls.tutorial())
-    private val logoutBtn = scene2d.textButton(Nls.logOut())
-    private val exitBtn = scene2d.textButton(Nls.exitGame())
-    private val currentWizardLabel = bodyLabel("")
-    private val wizardHeading = headingLabel("BeardBlaster")
+    private lateinit var createGameBtn: TextButton
+    private lateinit var joinGameBtn: TextButton
+    private lateinit var highScoreBtn: TextButton
+    private lateinit var tutorialBtn: TextButton
+    private lateinit var logoutBtn: TextButton
+    private lateinit var exitBtn: TextButton
+    private lateinit var currentWizardLabel: Label
+    private lateinit var wizardHeading: Label
 
     override fun initScreen() {
         KtxAsync.launch {
             UserData.instance.loadUserData()
         }
         UserData.instance.addObserver(this)
+
+        createGameBtn = scene2d.textButton(Nls.createGame())
+        joinGameBtn = scene2d.textButton(Nls.joinGame())
+        highScoreBtn = scene2d.textButton(Nls.leaderBeard())
+        tutorialBtn = scene2d.textButton(Nls.tutorial())
+        logoutBtn = scene2d.textButton(Nls.logOut())
+        exitBtn = scene2d.textButton(Nls.exitGame())
+        currentWizardLabel = bodyLabel("")
+        wizardHeading = headingLabel("BeardBlaster")
 
         val table = fullSizeTable(20f).apply {
             background = skin[Image.Background]
@@ -65,6 +76,7 @@ class MenuScreen(
         createGameBtn.onClick {
             // Handle creation of game, and then go to Lobby screen to display code and wait for player 2
             game.setScreen<LobbyScreen>()
+
         }
         joinGameBtn.onClick {
             game.setScreen<JoinLobbyScreen>()
@@ -87,9 +99,7 @@ class MenuScreen(
         }
     }
 
-    override fun update(delta: Float) {
-
-    }
+    override fun update(delta: Float) {}
 
     override fun render(delta: Float) {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
@@ -100,7 +110,7 @@ class MenuScreen(
     }
 
     override fun update(p0: Observable?, p1: Any?) {
-        LOG.info { p1.toString() }
+        log.info { p1.toString() }
         currentWizardLabel.setText(p1.toString())
     }
 

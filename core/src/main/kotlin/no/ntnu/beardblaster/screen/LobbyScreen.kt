@@ -4,14 +4,15 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
-import ktx.log.info
 import ktx.scene2d.*
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.WORLD_WIDTH
@@ -31,9 +32,9 @@ class LobbyScreen(
 ) : BaseScreen(game, batch, assets, camera), Observer {
     private lateinit var codeLabel: Label
     private lateinit var opponentLabel: Label
-    private val infoLabel = scene2d.label(Nls.shareGameCodeMessage())
-    private val startGameBtn = scene2d.textButton(Nls.startGame())
-    private val backBtn = scene2d.button(ButtonStyle.Cancel.name)
+    private lateinit var infoLabel: Label
+    private lateinit var startGameBtn: TextButton
+    private lateinit var backBtn: Button
 
     override fun initScreen() {
         LobbyData.instance.addObserver(this)
@@ -44,6 +45,10 @@ class LobbyScreen(
         KtxAsync.launch {
             LobbyData.instance.createLobby()
         }
+        infoLabel = scene2d.label(Nls.shareGameCodeMessage())
+        startGameBtn = scene2d.textButton(Nls.startGame())
+        backBtn = scene2d.button(ButtonStyle.Cancel.name)
+
         // This will only be visible when wizard B joins the game
         startGameBtn.isVisible = false
 
@@ -74,7 +79,7 @@ class LobbyScreen(
             // (or alternatively just start immediately (might be simpler))
             KtxAsync.launch {
                 LobbyData.instance.startGame()?.collect {
-                    when(it) {
+                    when (it) {
                         is State.Loading -> {
                             opponentLabel.setText("Starting game..")
                         }
@@ -90,11 +95,11 @@ class LobbyScreen(
         }
         backBtn.onClick {
             KtxAsync.launch {
-                if(LobbyData.instance.game == null) {
+                if (LobbyData.instance.game == null) {
                     game.setScreen<MenuScreen>()
                 } else {
-                    LobbyData.instance.cancelLobby()?.collect{
-                        when(it) {
+                    LobbyData.instance.cancelLobby()?.collect {
+                        when (it) {
                             is State.Success -> {
                                 game.setScreen<MenuScreen>()
                             }
@@ -124,31 +129,31 @@ class LobbyScreen(
 
     @ExperimentalCoroutinesApi
     override fun update(p0: Observable?, p1: Any?) {
-       if (p1 is Game) {
+        if (p1 is Game) {
             codeLabel.setText(p1.code)
 
-           // Yeah, this is ugly! Listen for live updates on lobby with id
-           KtxAsync.launch {
-               LobbyRepository().subscribeToLobbyUpdates(p1.id).collect {
-                   when(it) {
-                       is State.Success -> {
-                           // On received update: Check if opponent of updated Game is not null
-                           if(it.data.opponent != null) {
-                               // Player may now start the game
-                               opponentLabel.setText("${it.data.opponent?.displayName} - ${it.data.opponent?.beardLength}cm");
-                               startGameBtn.isVisible = true
-                           } else {
-                               opponentLabel.setText("Waiting for opponent to join");
-                               startGameBtn.isVisible = false
-                           }
-                       }
-                       is State.Loading -> {
-                       }
-                       is State.Failed -> {
-                       }
-                   }
-               };
-           }
+            // Yeah, this is ugly! Listen for live updates on lobby with id
+            KtxAsync.launch {
+                LobbyRepository().subscribeToLobbyUpdates(p1.id).collect {
+                    when (it) {
+                        is State.Success -> {
+                            // On received update: Check if opponent of updated Game is not null
+                            if (it.data.opponent != null) {
+                                // Player may now start the game
+                                opponentLabel.setText("${it.data.opponent?.displayName} - ${it.data.opponent?.beardLength}cm");
+                                startGameBtn.isVisible = true
+                            } else {
+                                opponentLabel.setText("Waiting for opponent to join");
+                                startGameBtn.isVisible = false
+                            }
+                        }
+                        is State.Loading -> {
+                        }
+                        is State.Failed -> {
+                        }
+                    }
+                };
+            }
         }
     }
 }

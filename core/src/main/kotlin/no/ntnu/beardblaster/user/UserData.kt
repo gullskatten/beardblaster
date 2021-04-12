@@ -26,32 +26,33 @@ class UserData private constructor() : Observable() {
 
 
     suspend fun loadUserData() {
-        if(user == null) {
-            UserRepository().getDocument(GdxFIRAuth.inst().currentUser.userInfo.uid, "users").collect {
+        if (user == null) {
+            UserRepository().getDocument(GdxFIRAuth.inst().currentUser.userInfo.uid, "users")
+                .collect {
 
-                when (it) {
-                    is State.Success -> {
-                        isLoading = false
-                        setUserData(it.data)
-                        LOG.info { "Found Current User (!): ${it.data.displayName}" }
-                        notifyObservers("${it.data.displayName} - ${it.data.beardLength}cm")
-                        error = null
+                    when (it) {
+                        is State.Success -> {
+                            isLoading = false
+                            setUserData(it.data)
+                            LOG.info { "Found Current User (!): ${it.data.displayName}" }
+                            notifyObservers("${it.data.displayName} - ${it.data.beardLength}cm")
+                            error = null
+                        }
+                        is State.Loading -> {
+                            isLoading = true
+                            LOG.info { "Loading user data!" }
+                            notifyObservers("Loading user..")
+                            error = null
+                        }
+                        is State.Failed -> {
+                            isLoading = false
+                            LOG.info { "Loading user FAILED: ${it.message}" }
+                            notifyObservers("Failed to load user data!")
+                            error = it.message
+                        }
                     }
-                    is State.Loading -> {
-                        isLoading = true
-                        LOG.info { "Loading user data!" }
-                        notifyObservers("Loading user..")
-                        error = null
-                    }
-                    is State.Failed -> {
-                        isLoading = false
-                        LOG.info { "Loading user FAILED: ${it.message}" }
-                        notifyObservers("Failed to load user data!")
-                        error = it.message
-                    }
+                    setChanged()
                 }
-                setChanged()
-            }
         }
 
     }
