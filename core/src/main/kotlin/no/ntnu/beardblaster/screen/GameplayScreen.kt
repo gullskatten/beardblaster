@@ -38,9 +38,14 @@ class GameplayScreen(
     private lateinit var natureElementBtn: Button
     private lateinit var spellBar: SpellBar
     private lateinit var spellCasting: SpellCasting
+    private var countDownTimer = 10f
 
     override fun initScreen() {
         log.debug { "Gameplay screen" }
+        initPreparationPhase()
+    }
+
+    private fun initPreparationPhase() {
         spellCasting = SpellCasting()
         quitBtn = scene2d.textButton(Nls.quit())
         fireElementBtn = scene2d.button(ElementType.Fire.name)
@@ -72,9 +77,22 @@ class GameplayScreen(
             WORLD_WIDTH - 210f,
             220f
         )
+
+        stage.clear()
         stage.addActor(table)
         stage.addActor(spellBar)
         stage.addActor(elementButtonsTable)
+    }
+
+
+    private fun initActionPhase() {
+        val table = fullSizeTable().apply {
+            add(headingLabel(Nls.actionPhase())).pad(50f)
+            row()
+        }
+        //When prep. phase is done this needs to be updated to update and not clear the stage
+        stage.clear()
+        stage.addActor(table)
     }
 
     override fun setBtnEventListeners() {
@@ -96,5 +114,14 @@ class GameplayScreen(
     }
 
     override fun update(delta: Float) {
+        countDownTimer -= delta
+
+        if (countDownTimer <= 10) {
+            stage.addActor(headingLabel(countDownTimer.toInt().toString()))
+        }
+
+        if (countDownTimer <= 0) {
+            initActionPhase()
+        }
     }
 }
