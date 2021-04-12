@@ -5,7 +5,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Spell::class, Element::class, WizardDB::class, Composition::class, KnowsSpell::class], version = 1)
+@Database(entities = [
+    Spell::class,
+    Element::class,
+    WizardDB::class,
+    Composition::class,
+    KnowsSpell::class,
+    Proficiency::class],
+        version = 1)
 abstract class SpellDatabase: RoomDatabase() {
     abstract fun elementDao() : ElementDao
     abstract fun spellDao() : SpellDao

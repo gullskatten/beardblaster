@@ -1,11 +1,11 @@
 package no.ntnu.beardblaster.dbclasses
 
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.Junction
-import androidx.room.Relation
+import androidx.room.*
 
-@Entity(primaryKeys = ["wizardID", "spellID"])
+@Entity(tableName = "knows_spell_table",
+        primaryKeys = ["wizardID", "spellID"],
+        indices = [Index("spellID"), Index("wizardID")]
+)
 data class KnowsSpell(
         val wizardID : Int,
         val spellID : Int

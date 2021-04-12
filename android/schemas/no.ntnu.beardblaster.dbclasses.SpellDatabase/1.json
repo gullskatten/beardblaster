@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d92d32181af2a9795f305bdc85308a22",
+    "identityHash": "c43cd0da787470bc61efa4de2f9b5702",
     "entities": [
       {
         "tableName": "spell_table",
@@ -163,7 +163,7 @@
         "foreignKeys": []
       },
       {
-        "tableName": "KnowsSpell",
+        "tableName": "knows_spell_table",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`spellID` INTEGER NOT NULL, `wizardID` INTEGER NOT NULL, PRIMARY KEY(`wizardID`, `spellID`))",
         "fields": [
           {
@@ -186,14 +186,75 @@
           ],
           "autoGenerate": false
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_knows_spell_table_spellID",
+            "unique": false,
+            "columnNames": [
+              "spellID"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_knows_spell_table_spellID` ON `${TABLE_NAME}` (`spellID`)"
+          },
+          {
+            "name": "index_knows_spell_table_wizardID",
+            "unique": false,
+            "columnNames": [
+              "wizardID"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_knows_spell_table_wizardID` ON `${TABLE_NAME}` (`wizardID`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "proficiency_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`elementID` INTEGER NOT NULL, `wizardID` INTEGER NOT NULL, PRIMARY KEY(`wizardID`, `elementID`))",
+        "fields": [
+          {
+            "fieldPath": "elementID",
+            "columnName": "elementID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wizardID",
+            "columnName": "wizardID",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "wizardID",
+            "elementID"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_proficiency_table_elementID",
+            "unique": false,
+            "columnNames": [
+              "elementID"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_proficiency_table_elementID` ON `${TABLE_NAME}` (`elementID`)"
+          },
+          {
+            "name": "index_proficiency_table_wizardID",
+            "unique": false,
+            "columnNames": [
+              "wizardID"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_proficiency_table_wizardID` ON `${TABLE_NAME}` (`wizardID`)"
+          }
+        ],
         "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd92d32181af2a9795f305bdc85308a22')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c43cd0da787470bc61efa4de2f9b5702')"
     ]
   }
 }
