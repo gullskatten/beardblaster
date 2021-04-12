@@ -4,8 +4,12 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
+import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
+import ktx.async.KtxAsync
+import ktx.log.info
+import ktx.log.logger
 import ktx.scene2d.button
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
@@ -15,6 +19,10 @@ import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
+import no.ntnu.beardblaster.user.UserData
+import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
+
+private val LOG = logger<LoginScreen>()
 
 class LoginScreen(
     game: BeardBlasterGame,
@@ -26,9 +34,11 @@ class LoginScreen(
     private val backBtn = scene2d.button(ButtonStyle.Cancel.name)
     private val emailInput = inputField(Nls.emailAddress())
     private val passwordInput = passwordField(Nls.password())
+    private val error = bodyLabel("", LabelStyle.Error.name)
 
     override fun initScreen() {
         setBtnEventListeners()
+        error.setText("")
         // TODO: find out why input fields renders with wrong width
         val content = scene2d.table {
             defaults().pad(30f)
@@ -40,6 +50,8 @@ class LoginScreen(
             add(passwordInput).width(570f)
             row()
             add(loginBtn).center()
+            row()
+            add(error)
         }
         val table = fullSizeTable().apply {
             background = skin[Image.Background]
@@ -53,11 +65,19 @@ class LoginScreen(
         loginBtn.onClick {
             if (!UserAuth().isLoggedIn() && emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty()) {
                 UserAuth().signIn(emailInput.text, passwordInput.text)
+                    .then<GdxFirebaseUser> { gdxFirebaseUser ->
+                        game.setScreen<MenuScreen>()
+                    }
+                    .fail { s, _ ->
+                        LOG.info {s}
+                        error.setText(s)
+                    }
+            } else {
+                error.setText("Username or password cannot be empty!")
             }
-            // TODO: Future: Don't proceed unless login actually successful
-            game.setScreen<MenuScreen>()
         }
         backBtn.onClick {
+            error.setText("")
             game.setScreen<LoginMenuScreen>()
         }
     }
