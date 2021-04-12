@@ -59,10 +59,9 @@ class LoadingScreen(
             Nls.i18nBundle = assets[I18NAsset.Default]
             createSkin(assets)
             addGameScreens()
-            if (UserAuth().isLoggedIn()) {
-                game.setScreen<MenuScreen>()
-            } else {
-                game.setScreen<LoginMenuScreen>()
+            when (UserAuth().isLoggedIn()) {
+                true -> game.setScreen<MenuScreen>()
+                false -> game.setScreen<LoginMenuScreen>()
             }
             game.removeScreen<LoadingScreen>()
             dispose()
