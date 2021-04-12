@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 29
@@ -41,13 +40,6 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas")
-                arg("room.incremental", "true")
-                arg("room.expandProjection", "true")
-            }
-        }
     }
     compileOptions {
         sourceCompatibility "8.0"
@@ -93,24 +85,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation "pl.mk5.gdx-fireapp:gdx-fireapp-android:$gdxFireappVersion"
     implementation project(':commons')
-    // Import the room dependencies
-    implementation "androidx.room:room-runtime:$roomVersion"
-    kapt "androidx.room:room-compiler:$roomVersion"
-
-    // optional - Kotlin Extensions and Coroutines support for Room
-    implementation "androidx.room:room-ktx:$roomVersion"
-
-    // optional - Test helpers
-    testImplementation "androidx.room:room-testing:$roomVersion"
-
-    // Lifecycle components
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
-
-
-
-
 }
 
 // Called every time gradle gets executed, takes the native dependencies of
