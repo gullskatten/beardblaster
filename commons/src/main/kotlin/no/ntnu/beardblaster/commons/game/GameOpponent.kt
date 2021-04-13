@@ -1,9 +1,6 @@
 package no.ntnu.beardblaster.commons.game
 
-import no.ntnu.beardblaster.commons.State
-import no.ntnu.beardblaster.commons.User
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import no.ntnu.beardblaster.commons.user.User
 
 
 class GameOpponent(val id: String, val beardLength: Float = 0f, val displayName: String) {

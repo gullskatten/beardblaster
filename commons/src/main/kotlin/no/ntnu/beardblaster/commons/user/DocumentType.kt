@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.commons
+package no.ntnu.beardblaster.commons.user
 
 interface DocumentType {
     var id: String

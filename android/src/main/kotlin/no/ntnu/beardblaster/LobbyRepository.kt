@@ -1,10 +1,7 @@
 package no.ntnu.beardblaster
 
 import android.util.Log
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -14,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import no.ntnu.beardblaster.commons.AbstractLobbyRepository
+import no.ntnu.beardblaster.commons.game.AbstractLobbyRepository
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.commons.game.GameOpponent

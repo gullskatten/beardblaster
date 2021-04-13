@@ -12,8 +12,8 @@ data class KnowsSpell(
 )
 
 data class SpellsOfWizard(
-        @Embedded val wizardDB: WizardDB,
-        @Relation(
+    @Embedded val wizard: Wizard,
+    @Relation(
                 parentColumn = "wizardID",
                 entityColumn = "spellID",
                 associateBy = Junction(KnowsSpell::class)

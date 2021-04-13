@@ -1,9 +1,8 @@
-package no.ntnu.beardblaster.commons
+package no.ntnu.beardblaster.commons.game
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import no.ntnu.beardblaster.commons.game.Game
-import no.ntnu.beardblaster.commons.game.GameOpponent
+import no.ntnu.beardblaster.commons.State
 
 interface AbstractLobbyRepository<T> {
     fun createLobby(): Flow<State<T>>

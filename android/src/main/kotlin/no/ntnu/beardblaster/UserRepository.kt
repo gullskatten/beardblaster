@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import no.ntnu.beardblaster.commons.*
+import no.ntnu.beardblaster.commons.user.AbstractRepository
+import no.ntnu.beardblaster.commons.user.User
 
 class UserRepository(private val db: FirebaseFirestore = Firebase.firestore) : AbstractRepository<User> {
     private val TAG = "UserRepository"

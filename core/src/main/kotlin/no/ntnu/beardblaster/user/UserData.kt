@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.collect
 import ktx.log.info
 import ktx.log.logger
 import no.ntnu.beardblaster.commons.State
-import no.ntnu.beardblaster.commons.User
+import no.ntnu.beardblaster.commons.user.User
 import pl.mk5.gdx.fireapp.GdxFIRAuth
 import java.util.*
 

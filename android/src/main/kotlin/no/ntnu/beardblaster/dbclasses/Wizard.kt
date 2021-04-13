@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "wizard_table")
-data class WizardDB(
+data class Wizard(
         @PrimaryKey(autoGenerate = true)
         val wizardID : Int,
         val wizardName : String,

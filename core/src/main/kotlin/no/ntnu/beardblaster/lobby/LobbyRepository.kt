@@ -3,6 +3,7 @@ package no.ntnu.beardblaster.lobby
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import no.ntnu.beardblaster.commons.*
+import no.ntnu.beardblaster.commons.game.AbstractLobbyRepository
 import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.commons.game.GameOpponent
 import pl.mk5.gdx.fireapp.PlatformDistributor

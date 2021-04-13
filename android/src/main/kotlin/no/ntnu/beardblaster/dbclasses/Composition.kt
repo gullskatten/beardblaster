@@ -13,8 +13,8 @@ data class Composition(
 )
 
 data class ElementsOfSpell(
-        @Embedded val spell: Spell,
-        @Relation(
+    @Embedded val spell: Spell,
+    @Relation(
                 parentColumn = "spellID",
                 entityColumn = "elementID",
                 associateBy = Junction(Composition::class)
