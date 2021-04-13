@@ -1,7 +1,7 @@
 package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
@@ -16,7 +16,7 @@ import no.ntnu.beardblaster.ui.headingLabel
 
 class HighScoreScreen(
     game: BeardBlasterGame,
-    batch: Batch,
+    batch: SpriteBatch,
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {

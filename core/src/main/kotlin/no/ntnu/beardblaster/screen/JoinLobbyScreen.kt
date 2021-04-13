@@ -3,7 +3,7 @@ package no.ntnu.beardblaster.screen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
@@ -33,7 +33,7 @@ private val log = logger<JoinLobbyScreen>()
 
 class JoinLobbyScreen(
     game: BeardBlasterGame,
-    batch: Batch,
+    batch: SpriteBatch,
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera), Observer {

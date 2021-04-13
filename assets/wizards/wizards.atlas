@@ -1,0 +1,96 @@
+wizards.png
+size: 1848, 1562
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+evil_wizard_attack
+  rotate: false
+  xy: 0, 950
+  size: 1200, 150
+  orig: 1200, 150
+  offset: 0, 0
+  index: -1
+evil_wizard_death
+  rotate: false
+  xy: 0, 1400
+  size: 750, 150
+  orig: 750, 150
+  offset: 0, 0
+  index: -1
+evil_wizard_idle
+  rotate: false
+  xy: 0, 1100
+  size: 1200, 150
+  orig: 1200, 150
+  offset: 0, 0
+  index: -1
+evil_wizard_move
+  rotate: false
+  xy: 0, 1250
+  size: 1200, 150
+  orig: 1200, 150
+  offset: 0, 0
+  index: -1
+evil_wizard_take_hit
+  rotate: false
+  xy: 750, 1412
+  size: 600, 150
+  orig: 600, 150
+  offset: 0, 0
+  index: -1
+good_wizard_attack1
+  rotate: false
+  xy: 0, 0
+  size: 1848, 190
+  orig: 1848, 190
+  offset: 0, 0
+  index: -1
+good_wizard_attack2
+  rotate: false
+  xy: 0, 190
+  size: 1848, 190
+  orig: 1848, 190
+  offset: 0, 0
+  index: -1
+good_wizard_death
+  rotate: false
+  xy: 0, 570
+  size: 1617, 190
+  orig: 1617, 190
+  offset: 0, 0
+  index: -1
+good_wizard_fall
+  rotate: true
+  xy: 1200, 950
+  size: 462, 190
+  orig: 462, 190
+  offset: 0, 0
+  index: -1
+good_wizard_hit
+  rotate: true
+  xy: 1617, 570
+  size: 924, 190
+  orig: 924, 190
+  offset: 0, 0
+  index: -1
+good_wizard_idle
+  rotate: false
+  xy: 0, 760
+  size: 1386, 190
+  orig: 1386, 190
+  offset: 0, 0
+  index: -1
+good_wizard_jump
+  rotate: true
+  xy: 1390, 760
+  size: 462, 190
+  orig: 462, 190
+  offset: 0, 0
+  index: -1
+good_wizard_run
+  rotate: false
+  xy: 0, 380
+  size: 1848, 190
+  orig: 1848, 190
+  offset: 0, 0
+  index: -1

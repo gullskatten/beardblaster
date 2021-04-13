@@ -2,15 +2,14 @@ package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import kotlinx.coroutines.launch
 import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
 import ktx.graphics.use
-import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.*
 import no.ntnu.beardblaster.commons.User
@@ -20,7 +19,7 @@ import no.ntnu.beardblaster.user.UserAuth
 
 class LoadingScreen(
     private val game: BeardBlasterGame,
-    private val batch: Batch,
+    private val batch: SpriteBatch,
     private val assets: AssetStorage,
     private val camera: OrthographicCamera,
 ) : KtxScreen {

@@ -3,13 +3,11 @@ package no.ntnu.beardblaster.screen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
-import ktx.async.KtxAsync
 import ktx.log.info
 import ktx.log.logger
 import ktx.scene2d.scene2d
@@ -17,7 +15,6 @@ import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.*
-import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData
 import java.util.*
 
@@ -25,7 +22,7 @@ private val log = logger<MenuScreen>()
 
 class MenuScreen(
     game: BeardBlasterGame,
-    batch: Batch,
+    batch: SpriteBatch,
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera), Observer {
@@ -39,9 +36,9 @@ class MenuScreen(
     private lateinit var wizardHeading: Label
 
     override fun initScreen() {
-        KtxAsync.launch {
+        /*KtxAsync.launch {
             UserData.instance.loadUserData()
-        }
+        }*/
         UserData.instance.addObserver(this)
 
         createGameBtn = scene2d.textButton(Nls.createGame())
@@ -75,7 +72,7 @@ class MenuScreen(
     override fun setBtnEventListeners() {
         createGameBtn.onClick {
             // Handle creation of game, and then go to Lobby screen to display code and wait for player 2
-            game.setScreen<LobbyScreen>()
+            game.setScreen<GameplayScreen>()
 
         }
         joinGameBtn.onClick {
@@ -88,10 +85,10 @@ class MenuScreen(
             game.setScreen<TutorialScreen>()
         }
         logoutBtn.onClick {
-            if (UserAuth().isLoggedIn()) {
+            /*if (UserAuth().isLoggedIn()) {
                 UserData.instance.setUserData(null)
                 UserAuth().signOut()
-            }
+            }*/
             game.setScreen<LoginMenuScreen>()
         }
         exitBtn.onClick {
@@ -116,6 +113,6 @@ class MenuScreen(
 
     override fun dispose() {
         super.dispose()
-        UserData.instance.deleteObserver(this)
+        /*UserData.instance.deleteObserver(this)*/
     }
 }

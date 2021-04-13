@@ -1,7 +1,7 @@
 package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
-import ktx.log.debug
 import ktx.log.error
 import ktx.log.info
 import ktx.log.logger
@@ -32,7 +31,7 @@ val LOG = logger<RegisterScreen>()
 
 class RegisterScreen(
     game: BeardBlasterGame,
-    batch: Batch,
+    batch: SpriteBatch,
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {

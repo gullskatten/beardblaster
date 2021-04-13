@@ -3,30 +3,23 @@ package no.ntnu.beardblaster.screen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
-import ktx.async.KtxAsync
 import ktx.scene2d.*
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
-import no.ntnu.beardblaster.commons.State
-import no.ntnu.beardblaster.commons.game.Game
-import no.ntnu.beardblaster.lobby.LobbyData
-import no.ntnu.beardblaster.lobby.LobbyRepository
 import no.ntnu.beardblaster.ui.*
 import java.util.*
 
 class LobbyScreen(
     game: BeardBlasterGame,
-    batch: Batch,
+    batch: SpriteBatch,
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera), Observer {
@@ -37,14 +30,14 @@ class LobbyScreen(
     private lateinit var backBtn: Button
 
     override fun initScreen() {
-        LobbyData.instance.addObserver(this)
+        /*LobbyData.instance.addObserver(this)*/
 
         codeLabel = bodyLabel("Creating game..")
         opponentLabel = bodyLabel("Waiting for opponent to join..")
 
-        KtxAsync.launch {
+        /*KtxAsync.launch {
             LobbyData.instance.createLobby()
-        }
+        }*/
         infoLabel = scene2d.label(Nls.shareGameCodeMessage())
         startGameBtn = scene2d.textButton(Nls.startGame())
         backBtn = scene2d.button(ButtonStyle.Cancel.name)
@@ -77,7 +70,7 @@ class LobbyScreen(
         startGameBtn.onClick {
             // When two players have joined the game, the host can chose to start it
             // (or alternatively just start immediately (might be simpler))
-            KtxAsync.launch {
+            /*KtxAsync.launch {
                 LobbyData.instance.startGame()?.collect {
                     when (it) {
                         is State.Loading -> {
@@ -86,18 +79,18 @@ class LobbyScreen(
                         is State.Failed -> {
                             opponentLabel.setText(it.message)
                         }
-                        is State.Success -> {
+                        is State.Success -> {*/
                             game.setScreen<GameplayScreen>()
-                        }
+                        /*}
                     }
                 }
-            }
+            }*/
         }
         backBtn.onClick {
-            KtxAsync.launch {
-                if (LobbyData.instance.game == null) {
+            /*KtxAsync.launch {
+                if (LobbyData.instance.game == null) {*/
                     game.setScreen<MenuScreen>()
-                } else {
+                /*} else {
                     LobbyData.instance.cancelLobby()?.collect {
                         when (it) {
                             is State.Success -> {
@@ -113,7 +106,7 @@ class LobbyScreen(
                     }
                 }
 
-            }
+            }*/
         }
     }
 
@@ -129,7 +122,7 @@ class LobbyScreen(
 
     @ExperimentalCoroutinesApi
     override fun update(p0: Observable?, p1: Any?) {
-        if (p1 is Game) {
+        /*if (p1 is Game) {
             codeLabel.setText(p1.code)
 
             // Yeah, this is ugly! Listen for live updates on lobby with id
@@ -154,6 +147,6 @@ class LobbyScreen(
                     }
                 };
             }
-        }
+        }*/
     }
 }

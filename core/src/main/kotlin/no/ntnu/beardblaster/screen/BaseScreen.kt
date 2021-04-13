@@ -3,7 +3,7 @@ package no.ntnu.beardblaster.screen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
@@ -14,7 +14,7 @@ private val log = logger<BaseScreen>()
 
 abstract class BaseScreen(
     val game: BeardBlasterGame,
-    val batch: Batch,
+    val batch: SpriteBatch,
     val assets: AssetStorage,
     val camera: OrthographicCamera,
 ) : KtxScreen {
@@ -42,6 +42,7 @@ abstract class BaseScreen(
         update(delta)
         stage.act(delta)
         stage.draw()
+
     }
 
     override fun dispose() {
