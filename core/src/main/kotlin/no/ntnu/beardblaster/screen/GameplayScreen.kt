@@ -58,7 +58,7 @@ class GameplayScreen(
 
     private fun initPreparationPhase() {
 
-        goodWizard?.setAnimation(100f, 100f, assets , WizardTextures.GoodWizardIdle)
+        goodWizard.setAnimation(100f, 100f, assets , WizardTextures.GoodWizardIdle)
         spellCasting = SpellCasting()
         quitBtn = scene2d.textButton(Nls.quit())
         fireElementBtn = scene2d.button(ElementType.Fire.name)
@@ -105,8 +105,8 @@ class GameplayScreen(
         //When prep. phase is done this needs to be updated to update and not clear the stage
         stage.clear()
         stage.addActor(table)
-        goodWizard?.setAnimation(0f,0f, assets, WizardTextures.GoodWizardAttack2)
-        evilWizard?.setAnimation(0f, camera.viewportWidth - 400f, assets, WizardTextures.EvilWizardTakeHit)
+        goodWizard.setAnimation(0f,0f, assets, WizardTextures.GoodWizardAttack2)
+        evilWizard.setAnimation(0f, camera.viewportWidth - 400f, assets, WizardTextures.EvilWizardTakeHit)
     }
 
     override fun setBtnEventListeners() {
@@ -129,8 +129,8 @@ class GameplayScreen(
 
     override fun update(delta: Float) {
 
-        goodWizard?.update(delta)
-        evilWizard?.update(delta)
+        goodWizard.update(delta)
+        evilWizard.update(delta)
         if (gamePhase == Phase.PREP) {
             countDownTimer -= delta
         }
@@ -160,14 +160,14 @@ class GameplayScreen(
         {
             batch.use() {
                 it.projectionMatrix = camera.combined
-                it.draw(goodWizard?.getWizard(), -340f,-200f, goodWizard!!.getBounds().width*5, goodWizard!!.getBounds().height*5)
+                it.draw(goodWizard.getWizard(), -340f,-200f, goodWizard.getBounds().width*5, goodWizard.getBounds().height*5)
                 }
         }
         if (gamePhase == Phase.ACTION) {
             batch.use() {
                 /*it.projectionMatrix = camera.combined*/
-                it.draw(goodWizard?.getWizard(), -340f,-200f, goodWizard!!.getBounds().width*5, goodWizard!!.getBounds().height*5)
-                it.draw(evilWizard?.getWizard(), camera.viewportWidth - evilWizard.getBounds().width + 300f, -340f, -evilWizard!!.getBounds().width*9, evilWizard!!.getBounds().height*9)
+                it.draw(goodWizard.getWizard(), -340f,-200f, goodWizard.getBounds().width*5, goodWizard.getBounds().height*5)
+                it.draw(evilWizard.getWizard(), camera.viewportWidth - evilWizard.getBounds().width + 300f, -340f, -evilWizard.getBounds().width*9, evilWizard.getBounds().height*9)
 
             }
         }
