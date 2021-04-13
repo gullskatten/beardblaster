@@ -67,37 +67,26 @@ class LoginMenuScreen(
     override fun update(delta: Float) {}
 
     private fun showLoginDialog() {
-        InputDialog(Nls.login()).apply {
-            input("email", Nls.emailAddress())
-            input("password", Nls.password(), true)
+        LoginDialog().apply {
             okBtn.onChange {
                 if (!UserAuth().isLoggedIn() && isValid) {
-                    val email = data.getValue("email")
-                    val password = data.getValue("password")
-                    log.debug { "Signing in user: (${email}, ${password})" }
+                    log.debug { "Signing in user: ($email, $password)" }
                     UserAuth().signIn(email, password)
                         .then<GdxFirebaseUser> { game.setScreen<MenuScreen>() }
                         .fail { message, _ ->
-                            log.info { message }
+                            log.error { message }
                             errorLabel.setText(message)
                         }
                 }
                 hide()
             }
-            cancelBtn.onChange { hide() }
         }.show(stage)
     }
 
     private fun showRegisterDialog() {
-        InputDialog(Nls.register()).apply {
-            input("username", Nls.wizardName())
-            input("email", Nls.emailAddress())
-            input("password", Nls.password(), true)
+        RegisterDialog().apply {
             okBtn.onChange {
-                val username = data.getValue("username")
-                val email = data.getValue("email")
-                val password = data.getValue("password")
-                log.debug { "Got user data from registration dialog: ($username, $email, $password)" }
+                log.debug { "Creating new user: ($username, $email, $password)" }
                 UserAuth().createUser(email, password, username)
                     .then<GdxFirebaseUser> {
                         val user = User(username, id = it.userInfo.uid)
@@ -109,6 +98,7 @@ class LoginMenuScreen(
                                     }
                                     is State.Failed -> {
                                         log.error { state.message }
+                                        errorLabel.setText(state.message)
                                     }
                                     is State.Loading -> {
                                         log.info { "Creating user.." }
@@ -117,15 +107,11 @@ class LoginMenuScreen(
                             }
                         }
                     }.fail { message, _ ->
-                        // TODO: Show error: User already exist
-                        //if (message.contains("The email address is already in use by another account")) {
-                        //}
                         log.error { message }
-                        // TODO: Show error to user (on user creation fail)
+                        errorLabel.setText(message)
                     }
                 hide()
             }
-            cancelBtn.onChange { hide() }
         }.show(stage)
     }
 }
