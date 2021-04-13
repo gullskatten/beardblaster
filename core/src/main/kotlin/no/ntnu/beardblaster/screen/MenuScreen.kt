@@ -50,7 +50,7 @@ class MenuScreen(
         tutorialBtn = scene2d.textButton(Nls.tutorial())
         logoutBtn = scene2d.textButton(Nls.logOut())
         exitBtn = scene2d.textButton(Nls.exitGame())
-        currentWizardLabel = bodyLabel("")
+        currentWizardLabel = bodyLabel(UserData.instance.getCurrentUserString())
         wizardHeading = headingLabel("BeardBlaster")
 
         val table = fullSizeTable(20f).apply {
@@ -74,9 +74,7 @@ class MenuScreen(
 
     override fun setBtnEventListeners() {
         createGameBtn.onClick {
-            // Handle creation of game, and then go to Lobby screen to display code and wait for player 2
             game.setScreen<LobbyScreen>()
-
         }
         joinGameBtn.onClick {
             game.setScreen<JoinLobbyScreen>()

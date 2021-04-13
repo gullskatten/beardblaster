@@ -49,8 +49,8 @@ class UserAuth : IUserAuth {
 
     override fun loginDevUser() {
         if (!isLoggedIn() && Gdx.app.logLevel == Application.LOG_DEBUG) signIn(
-            "beard@blaster.com",
-            "beardblaster"
+            "beardy@beardy.no",
+            "beardy"
         )
     }
 }
