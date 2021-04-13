@@ -3,9 +3,7 @@ package no.ntnu.beardblaster.user
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import ktx.log.debug
-import ktx.log.error
 import ktx.log.logger
-import no.ntnu.beardblaster.commons.User
 import pl.mk5.gdx.fireapp.GdxFIRAuth
 import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
 import pl.mk5.gdx.fireapp.promises.Promise

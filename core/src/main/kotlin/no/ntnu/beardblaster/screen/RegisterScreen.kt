@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
-import ktx.log.debug
 import ktx.log.error
 import ktx.log.info
 import ktx.log.logger
@@ -22,7 +21,7 @@ import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
-import no.ntnu.beardblaster.commons.User
+import no.ntnu.beardblaster.commons.user.User
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserRepository

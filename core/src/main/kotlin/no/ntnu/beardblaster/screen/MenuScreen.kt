@@ -6,16 +6,20 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
+import ktx.log.error
 import ktx.log.info
 import ktx.log.logger
 import ktx.scene2d.scene2d
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.commons.State
+import no.ntnu.beardblaster.spell.SpellRepository
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData
@@ -41,6 +45,14 @@ class MenuScreen(
     override fun initScreen() {
         KtxAsync.launch {
             UserData.instance.loadUserData()
+
+            val foundSpell = SpellRepository().getSpellById(1)
+            if(foundSpell != null) {
+                LOG.info {foundSpell.spellName }
+            } else {
+                LOG.info { "Spell not found!" }
+            }
+
         }
         UserData.instance.addObserver(this)
 
