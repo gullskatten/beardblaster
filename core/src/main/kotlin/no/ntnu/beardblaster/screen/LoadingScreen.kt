@@ -10,10 +10,13 @@ import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
 import ktx.graphics.use
+import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.*
+import no.ntnu.beardblaster.commons.User
 import no.ntnu.beardblaster.ui.createSkin
 import no.ntnu.beardblaster.user.UserAuth
+
 
 class LoadingScreen(
     private val game: BeardBlasterGame,
@@ -23,6 +26,7 @@ class LoadingScreen(
 ) : KtxScreen {
     private val renderer = ShapeRenderer()
     private val font = BitmapFont()
+    private var currentUser: User? = null
     private val isFinishedLoading: Boolean
         get() = assets.progress.percent >= 1f
 

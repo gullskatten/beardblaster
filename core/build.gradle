@@ -21,5 +21,7 @@ dependencies {
 	api "com.kotcrab.vis:vis-ui:$visUiVersion"
 	implementation "pl.mk5.gdx-fireapp:gdx-fireapp-core:$gdxFireappVersion"
 	implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+	implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2"
 	implementation project(':commons')
+	implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1"
 }

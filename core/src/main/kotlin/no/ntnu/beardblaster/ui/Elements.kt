@@ -33,6 +33,13 @@ fun headingLabel(text: String): Label {
     }
 }
 
+fun bodyLabel(text: String, labelStyle: String = LabelStyle.Body.name): Label {
+    return scene2d.label(text, labelStyle) {
+        setAlignment(Align.center)
+        setFontScale(2f)
+    }
+}
+
 fun fullSizeTable(pad: Float = 0f): Table {
     return scene2d.table {
         setBounds(0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
