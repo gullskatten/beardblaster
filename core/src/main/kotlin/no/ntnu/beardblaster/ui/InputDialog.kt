@@ -38,21 +38,20 @@ class InputDialog(
     }
 
     private val inputMap = HashMap<String, TextField>()
+
+    val isValid: Boolean = inputMap.filter { it.value.text == "" }.isEmpty()
+
     val data: Map<String, String>
         get() = inputMap.map { (key, value) -> key to value.text }.toMap()
 
     fun input(key: String, messageText: String, passwordMode: Boolean = false) {
         val inputField = inputField(messageText, passwordMode).apply {
-            onChange { updateButtonSensitivity() }
+            onChange { okBtn.isDisabled = !isValid }
         }
         inputMap[key] = inputField
         inputTable.apply {
             row()
             add(inputField).growX()
         }
-    }
-
-    private fun updateButtonSensitivity() {
-        okBtn.isDisabled = inputMap.filter { it.value.text == "" }.isNotEmpty()
     }
 }
