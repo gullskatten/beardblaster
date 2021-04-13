@@ -35,7 +35,7 @@ class UserData private constructor() : Observable() {
                             isLoading = false
                             setUserData(it.data)
                             LOG.info { "Found Current User (!): ${it.data.displayName}" }
-                            notifyObservers("${it.data.displayName} - ${it.data.beardLength}cm")
+                            notifyObservers(getCurrentUserString())
                             error = null
                         }
                         is State.Loading -> {
@@ -55,6 +55,11 @@ class UserData private constructor() : Observable() {
                 }
         }
 
+    }
+
+    fun getCurrentUserString(): String {
+        user?.let { return "${user!!.displayName} - ${user!!.beardLength}cm" }
+        return ""
     }
 
     companion object {

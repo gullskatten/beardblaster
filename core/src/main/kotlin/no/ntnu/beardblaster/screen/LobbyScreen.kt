@@ -101,6 +101,7 @@ class LobbyScreen(
                     LobbyData.instance.cancelLobby()?.collect {
                         when (it) {
                             is State.Success -> {
+                                LobbyData.instance.setGame(null)
                                 game.setScreen<MenuScreen>()
                             }
                             is State.Loading -> {
