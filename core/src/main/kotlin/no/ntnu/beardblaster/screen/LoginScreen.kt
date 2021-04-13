@@ -21,7 +21,6 @@ import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
 
-private val LOG = logger<LoginScreen>()
 
 class LoginScreen(
     game: BeardBlasterGame,

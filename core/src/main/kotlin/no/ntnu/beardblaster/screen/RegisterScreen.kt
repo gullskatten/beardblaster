@@ -5,8 +5,15 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
+import ktx.async.KtxAsync
+import ktx.log.debug
+import ktx.log.error
+import ktx.log.info
+import ktx.log.logger
 import ktx.scene2d.button
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
@@ -14,8 +21,14 @@ import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.commons.State
+import no.ntnu.beardblaster.commons.User
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
+import no.ntnu.beardblaster.user.UserRepository
+import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
+
+val LOG = logger<RegisterScreen>()
 
 class RegisterScreen(
     game: BeardBlasterGame,
@@ -64,10 +77,34 @@ class RegisterScreen(
     override fun setBtnEventListeners() {
         createBtn.onClick {
             if (emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty() && userNameInput.text.isNotEmpty()) {
-                UserAuth().createUser(emailInput.text, passwordInput.text, userNameInput.text)
+                UserAuth().createUser(emailInput.text, passwordInput.text, userNameInput.text).then<GdxFirebaseUser> {
+
+                    val user = User(displayName = userNameInput.text, id = it.userInfo.uid)
+
+                    KtxAsync.launch {
+                        UserRepository().create(user, "users").collect {
+                            when(it) {
+                                is State.Success -> {
+                                    game.setScreen<MenuScreen>()
+                                }
+                                is State.Failed -> {
+                                    LOG.error { it.message }
+                                }
+                                is State.Loading -> {
+                                    LOG.info { "Creating user.."}
+                                }
+                            }
+                        }
+                    }
+
+                }.fail { s, _ ->
+                        if (s.contains("The email address is already in use by another account")) {
+                            // TODO: Show error: User already exist
+                        }
+                        LOG.error { s }
+                        // TODO: SHOW ERROR TO USER (ON USER CREATION FAIL)
+                    }
             }
-            // TODO: Future: Don't proceed unless signup actually successful
-            game.setScreen<MenuScreen>()
         }
         backBtn.onClick {
             game.setScreen<LoginMenuScreen>()
