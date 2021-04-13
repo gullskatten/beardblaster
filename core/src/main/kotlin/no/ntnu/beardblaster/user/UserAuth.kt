@@ -11,7 +11,7 @@ import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
 import pl.mk5.gdx.fireapp.promises.Promise
 
 interface IUserAuth {
-    fun createUser(email: String, password: String, displayName: String)
+    fun createUser(email: String, password: String, displayName: String) : Promise<GdxFirebaseUser>
     fun signIn(email: String, password: String): Promise<GdxFirebaseUser>
     fun signOut()
     fun isLoggedIn(): Boolean
@@ -22,22 +22,9 @@ private val LOG = logger<UserAuth>()
 
 class UserAuth : IUserAuth {
 
-    override fun createUser(email: String, password: String, displayName: String) {
-        GdxFIRAuth.inst()
+    override fun createUser(email: String, password: String, displayName: String): Promise<GdxFirebaseUser> {
+        return GdxFIRAuth.inst()
             .createUserWithEmailAndPassword(email, password.toCharArray())
-            .then<GdxFirebaseUser> {
-                LOG.debug { "Created user: $displayName, ${it.userInfo.email}" }
-
-                val user = User(displayName, id = it.userInfo.uid)
-                UserRepository().create(user, "users")
-            }
-            .fail { s, _ ->
-                if (s.contains("The email address is already in use by another account")) {
-                    LOG.debug { "Tried to create a duplicate user $email" }
-                }
-                LOG.error { "Create user failed $s" }
-                // TODO: SHOW ERROR TO USER (ON USER CREATION FAIL)
-            }
     }
 
 

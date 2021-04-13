@@ -48,12 +48,8 @@ class UserRepository(private val db: FirebaseFirestore = Firebase.firestore) : A
             if (doc.hasId()) {
                 Log.d(TAG, "Updating document with id ${doc.id}")
 
-                val task = db.collection(collection).document(doc.id).set(doc)
-                if (task.isSuccessful) {
-                    emit(State.success(doc))
-                } else if (task.isComplete && task.exception != null) {
-                    emit(State.failed(task.exception?.message!!))
-                }
+                db.collection(collection).document(doc.id).set(doc).await()
+                emit(State.success(doc))
             } else {
                 Log.d(TAG, "Adding document in $collection")
                 val newDocRef = db.collection(collection).add(doc).await()
