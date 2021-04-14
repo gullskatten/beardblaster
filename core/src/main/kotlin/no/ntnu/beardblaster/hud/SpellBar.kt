@@ -3,16 +3,21 @@ package no.ntnu.beardblaster.hud
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import ktx.actors.onClick
+import ktx.log.debug
+import ktx.log.logger
 import ktx.scene2d.*
 import no.ntnu.beardblaster.ElementType
 import no.ntnu.beardblaster.models.Element
+import no.ntnu.beardblaster.models.SpellCasting
 import no.ntnu.beardblaster.ui.Image
 import no.ntnu.beardblaster.ui.get
 import java.util.*
 
+private val LOG = logger<SpellBar>()
+
 @Scene2dDsl
 class SpellBar(
-    styleName: String, skin: Skin, private val selected: MutableList<Element?>
+    styleName: String, skin: Skin, private val spellCasting: SpellCasting
 ) : Table(skin), KTable, Observer {
     companion object {
         const val MAX_SLOTS = 3
@@ -30,7 +35,7 @@ class SpellBar(
 
     private fun build() {
         for (count in 0 until MAX_SLOTS) {
-            val element: Element? = selected[count]
+            val element: Element? = spellCasting.selectedElements[count]
             val elementBtnSize = 200f
             val slot = scene2d.table {
                 background = skin[Image.SpellBarSlot]
@@ -51,6 +56,7 @@ class SpellBar(
     }
 
     override fun update(p0: Observable?, p1: Any?) {
+        LOG.debug { "Update spell bar" }
         this.update()
     }
 }
@@ -63,7 +69,7 @@ class SpellBar(
 inline fun <S> KWidget<S>.spellbar(
     skin: Skin = Scene2DSkin.defaultSkin,
     style: String = defaultStyle,
-    selected: MutableList<Element?>,
+    spellCasting: SpellCasting,
     init: SpellBar.(S) -> Unit = {}
-): SpellBar = actor(SpellBar(style, skin, selected), init)
+): SpellBar = actor(SpellBar(style, skin, spellCasting), init)
 

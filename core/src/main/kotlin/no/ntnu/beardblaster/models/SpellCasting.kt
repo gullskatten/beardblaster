@@ -51,11 +51,22 @@ class SpellCasting : Observer, Observable() {
         addElement(nature)
     }
 
-/*    fun getSpellID(): Int {
+    fun getSelectedSpell(): Spell? {
+        if (null in selectedElements) return null
+        // Here you would query the database I guess to get data to initialize the spell model
+        return Spell(1, "Fireball", 12, "Blasts the enemy to pieces.")
+    }
+
+    /*    fun getSpellID(): Int {
         //Unique spell IDs can be created by using the fundamental theorem of arithmetic, as long as all the distinct elementIDs are uniquely prime. The number of elements needed to be added for this to be a
         //terrible way of uniquely identifying spells is quite high.
         return elementIDs[0] * elementIDs[1] * elementIDs[2]
     }*/
+
+    fun reset() {
+        LOG.debug { "Reset selected elements" }
+        selectedElements = mutableListOf(null, null, null)
+    }
 
     override fun update(o: Observable, arg: Any) {
         if (o is ElementClickedObserver) {

@@ -57,7 +57,7 @@ operator fun Skin.get(font: FontStyle): BitmapFont = this.getFont(font.name)
 enum class LabelStyle {
     Heading,
     Body,
-    Error
+    Error,
 }
 
 enum class ButtonStyle {
@@ -84,6 +84,7 @@ fun createSkin(assets: AssetStorage): Skin {
             fontColor = Color.BROWN
             background = skin[Image.ModalHeader]
         }
+
         label(LabelStyle.Body.name) {
             font = skin[FontStyle.Default]
             fontColor = Color.WHITE
