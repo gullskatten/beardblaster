@@ -16,9 +16,7 @@ import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.ElementType
 import no.ntnu.beardblaster.WORLD_WIDTH
-import no.ntnu.beardblaster.assets.AtlasAsset
 import no.ntnu.beardblaster.assets.Nls
-import no.ntnu.beardblaster.assets.get
 import no.ntnu.beardblaster.hud.SpellBar
 import no.ntnu.beardblaster.hud.spellbar
 import no.ntnu.beardblaster.models.SpellCasting
@@ -34,7 +32,6 @@ class GameplayScreen(
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    private val atlas = assets[AtlasAsset.Wizards]
     private lateinit var quitBtn: TextButton
     private lateinit var fireElementBtn: Button
     private lateinit var iceElementBtn: Button
@@ -46,8 +43,9 @@ class GameplayScreen(
     private var evilWizard: WizardTexture = WizardTexture()
     private enum class Phase {
         PREP,
-        ACTION,
-        WAIT
+        ACTION1,
+        ACTION2,
+        ACTION3
     }
     private lateinit var gamePhase: Phase
     override fun initScreen() {
@@ -57,8 +55,7 @@ class GameplayScreen(
     }
 
     private fun initPreparationPhase() {
-
-        goodWizard.setAnimation(100f, 100f, assets , WizardTextures.GoodWizardIdle)
+        goodWizard.setAnimation(0f, 0f, assets , WizardTextures.GoodWizardIdle)
         spellCasting = SpellCasting()
         quitBtn = scene2d.textButton(Nls.quit())
         fireElementBtn = scene2d.button(ElementType.Fire.name)
@@ -99,15 +96,34 @@ class GameplayScreen(
 
 
     private fun initActionPhase() {
-        val table = smallTable().apply {
-
+        val table = fullSizeTable().apply {
+            background = skin[Image.Background]
+            add(headingLabel("FIGHT"))
+            row()
+            row()
+            row()
+            add(bodyLabel("BOOM, BLAST, POOF, BEARD GONE"))
         }
-        //When prep. phase is done this needs to be updated to update and not clear the stage
+        //When prep. phase is done this needs to be changed to update and not clear the stage
         stage.clear()
         stage.addActor(table)
-        goodWizard.setAnimation(0f,0f, assets, WizardTextures.GoodWizardAttack2)
-        evilWizard.setAnimation(0f, camera.viewportWidth - 400f, assets, WizardTextures.EvilWizardTakeHit)
+
+        //If wizardA attacks first -> wizardA.setAnimation(Attack) + wizardB.setAnimation(takeHit)
+        //If wizardA | B is dead -> setAnimation(dead)
+        goodWizard.setAnimation(0f,0f, assets, WizardTextures.GoodWizardAttack1)
+        evilWizard.setAnimation(0f, 0f, assets, WizardTextures.EvilWizardTakeHit)
     }
+
+    private fun initSecondActionPhase() {
+        goodWizard.setAnimation(0f,0f, assets, WizardTextures.GoodWizardHit)
+        evilWizard.setAnimation(0f, 0f, assets, WizardTextures.EvilWizardAttack)
+    }
+
+    private fun initSecondDeathPhase() {
+        goodWizard.setAnimation(0f,0f, assets, WizardTextures.GoodWizardIdle)
+        evilWizard.setAnimation(0f, 0f, assets, WizardTextures.EvilWizardDeath)
+    }
+
 
     override fun setBtnEventListeners() {
         quitBtn.onClick {
@@ -128,51 +144,53 @@ class GameplayScreen(
     }
 
     override fun update(delta: Float) {
-
         goodWizard.update(delta)
         evilWizard.update(delta)
-        if (gamePhase == Phase.PREP) {
-            countDownTimer -= delta
-        }
+
+        countDownTimer -= delta
 
         val table = smallTable().apply {
             background = skin[Image.TimerSlot]
             add(bodyLabel(countDownTimer.toInt().toString()))
         }
         if (countDownTimer <= 10) {
-            /*stage.addActor(bodyLabel(countDownTimer.toInt().toString()))*/
             stage.addActor(table)
         }
 
         if (countDownTimer <= 0 && gamePhase == Phase.PREP) {
-            gamePhase = Phase.ACTION
-            if (gamePhase == Phase.ACTION) {
-                initActionPhase()
-            }
+            gamePhase = Phase.ACTION1
+            initActionPhase()
 
+        }
+        if (countDownTimer <= -5f && gamePhase == Phase.ACTION1) {
+            gamePhase = Phase.ACTION2
+            initSecondActionPhase()
+        }
+
+        if (countDownTimer <= -10f && gamePhase == Phase.ACTION2){
+            gamePhase = Phase.ACTION3
+            initSecondDeathPhase()
         }
         camera.update()
     }
 
     override fun render(delta: Float) {
         update(delta)
+        stage.act(delta)
+        stage.draw()
         if (gamePhase == Phase.PREP)
         {
             batch.use() {
                 it.projectionMatrix = camera.combined
-                it.draw(goodWizard.getWizard(), -340f,-200f, goodWizard.getBounds().width*5, goodWizard.getBounds().height*5)
+                it.draw(goodWizard.getWizard(), -300f, -200f, goodWizard.getBounds().width*5f, goodWizard.getBounds().height*5f)
                 }
         }
-        if (gamePhase == Phase.ACTION) {
+        if (gamePhase != Phase.PREP) {
             batch.use() {
-                /*it.projectionMatrix = camera.combined*/
-                it.draw(goodWizard.getWizard(), -340f,-200f, goodWizard.getBounds().width*5, goodWizard.getBounds().height*5)
-                it.draw(evilWizard.getWizard(), camera.viewportWidth - evilWizard.getBounds().width + 300f, -340f, -evilWizard.getBounds().width*9, evilWizard.getBounds().height*9)
+                it.draw(goodWizard.getWizard(), -300f,-200f, goodWizard.getBounds().width*4f, goodWizard.getBounds().height*4f)
+                it.draw(evilWizard.getWizard(), camera.viewportWidth - evilWizard.getBounds().width + 520f, -440f, -evilWizard.getBounds().width*9, evilWizard.getBounds().height*9)
 
             }
         }
-        stage.act(delta)
-        stage.draw()
-
     }
 }

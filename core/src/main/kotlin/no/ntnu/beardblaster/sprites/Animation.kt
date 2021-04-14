@@ -2,7 +2,6 @@ package no.ntnu.beardblaster.sprites
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Array
-import ktx.log.debug
 import ktx.log.logger
 import no.ntnu.beardblaster.screen.GameplayScreen
 
@@ -28,7 +27,6 @@ class Animation {
 
 
     fun update(deltaTime: Float) {
-        log.debug { "Animation Update" }
         currentFrameTime += deltaTime
         if (currentFrameTime > maxFrameTime) {
             frame++
@@ -40,7 +38,6 @@ class Animation {
     }
 
     fun getFrame(): TextureRegion? {
-        log.debug { "Animation GetFrame" }
         return frames?.get(frame)
     }
 }

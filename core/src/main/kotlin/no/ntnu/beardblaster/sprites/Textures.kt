@@ -8,7 +8,6 @@ enum class WizardTextures(val atlasKey: String) {
     EvilWizardIdle("evil_wizard_idle"),
     EvilWizardMove("evil_wizard_move"),
     EvilWizardTakeHit("evil_wizard_take_hit"),
-    EvilWizardAttack1("good_wizard_attack1"),
 
     GoodWizardAttack1("good_wizard_attack1"),
     GoodWizardAttack2("good_wizard_attack2"),
