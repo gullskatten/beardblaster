@@ -23,7 +23,7 @@ import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
-import no.ntnu.beardblaster.lobby.LobbyData
+import no.ntnu.beardblaster.lobby.LobbyHandler
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserData
 import pl.mk5.gdx.fireapp.GdxFIRAuth
@@ -43,10 +43,11 @@ class JoinLobbyScreen(
     private lateinit var codeInput: TextField
     private lateinit var submitCodeBtn: TextButton
     private lateinit var backBtn: Button
+    private var lobbyHandler: LobbyHandler = LobbyHandler()
 
     override fun initScreen() {
         // Listen for updates on LobbyData
-        LobbyData.instance.addObserver(this)
+        lobbyHandler.addObserver(this)
         codeInput = inputField(Nls.gameCode())
         submitCodeBtn = scene2d.textButton(Nls.submit())
         backBtn = scene2d.button(ButtonStyle.Cancel.name)
@@ -86,14 +87,14 @@ class JoinLobbyScreen(
                     return@onClick;
                 }
             // This will eventually trigger "update()"
-            LobbyData.instance.joinLobbyWithCode(codeInput.text)
+            lobbyHandler.joinLobbyWithCode(codeInput.text)
             waitingLabel.setText("Verifying code...")
             waitingLabel.isVisible = true
         }
         backBtn.onClick {
             KtxAsync.launch {
-                if (LobbyData.instance.game != null) {
-                    LobbyData.instance.leaveLobby()?.collect {
+                if (lobbyHandler.game != null) {
+                    lobbyHandler.leaveLobby()?.collect {
                         when (it) {
                             is State.Success -> {
                                 game.setScreen<MenuScreen>()
@@ -128,7 +129,7 @@ class JoinLobbyScreen(
 
     // Listens for changes on lobby -> when entering lobby and when lobby starts.
     override fun update(o: Observable?, arg: Any?) {
-        if (o is LobbyData) {
+        if (o is LobbyHandler) {
 
             if (arg is String) {
                 errorLabel.setText(arg)
