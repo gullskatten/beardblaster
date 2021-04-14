@@ -19,7 +19,7 @@ import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
-import no.ntnu.beardblaster.lobby.LobbyData
+import no.ntnu.beardblaster.lobby.LobbyHandler
 import no.ntnu.beardblaster.lobby.LobbyRepository
 import no.ntnu.beardblaster.ui.*
 import java.util.*
@@ -35,15 +35,16 @@ class LobbyScreen(
     private lateinit var infoLabel: Label
     private lateinit var startGameBtn: TextButton
     private lateinit var backBtn: Button
+    private var lobbyHandler: LobbyHandler = LobbyHandler()
 
     override fun initScreen() {
-        LobbyData.instance.addObserver(this)
+        lobbyHandler.addObserver(this)
 
         codeLabel = bodyLabel("Creating game..")
         opponentLabel = bodyLabel("Waiting for opponent to join..")
 
         KtxAsync.launch {
-            LobbyData.instance.createLobby()
+            lobbyHandler.createLobby()
         }
         infoLabel = scene2d.label(Nls.shareGameCodeMessage())
         startGameBtn = scene2d.textButton(Nls.startGame())
@@ -78,7 +79,7 @@ class LobbyScreen(
             // When two players have joined the game, the host can chose to start it
             // (or alternatively just start immediately (might be simpler))
             KtxAsync.launch {
-                LobbyData.instance.startGame()?.collect {
+                lobbyHandler.startGame()?.collect {
                     when (it) {
                         is State.Loading -> {
                             opponentLabel.setText("Starting game..")
@@ -95,13 +96,13 @@ class LobbyScreen(
         }
         backBtn.onClick {
             KtxAsync.launch {
-                if (LobbyData.instance.game == null) {
+                if (lobbyHandler.game == null) {
                     game.setScreen<MenuScreen>()
                 } else {
-                    LobbyData.instance.cancelLobby()?.collect {
+                    lobbyHandler.cancelLobby()?.collect {
                         when (it) {
                             is State.Success -> {
-                                LobbyData.instance.setGame(null)
+                                lobbyHandler.setGame(null)
                                 game.setScreen<MenuScreen>()
                             }
                             is State.Loading -> {

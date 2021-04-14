@@ -16,9 +16,9 @@ import no.ntnu.beardblaster.screen.GameplayScreen
 import no.ntnu.beardblaster.user.UserData
 import java.util.*
 
-private val LOG = logger<LobbyData>()
+private val LOG = logger<LobbyHandler>()
 
-class LobbyData private constructor() : Observable() {
+class LobbyHandler : Observable() {
     var game: Game? = null
         private set
 
@@ -127,9 +127,5 @@ class LobbyData private constructor() : Observable() {
             return LobbyRepository().startGame(game!!.id)
         }
         return null;
-    }
-
-    companion object {
-        val instance = LobbyData()
     }
 }
