@@ -36,7 +36,7 @@ class LoginMenuScreen(
     private lateinit var exitBtn: TextButton
     private lateinit var loginBtn: TextButton
     private lateinit var registerBtn: TextButton
-    private val errorLabel = bodyLabel("", LabelStyle.Error.name)
+    private val errorLabel = bodyLabel("", 1.5f, LabelStyle.Error.name)
 
     override fun initScreen() {
         exitBtn = scene2d.textButton(Nls.exitGame())

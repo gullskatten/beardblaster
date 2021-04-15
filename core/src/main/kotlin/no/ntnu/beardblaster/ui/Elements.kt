@@ -33,17 +33,10 @@ fun headingLabel(text: String): Label {
     }
 }
 
-fun bodyLabel(text: String, labelStyle: String = LabelStyle.Body.name): Label {
+fun bodyLabel(text: String, fontScale: Float = 1.5f, labelStyle: String = LabelStyle.Body.name): Label {
     return scene2d.label(text, labelStyle) {
         setAlignment(Align.center)
-        setFontScale(2f)
-    }
-}
-
-fun smallBodyLabel(text: String, labelStyle: String = LabelStyle.Body.name): Label {
-    return scene2d.label(text, labelStyle) {
-        setAlignment(Align.center)
-        setFontScale(1.5f)
+        setFontScale(fontScale)
     }
 }
 

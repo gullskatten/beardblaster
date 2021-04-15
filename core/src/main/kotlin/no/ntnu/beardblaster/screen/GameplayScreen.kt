@@ -68,8 +68,8 @@ class GameplayScreen(
         spellCasting = SpellCasting()
 
         headingLabel = headingLabel(Nls.preparationPhase())
-        hostLabel = smallBodyLabel("${GameData.instance.game?.host}")
-        opponentLabel = smallBodyLabel("${GameData.instance.game?.opponent}")
+        hostLabel = bodyLabel("${GameData.instance.game?.host}")
+        opponentLabel = bodyLabel("${GameData.instance.game?.opponent}")
         hostLabel.setPosition(hostLabel.width + 10f, WORLD_HEIGHT / 2)
         opponentLabel.setPosition(WORLD_WIDTH - 100f - opponentLabel.width, WORLD_HEIGHT / 2)
         waitingLabel = headingLabel(Nls.waitingPhase())
