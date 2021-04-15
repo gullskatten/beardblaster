@@ -24,7 +24,4 @@ data class Spell (
             spellDescription
         )
     }
-    /*fun toArray(): List<Spell> {
-        return
-    }*/
 }
