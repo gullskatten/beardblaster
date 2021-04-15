@@ -19,7 +19,7 @@ import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
-import no.ntnu.beardblaster.commons.User
+import no.ntnu.beardblaster.commons.user.User
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserRepository

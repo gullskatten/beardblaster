@@ -28,10 +28,10 @@ abstract class SpellDatabase: RoomDatabase() {
                         context.applicationContext,
                         SpellDatabase::class.java,
                         "beardblaster-db"
-                    )
-                        .createFromAsset("beardblaster-db.db")
+                    ).createFromAsset("bb-db-v2.db")
                         .fallbackToDestructiveMigration()
                         .build()
+
                     INSTANCE = instance
                 }
                 return instance
