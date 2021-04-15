@@ -31,16 +31,19 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         GameData.instance.game.let { }
         emit(State.loading<Turn>())
         val doc = Turn()
-        val newDocRef = db.collection(GAME_COLLECTION)
+        val documentReference = db.collection(GAME_COLLECTION)
             .document(GameData.instance.game!!.id)
             .collection(TURNS_COLLECTION)
             .document("$currentTurn")
-        // TODO: Don't create turn if it has already been created (by the other player). Or ensure that only the host creates it (and the other user waits properly)
-        newDocRef.set(doc).await()
 
+        val turnDocument = documentReference.get().await()
+
+        if(!turnDocument.exists()) {
+            documentReference.set(doc).await()
+        }
         Log.d(TAG, "Created turn $currentTurn successfully")
 
-        doc.id = newDocRef.id
+        doc.id = documentReference.id
         emit(State.success(doc))
     }
 
@@ -97,7 +100,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
                         offer(State.Success(updatedGameObject))
                     }
                 } else {
-                    offer(State.Failed<Game>("The lobby has been deleted."))
+                    offer(State.Failed<Game>("The game has been deleted."))
                 }
             }
 
