@@ -46,6 +46,14 @@ class MenuScreen(
         KtxAsync.launch {
             UserData.instance.loadUserData()
         }
+        val foundSpell = SpellRepository().getSpellById(1)
+        if(foundSpell != null) {
+            LOG.info {foundSpell.spellName }
+        } else {
+            LOG.info { "Spell not found!" }
+        }
+
+
         UserData.instance.addObserver(this)
 
         createGameBtn = scene2d.textButton(Nls.createGame())

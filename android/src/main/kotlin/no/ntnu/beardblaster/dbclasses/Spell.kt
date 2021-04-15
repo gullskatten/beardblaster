@@ -9,15 +9,22 @@ data class Spell (
         @PrimaryKey(autoGenerate = false)
         val spellID : Int,
         val spellName : String,
+        val spellHealing : Int,
         val spellDamage : Int,
+        val spellMitigation : Int,
         val spellDescription : String
         ) {
     fun toEntity(): Spell {
-        return no.ntnu.beardblaster.commons.spell.Spell(
+        return Spell(
             spellID,
             spellName,
+            spellHealing,
             spellDamage,
+            spellMitigation,
             spellDescription
         )
     }
+    /*fun toArray(): List<Spell> {
+        return
+    }*/
 }

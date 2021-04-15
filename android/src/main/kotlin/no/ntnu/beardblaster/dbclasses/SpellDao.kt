@@ -9,7 +9,7 @@ interface SpellDao {
     suspend fun addSpell(spell : Spell)
 
     @Query("SELECT * FROM spell_table ORDER BY spellID ASC")
-    fun readAllData(): LiveData<List<Spell>>
+    fun readAllSpellData(): List<Spell>
 
     @Transaction
     @Query("SELECT * FROM spell_table join element_table")

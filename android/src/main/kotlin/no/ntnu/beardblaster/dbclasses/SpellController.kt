@@ -8,4 +8,7 @@ class SpellController(val db : SpellDatabase = SpellDatabase.getInstance()!!) : 
     override fun getSpellById(id: Int): Spell? {
         return db.spellDao().getSpellById(id)?.toEntity()
     }
+    /*override fun readAllSpellData(): List<Spell?> {
+        return db.spellDao().readAllSpellData()?.toSpellList()
+    }*/
 }

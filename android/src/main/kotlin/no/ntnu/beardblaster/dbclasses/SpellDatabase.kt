@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [Spell::class, Element::class, Wizard::class, Composition::class, KnowsSpell::class], version = 1)
+@Database(entities = [Spell::class, Element::class, Wizard::class, Composition::class, KnowsSpell::class], version = 2)
 abstract class SpellDatabase: RoomDatabase() {
 
     abstract fun elementDao() : ElementDao
@@ -28,8 +28,10 @@ abstract class SpellDatabase: RoomDatabase() {
                         context.applicationContext,
                         SpellDatabase::class.java,
                         "beardblaster-db"
-                    ).fallbackToDestructiveMigration()
-                            .build()
+                    )
+                        .createFromAsset("beardblaster-db.db")
+                        .fallbackToDestructiveMigration()
+                        .build()
                     INSTANCE = instance
                 }
                 return instance

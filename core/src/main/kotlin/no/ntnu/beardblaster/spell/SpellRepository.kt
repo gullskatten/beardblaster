@@ -20,4 +20,8 @@ class SpellRepository : PlatformDistributor<AbstractSpellRepository>(), Abstract
     override fun getSpellById(id: Int): Spell? {
        return platformObject.getSpellById(id)
     }
+
+    /*override fun readAllSpellData(): List<Spell?> {
+        return platformObject.readAllSpellData()
+    }*/
 }
