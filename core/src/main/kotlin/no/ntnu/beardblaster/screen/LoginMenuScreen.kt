@@ -25,7 +25,7 @@ import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserRepository
 import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
 
-private val log = logger<LoginMenuScreen>()
+private val LOG = logger<LoginMenuScreen>()
 
 class LoginMenuScreen(
     game: BeardBlasterGame,
@@ -36,7 +36,7 @@ class LoginMenuScreen(
     private lateinit var exitBtn: TextButton
     private lateinit var loginBtn: TextButton
     private lateinit var registerBtn: TextButton
-    private val errorLabel = bodyLabel("", LabelStyle.Error.name)
+    private val errorLabel = bodyLabel("", 1.5f, LabelStyle.Error.name)
 
     override fun initScreen() {
         exitBtn = scene2d.textButton(Nls.exitGame())
@@ -70,11 +70,11 @@ class LoginMenuScreen(
         LoginDialog().apply {
             okBtn.onChange {
                 if (!UserAuth().isLoggedIn() && isValid) {
-                    log.debug { "Signing in user: ($email, $password)" }
+                    LOG.debug { "Signing in user: ($email, $password)" }
                     UserAuth().signIn(email, password)
                         .then<GdxFirebaseUser> { game.setScreen<MenuScreen>() }
                         .fail { message, _ ->
-                            log.error { message }
+                            LOG.error { message }
                             errorLabel.setText(message)
                         }
                 }
@@ -86,7 +86,7 @@ class LoginMenuScreen(
     private fun showRegisterDialog() {
         RegisterDialog().apply {
             okBtn.onChange {
-                log.debug { "Creating new user: ($username, $email, $password)" }
+                LOG.debug { "Creating new user: ($username, $email, $password)" }
                 UserAuth().createUser(email, password, username)
                     .then<GdxFirebaseUser> {
                         val user = User(username, id = it.userInfo.uid)
@@ -97,17 +97,17 @@ class LoginMenuScreen(
                                         game.setScreen<MenuScreen>()
                                     }
                                     is State.Failed -> {
-                                        log.error { state.message }
+                                        LOG.error { state.message }
                                         errorLabel.setText(state.message)
                                     }
                                     is State.Loading -> {
-                                        log.info { "Creating user.." }
+                                        LOG.info { "Creating user.." }
                                     }
                                 }
                             }
                         }
                     }.fail { message, _ ->
-                        log.error { message }
+                        LOG.error { message }
                         errorLabel.setText(message)
                     }
                 hide()

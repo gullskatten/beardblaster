@@ -1,7 +1,6 @@
 package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.ui.Label
@@ -21,7 +20,7 @@ import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData
 import java.util.*
 
-private val log = logger<MenuScreen>()
+private val LOG = logger<MenuScreen>()
 
 class MenuScreen(
     game: BeardBlasterGame,
@@ -35,22 +34,17 @@ class MenuScreen(
     private lateinit var tutorialBtn: TextButton
     private lateinit var logoutBtn: TextButton
     private lateinit var exitBtn: TextButton
-    private lateinit var currentWizardLabel: Label
     private lateinit var wizardHeading: Label
+    private val currentWizardLabel: Label =
+        bodyLabel(UserData.instance.getCurrentUserString()) // Kept it here as it can crash for lateinit since loading user can finish before screen has been initialized
 
     override fun initScreen() {
-        KtxAsync.launch {
-            UserData.instance.loadUserData()
-        }
-        UserData.instance.addObserver(this)
-
         createGameBtn = scene2d.textButton(Nls.createGame())
         joinGameBtn = scene2d.textButton(Nls.joinGame())
         highScoreBtn = scene2d.textButton(Nls.leaderBeard())
         tutorialBtn = scene2d.textButton(Nls.tutorial())
         logoutBtn = scene2d.textButton(Nls.logOut())
         exitBtn = scene2d.textButton(Nls.exitGame())
-        currentWizardLabel = bodyLabel(UserData.instance.getCurrentUserString())
         wizardHeading = headingLabel("BeardBlaster")
 
         val table = fullSizeTable(20f).apply {
@@ -74,13 +68,19 @@ class MenuScreen(
 
     override fun setBtnEventListeners() {
         createGameBtn.onClick {
-            game.setScreen<LobbyScreen>()
+            if (UserData.instance.user != null) {
+                game.setScreen<LobbyScreen>()
+            }
         }
         joinGameBtn.onClick {
-            game.setScreen<JoinLobbyScreen>()
+            if (UserData.instance.user != null) {
+                game.setScreen<JoinLobbyScreen>()
+            }
         }
         highScoreBtn.onClick {
-            game.setScreen<HighScoreScreen>()
+            if (UserData.instance.user != null) {
+                game.setScreen<HighScoreScreen>()
+            }
         }
         tutorialBtn.onClick {
             game.setScreen<TutorialScreen>()
@@ -97,18 +97,17 @@ class MenuScreen(
         }
     }
 
-    override fun update(delta: Float) {}
-
-    override fun render(delta: Float) {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        update(delta)
-        stage.act(delta)
-        stage.draw()
+    override fun update(delta: Float) {
+        if (UserData.instance.user == null && !UserData.instance.isLoading) {
+            KtxAsync.launch {
+                UserData.instance.loadUserData()
+            }
+            UserData.instance.addObserver(this)
+        }
     }
 
     override fun update(p0: Observable?, p1: Any?) {
-        log.info { p1.toString() }
+        LOG.info { p1.toString() }
         currentWizardLabel.setText(p1.toString())
     }
 
