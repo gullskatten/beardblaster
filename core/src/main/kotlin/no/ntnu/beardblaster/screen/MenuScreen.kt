@@ -39,6 +39,14 @@ class MenuScreen(
         bodyLabel(UserData.instance.getCurrentUserString()) // Kept it here as it can crash for lateinit since loading user can finish before screen has been initialized
 
     override fun initScreen() {
+
+        if (UserData.instance.user == null && !UserData.instance.isLoading) {
+            KtxAsync.launch {
+                UserData.instance.loadUserData()
+            }
+            UserData.instance.addObserver(this)
+        }
+
         createGameBtn = scene2d.textButton(Nls.createGame())
         joinGameBtn = scene2d.textButton(Nls.joinGame())
         highScoreBtn = scene2d.textButton(Nls.leaderBeard())
@@ -98,12 +106,6 @@ class MenuScreen(
     }
 
     override fun update(delta: Float) {
-        if (UserData.instance.user == null && !UserData.instance.isLoading) {
-            KtxAsync.launch {
-                UserData.instance.loadUserData()
-            }
-            UserData.instance.addObserver(this)
-        }
     }
 
     override fun update(p0: Observable?, p1: Any?) {

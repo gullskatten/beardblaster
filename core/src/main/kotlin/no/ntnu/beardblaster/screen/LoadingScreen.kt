@@ -69,8 +69,6 @@ class LoadingScreen(
 
     private fun addGameScreens() {
         game.addScreen(LoginMenuScreen(game, batch, assets, camera))
-        game.addScreen(LoginScreen(game, batch, assets, camera))
-        game.addScreen(RegisterScreen(game, batch, assets, camera))
         game.addScreen(MenuScreen(game, batch, assets, camera))
         game.addScreen(TutorialScreen(game, batch, assets, camera))
         game.addScreen(HighScoreScreen(game, batch, assets, camera))
