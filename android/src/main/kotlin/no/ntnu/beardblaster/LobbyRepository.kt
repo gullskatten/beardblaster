@@ -81,17 +81,19 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
             .document(id)
             .addSnapshotListener { snapshot, _ ->
                 Log.i(TAG, "Game was updated externally! Checking if snapshot exists")
-                if (snapshot!!.exists()) {
-                    Log.i(TAG, "Serializing Game object")
-                    val updatedGameObject = snapshot.toObject<Game>()
-                    if (updatedGameObject != null) {
-                        Log.i(TAG, "Pushing offer of new game object.")
-                        // Ensure id is set on game object
-                        updatedGameObject.id = snapshot.id
-                        offer(State.Success(updatedGameObject))
+                if (snapshot != null) {
+                    if (snapshot.exists()) {
+                        Log.i(TAG, "Serializing Game object")
+                        val updatedGameObject = snapshot.toObject<Game>()
+                        if (updatedGameObject != null) {
+                            Log.i(TAG, "Pushing offer of new game object.")
+                            // Ensure id is set on game object
+                            updatedGameObject.id = snapshot.id
+                            offer(State.Success(updatedGameObject))
+                        }
+                    } else {
+                        offer(State.Failed<Game>("The lobby has been deleted."))
                     }
-                } else {
-                    offer(State.Failed<Game>("The lobby has been deleted."))
                 }
             }
 
