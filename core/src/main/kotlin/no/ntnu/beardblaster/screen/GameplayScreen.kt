@@ -24,10 +24,10 @@ import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
+import no.ntnu.beardblaster.commons.wizard.Wizard
 import no.ntnu.beardblaster.game.GameData
 import no.ntnu.beardblaster.hud.SpellBar
 import no.ntnu.beardblaster.hud.spellbar
-import no.ntnu.beardblaster.lobby.GameRepository
 import no.ntnu.beardblaster.models.SpellCasting
 import no.ntnu.beardblaster.sprites.WizardTexture
 import no.ntnu.beardblaster.sprites.WizardTextures
@@ -48,7 +48,9 @@ class GameplayScreen(
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    private val PREPARATION_TIME = 50f
+    private val PREPARATION_TIME = 10f
+    private lateinit var hostWizard: Wizard
+    private lateinit var opponentWizard: Wizard
     private lateinit var quitBtn: TextButton
     private lateinit var fireElementBtn: Button
     private lateinit var iceElementBtn: Button
@@ -61,9 +63,14 @@ class GameplayScreen(
     private var evilWizard: WizardTexture = WizardTexture()
     private lateinit var hostLabel: Label
     private lateinit var opponentLabel: Label
+    private lateinit var hostHP: Label
+    private lateinit var opponentHP: Label
     private lateinit var countDownLabel: Label
     private lateinit var headingLabel: Label
     private lateinit var waitingLabel: Label
+    private lateinit var hostInfo: Table
+    private lateinit var opponentInfo: Table
+
     private var countDown = PREPARATION_TIME
     private var currentPhase: Phase = Phase.Preparation
     private var currentTurn = 1
@@ -71,19 +78,38 @@ class GameplayScreen(
 
     override fun initComponents() {
         LOG.debug { "Set up components" }
+        hostWizard = Wizard(GameData.instance.game?.host!!.beardLength)
+        opponentWizard = Wizard(GameData.instance.game?.opponent!!.beardLength)
         spellCasting = SpellCasting()
 
         headingLabel = headingLabel(Nls.preparationPhase())
-        hostLabel = bodyLabel("${GameData.instance.game?.host}")
-        opponentLabel = bodyLabel("${GameData.instance.game?.opponent}")
-        hostLabel.setPosition(hostLabel.width + 10f, WORLD_HEIGHT / 2)
-        opponentLabel.setPosition(WORLD_WIDTH - 100f - opponentLabel.width, WORLD_HEIGHT / 2)
+        hostLabel = bodyLabel("${GameData.instance.game?.host}", 1.25f)
+        hostHP = bodyLabel(hostWizard.getCurrentHPString())
+        opponentLabel = bodyLabel("${GameData.instance.game?.opponent}", 1.25f)
+        opponentHP = bodyLabel(opponentWizard.getCurrentHPString())
+
+        hostInfo = scene2d.table {
+            add(hostLabel)
+            row()
+            row()
+            add(hostHP)
+        }
+        opponentInfo = scene2d.table {
+            add(opponentLabel)
+            row()
+            row()
+            add(opponentHP)
+        }
+
+        hostInfo.setPosition(hostLabel.width + 10f, WORLD_HEIGHT / 2 + 50f)
+        opponentInfo.setPosition(WORLD_WIDTH - 100f - opponentLabel.width, WORLD_HEIGHT / 2 + 50f)
         waitingLabel = headingLabel(Nls.waitingPhase())
 
         countDownLabel = headingLabel(countDown.toInt().toString())
         countDownLabel.setPosition(10f, WORLD_HEIGHT - countDownLabel.height - 100f)
 
         quitBtn = scene2d.textButton(Nls.quit())
+        quitBtn.setPosition(WORLD_WIDTH - quitBtn.width - 50f, WORLD_HEIGHT - quitBtn.height - 50f)
         fireElementBtn = scene2d.button(ElementType.Fire.name)
         iceElementBtn = scene2d.button(ElementType.Ice.name)
         natureElementBtn = scene2d.button(ElementType.Nature.name)
@@ -116,6 +142,7 @@ class GameplayScreen(
     override fun initScreen() {
         LOG.debug { "Gameplay screen" }
         initPreparationPhase()
+        stage.addActor(quitBtn)
     }
 
     private fun initPreparationPhase() {
@@ -130,7 +157,6 @@ class GameplayScreen(
         val table = fullSizeTable().apply {
             add(headingLabel).pad(50f)
             row()
-            add(quitBtn)
         }
         stage.clear()
         addWizards()
@@ -139,6 +165,7 @@ class GameplayScreen(
         stage.addActor(elementButtonsTable)
         stage.addActor(spellBar)
         stage.addActor(spellInfo)
+        stage.addActor(quitBtn)
     }
 
     private fun initWaitingForPlayerPhase() {
@@ -170,6 +197,7 @@ class GameplayScreen(
         addWizards()
         stage.addActor(countDownLabel)
         stage.addActor(table)
+        stage.addActor(quitBtn)
 
         //If wizardA attacks first -> wizardA.setAnimation(Attack) + wizardB.setAnimation(takeHit)
         //If wizardA | B is dead -> setAnimation(dead)
@@ -192,8 +220,8 @@ class GameplayScreen(
     }
 
     private fun addWizards() {
-        stage.addActor(hostLabel)
-        stage.addActor(opponentLabel)
+        stage.addActor(hostInfo)
+        stage.addActor(opponentInfo)
     }
 
     override fun setBtnEventListeners() {
@@ -205,12 +233,14 @@ class GameplayScreen(
         }
 
         fireElementBtn.onClick {
+            hostWizard.updateHP(-1)
             spellCasting.addFire()
         }
         iceElementBtn.onClick {
             spellCasting.addIce()
         }
         natureElementBtn.onClick {
+            hostWizard.updateHP(1)
             spellCasting.addNature()
         }
 
@@ -222,6 +252,8 @@ class GameplayScreen(
     override fun update(delta: Float) {
         when (currentPhase) {
             Phase.Preparation -> {
+                hostHP.setText(hostWizard.getCurrentHPString())
+                opponentHP.setText(opponentWizard.getCurrentHPString())
                 countDown -= delta * 0.5f
 
                 if (countDown <= PREPARATION_TIME) {
@@ -290,7 +322,7 @@ class GameplayScreen(
                 }
             }
             Phase.GameOver -> {
-                
+
             }
         }
         if (currentTurn > 3 && !canDo) {
@@ -311,18 +343,18 @@ class GameplayScreen(
 
         batch.use {
             it.projectionMatrix = camera.combined
-            if(goodWizard.getWizard() != null) {
+            if (goodWizard.getWizard() != null) {
                 it.draw(
                     goodWizard.getWizard(),
                     -400f,
                     -230f,
-                    goodWizard.getBounds().width  * 5,
-                    goodWizard.getBounds().height  * 5
+                    goodWizard.getBounds().width * 5,
+                    goodWizard.getBounds().height * 5
                 )
             }
 
             if (currentPhase != Phase.Preparation) {
-                if(evilWizard.getWizard() != null) {
+                if (evilWizard.getWizard() != null) {
                     it.draw(
                         evilWizard.getWizard(),
                         2300f,

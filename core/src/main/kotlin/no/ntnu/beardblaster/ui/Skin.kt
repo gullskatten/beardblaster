@@ -52,7 +52,11 @@ enum class Image(val atlasKey: String) {
     SpellBarSlot("button_icon"),
 
     //Timer
-    TimerSlot("button_icon")
+    TimerSlot("button_icon"),
+
+    //Wizard
+    HPBar("health_bar_indicator"),
+    BarContainer("bar_container"),
 }
 
 operator fun Skin.get(image: Image): Drawable = this.getDrawable(image.atlasKey)
