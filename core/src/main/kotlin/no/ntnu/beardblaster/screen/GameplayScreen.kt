@@ -27,6 +27,7 @@ import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.game.GameData
 import no.ntnu.beardblaster.hud.SpellBar
 import no.ntnu.beardblaster.hud.spellbar
+import no.ntnu.beardblaster.lobby.GameRepository
 import no.ntnu.beardblaster.models.SpellCasting
 import no.ntnu.beardblaster.sprites.WizardTexture
 import no.ntnu.beardblaster.sprites.WizardTextures
@@ -47,7 +48,7 @@ class GameplayScreen(
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    val PREPARATION_TIME = 5f
+    private val PREPARATION_TIME = 50f
     private lateinit var quitBtn: TextButton
     private lateinit var fireElementBtn: Button
     private lateinit var iceElementBtn: Button
@@ -122,6 +123,7 @@ class GameplayScreen(
         spellCasting.reset()
         spellBar.update()
         goodWizard.setAnimation(0f, 0f, assets, WizardTextures.GoodWizardIdle)
+        evilWizard.setAnimation(0f, 0f, assets, WizardTextures.EvilWizardIdle)
 
         headingLabel.setText(Nls.preparationPhase())
 
@@ -213,7 +215,6 @@ class GameplayScreen(
         }
 
         spellInfo.lockBtn.onClick {
-            // TODO Implement spell locking
             LOG.debug { "Wizard locks selected spell" }
         }
     }
@@ -221,7 +222,7 @@ class GameplayScreen(
     override fun update(delta: Float) {
         when (currentPhase) {
             Phase.Preparation -> {
-                countDown -= delta
+                countDown -= delta * 0.5f
 
                 if (countDown <= PREPARATION_TIME) {
                     countDownLabel.setText(countDown.toInt().toString())
@@ -289,7 +290,7 @@ class GameplayScreen(
                 }
             }
             Phase.GameOver -> {
-                // TODO: Distribute prizes and clean up game
+                
             }
         }
         if (currentTurn > 3 && !canDo) {
@@ -310,21 +311,26 @@ class GameplayScreen(
 
         batch.use {
             it.projectionMatrix = camera.combined
-            it.draw(
-                goodWizard.getWizard(),
-                -400f,
-                -230f,
-                goodWizard.getBounds().width * 5,
-                goodWizard.getBounds().height * 5
-            )
-            if (currentPhase != Phase.Preparation) {
+            if(goodWizard.getWizard() != null) {
                 it.draw(
-                    evilWizard.getWizard(),
-                    2300f,
-                    -370f,
-                    -evilWizard.getBounds().width * 8,
-                    evilWizard.getBounds().height * 8
+                    goodWizard.getWizard(),
+                    -400f,
+                    -230f,
+                    goodWizard.getBounds().width  * 5,
+                    goodWizard.getBounds().height  * 5
                 )
+            }
+
+            if (currentPhase != Phase.Preparation) {
+                if(evilWizard.getWizard() != null) {
+                    it.draw(
+                        evilWizard.getWizard(),
+                        2300f,
+                        -370f,
+                        -evilWizard.getBounds().width * 8,
+                        evilWizard.getBounds().height * 8
+                    )
+                }
             }
         }
     }
