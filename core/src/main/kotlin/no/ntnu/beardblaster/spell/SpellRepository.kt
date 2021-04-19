@@ -1,6 +1,8 @@
 package no.ntnu.beardblaster.spell
 
 import no.ntnu.beardblaster.commons.spell.AbstractSpellRepository
+import no.ntnu.beardblaster.commons.spell.Element
+import no.ntnu.beardblaster.commons.spell.ElementList
 import no.ntnu.beardblaster.commons.spell.Spell
 import pl.mk5.gdx.fireapp.PlatformDistributor
 
@@ -21,6 +23,9 @@ class SpellRepository : PlatformDistributor<AbstractSpellRepository>(), Abstract
        return platformObject.getSpellById(id)
     }
 
+    override fun getAllElements(): List<Element> {
+        return platformObject.getAllElements()
+    }
     /*override fun readAllSpellData(): List<Spell?> {
         return platformObject.readAllSpellData()
     }*/
