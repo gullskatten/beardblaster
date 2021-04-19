@@ -7,13 +7,16 @@ import java.time.ZoneOffset
 class Game(
     val code: String,
     val createdAt: Long,
-    val opponent: GameOpponent? = null,
-    val started: Long,
-    val ended: Long,
+    val host: GamePlayer? = null,
+    val opponent: GamePlayer? = null,
+    val startedAt: Long,
+    val endedAt: Long,
     override var id: String = ""
 ) : DocumentType {
     constructor() : this(
-        "", LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC),
+        "",
+        LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC),
+        null,
         null,
         0L,
         0L

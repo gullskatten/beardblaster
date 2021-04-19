@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
-import ktx.log.logger
 import no.ntnu.beardblaster.BeardBlasterGame
-
-private val log = logger<BaseScreen>()
 
 abstract class BaseScreen(
     val game: BeardBlasterGame,
@@ -27,12 +24,14 @@ abstract class BaseScreen(
     // Template method pattern: https://refactoring.guru/design-patterns/template-method
     final override fun show() {
         stage.clear()
+        initComponents()
         initScreen()
         setBtnEventListeners()
         Gdx.input.inputProcessor = stage
     }
 
     abstract fun initScreen() // Abstract step
+    open fun initComponents() {}
     abstract fun setBtnEventListeners()
     abstract fun update(delta: Float)
 
