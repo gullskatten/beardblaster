@@ -47,6 +47,17 @@ class MenuScreen(
             UserData.instance.loadUserData()
         }
 
+        val foundElements = SpellRepository().getAllElements()
+        LOG.info{foundElements.elementAt(0).elementID.toString()}
+        LOG.info{foundElements.elementAt(1).elementID.toString()}
+        LOG.info{foundElements.elementAt(2).elementID.toString()}
+        val foundSpell = SpellRepository().getSpellById(1)
+        if(foundSpell != null) {
+            LOG.info {foundSpell.spellName }
+        } else {
+            LOG.info { "Spell not found!" }
+        }
+
         UserData.instance.addObserver(this)
 
         createGameBtn = scene2d.textButton(Nls.createGame())
