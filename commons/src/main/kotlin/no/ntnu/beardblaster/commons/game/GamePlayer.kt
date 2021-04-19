@@ -1,6 +1,6 @@
 package no.ntnu.beardblaster.commons.game
 
-import no.ntnu.beardblaster.commons.User
+import no.ntnu.beardblaster.commons.user.User
 
 
 class GamePlayer(val id: String, val beardLength: Float = 0f, val displayName: String) {

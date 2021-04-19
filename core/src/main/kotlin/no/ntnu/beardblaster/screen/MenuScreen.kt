@@ -15,6 +15,7 @@ import ktx.scene2d.scene2d
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.spell.SpellRepository
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData

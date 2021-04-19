@@ -1,6 +1,6 @@
 package no.ntnu.beardblaster.commons.game
 
-import no.ntnu.beardblaster.commons.DocumentType
+import no.ntnu.beardblaster.commons.user.DocumentType
 
 class Turn(
     var hostFinished: Boolean = false,

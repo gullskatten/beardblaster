@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import no.ntnu.beardblaster.commons.game.AbstractLobbyRepository
+import no.ntnu.beardblaster.commons.AbstractLobbyRepository
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.commons.game.GamePlayer
@@ -107,7 +107,7 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         val code = (1..6)
             .map { i -> kotlin.random.Random.nextInt(0, availableCodeCharacters.size) }
             .map(availableCodeCharacters::get)
-            .joinToString("");
+            .joinToString("")
 
         Log.d(TAG, "Creating a new game (lobby) with code $code")
 
