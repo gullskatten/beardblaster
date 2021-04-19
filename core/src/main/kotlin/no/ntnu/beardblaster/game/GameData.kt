@@ -5,8 +5,8 @@ import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.commons.game.SpellCast
 import no.ntnu.beardblaster.commons.game.Turn
+import no.ntnu.beardblaster.commons.spell.Spell
 import no.ntnu.beardblaster.lobby.GameRepository
-import no.ntnu.beardblaster.models.Spell
 import java.util.*
 
 class GameData private constructor() : Observable() {
@@ -24,7 +24,7 @@ class GameData private constructor() : Observable() {
 
     fun endTurn(currentTurn: Int, chosenSpell: Spell?): Flow<State<SpellCast>>? {
         if (game != null && game!!.id.isNotEmpty()) {
-            return GameRepository().endTurn(currentTurn, chosenSpell?.id ?: 0)
+            return GameRepository().endTurn(currentTurn, chosenSpell?.spellID ?: 0)
         }
         return null
     }

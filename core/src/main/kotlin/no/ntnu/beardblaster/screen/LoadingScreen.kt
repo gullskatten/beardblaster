@@ -12,7 +12,7 @@ import ktx.async.KtxAsync
 import ktx.graphics.use
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.*
-import no.ntnu.beardblaster.commons.User
+import no.ntnu.beardblaster.commons.user.User
 import no.ntnu.beardblaster.ui.createSkin
 import no.ntnu.beardblaster.user.UserAuth
 

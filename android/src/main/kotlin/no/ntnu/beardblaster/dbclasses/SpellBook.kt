@@ -6,17 +6,17 @@ import androidx.room.Junction
 import androidx.room.Relation
 
 @Entity(primaryKeys = ["wizardID", "spellID"])
-data class KnowsSpell(
+data class SpellBook(
         val wizardID : Int,
         val spellID : Int
 )
 
 data class SpellsOfWizard(
-        @Embedded val wizardDB: WizardDB,
-        @Relation(
+    @Embedded val wizard: Wizard,
+    @Relation(
                 parentColumn = "wizardID",
                 entityColumn = "spellID",
-                associateBy = Junction(KnowsSpell::class)
+                associateBy = Junction(SpellBook::class)
         )
         val spells: List<Spell>
 )

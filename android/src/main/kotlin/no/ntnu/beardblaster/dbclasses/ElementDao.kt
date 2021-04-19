@@ -8,11 +8,16 @@ import androidx.room.Transaction
 
 @Dao
 interface ElementDao {
-    @Query("SELECT * FROM element_table WHERE elementID = :elementID")
-    fun getElementEntry(elementID : Int): LiveData<List<Element>>
+    @Query("SELECT * FROM element_table")
+    fun getAllElements(): List<Element>
 
     @Transaction
     @Query("SELECT * FROM element_table JOIN spell_table")
     fun getElementsOfSpell(): LiveData<List<ElementsOfSpell>>
+
+
+    @Transaction
+    @Query("SELECT * FROM element_table JOIN wizard_table WHERE wizardID = :wizardID")
+    fun getElementsOfWizard(wizardID : Int): List<ElementsOfWizard>
 
 }

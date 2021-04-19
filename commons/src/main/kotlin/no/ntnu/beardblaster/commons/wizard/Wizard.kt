@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.models
+package no.ntnu.beardblaster.commons.wizard
 
 class Wizard(private val beardLength : Int, private var hitPoints : Int = 30, private val wizType : MutableList<Int> = mutableListOf(1,2,3)){
     fun updateHP(hpChange : Int){

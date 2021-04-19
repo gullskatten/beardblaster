@@ -1,13 +1,19 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 1,
-    "identityHash": "621be400ea024ef8f07c87419488051e",
+    "version": 4,
+    "identityHash": "5d9b6d3cb08bcb6d67399267200cad3f",
     "entities": [
       {
         "tableName": "spell_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`spellDamage` INTEGER NOT NULL, `spellDescription` TEXT NOT NULL, `spellHealing` INTEGER NOT NULL, `spellID` INTEGER NOT NULL, `spellMitigation` INTEGER NOT NULL, `spellName` TEXT NOT NULL, PRIMARY KEY(`spellID`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`duration` INTEGER NOT NULL, `spellDamage` INTEGER NOT NULL, `spellDescription` TEXT NOT NULL, `spellHealing` INTEGER NOT NULL, `spellID` INTEGER NOT NULL, `spellMitigation` INTEGER NOT NULL, `spellName` TEXT NOT NULL, PRIMARY KEY(`spellID`))",
         "fields": [
+          {
+            "fieldPath": "duration",
+            "columnName": "duration",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
           {
             "fieldPath": "spellDamage",
             "columnName": "spellDamage",
@@ -82,26 +88,8 @@
       },
       {
         "tableName": "wizard_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`wizardID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `wizardName` TEXT NOT NULL, `hitPoints` INTEGER NOT NULL, `element1` INTEGER NOT NULL, `element2` INTEGER NOT NULL, `element3` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`element1` INTEGER NOT NULL, `element2` INTEGER NOT NULL, `element3` INTEGER NOT NULL, `hitPoints` INTEGER NOT NULL, `wizardID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `wizardName` TEXT NOT NULL)",
         "fields": [
-          {
-            "fieldPath": "wizardID",
-            "columnName": "wizardID",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "wizardName",
-            "columnName": "wizardName",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "hitPoints",
-            "columnName": "hitPoints",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
           {
             "fieldPath": "element1",
             "columnName": "element1",
@@ -118,6 +106,24 @@
             "fieldPath": "element3",
             "columnName": "element3",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hitPoints",
+            "columnName": "hitPoints",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wizardID",
+            "columnName": "wizardID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wizardName",
+            "columnName": "wizardName",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -175,18 +181,18 @@
         "foreignKeys": []
       },
       {
-        "tableName": "KnowsSpell",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`wizardID` INTEGER NOT NULL, `spellID` INTEGER NOT NULL, PRIMARY KEY(`wizardID`, `spellID`))",
+        "tableName": "SpellBook",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`spellID` INTEGER NOT NULL, `wizardID` INTEGER NOT NULL, PRIMARY KEY(`wizardID`, `spellID`))",
         "fields": [
           {
-            "fieldPath": "wizardID",
-            "columnName": "wizardID",
+            "fieldPath": "spellID",
+            "columnName": "spellID",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "spellID",
-            "columnName": "spellID",
+            "fieldPath": "wizardID",
+            "columnName": "wizardID",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -200,12 +206,39 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "Proficiency",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`elementID` INTEGER NOT NULL, `wizardID` INTEGER NOT NULL, PRIMARY KEY(`wizardID`, `elementID`))",
+        "fields": [
+          {
+            "fieldPath": "elementID",
+            "columnName": "elementID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wizardID",
+            "columnName": "wizardID",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "wizardID",
+            "elementID"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '621be400ea024ef8f07c87419488051e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5d9b6d3cb08bcb6d67399267200cad3f')"
     ]
   }
 }

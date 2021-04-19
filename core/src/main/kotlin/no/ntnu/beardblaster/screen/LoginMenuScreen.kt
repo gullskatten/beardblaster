@@ -19,7 +19,7 @@ import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
-import no.ntnu.beardblaster.commons.User
+import no.ntnu.beardblaster.commons.user.User
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserRepository
@@ -70,15 +70,15 @@ class LoginMenuScreen(
         LoginDialog().apply {
             okBtn.onChange {
                 if (!UserAuth().isLoggedIn() && isValid) {
-                    LOG.debug { "Signing in user: ($email, $password)" }
                     UserAuth().signIn(email, password)
-                        .then<GdxFirebaseUser> { game.setScreen<MenuScreen>() }
+                        .then<GdxFirebaseUser> {
+                            game.setScreen<MenuScreen>()
+                        }
                         .fail { message, _ ->
                             LOG.error { message }
                             errorLabel.setText(message)
                         }
                 }
-                hide()
             }
         }.show(stage)
     }
@@ -110,7 +110,6 @@ class LoginMenuScreen(
                         LOG.error { message }
                         errorLabel.setText(message)
                     }
-                hide()
             }
         }.show(stage)
     }

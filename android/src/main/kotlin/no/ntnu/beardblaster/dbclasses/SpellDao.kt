@@ -9,9 +9,16 @@ interface SpellDao {
     suspend fun addSpell(spell : Spell)
 
     @Query("SELECT * FROM spell_table ORDER BY spellID ASC")
-    fun readAllData(): LiveData<List<Spell>>
+    fun readAllSpellData(): List<Spell>
 
     @Transaction
-    @Query("SELECT * FROM spell_table join element_table")
-    fun getSpellsOfElement(): LiveData<List<SpellsOfElement>>
+    @Query("SELECT * FROM element_table WHERE elementID = :elementID")
+    fun getSpellsOfElement(elementID: Int): LiveData<List<SpellsOfElement>>
+
+    @Transaction
+    @Query("SELECT * FROM spell_table WHERE spellID = :spellID")
+    fun getElementsOfSpell(spellID : Int): LiveData<List<ElementsOfSpell>>
+
+    @Query("SELECT * FROM spell_table WHERE spellID = :spellID LIMIT 1")
+    fun getSpellById(spellID : Int) : Spell?
 }

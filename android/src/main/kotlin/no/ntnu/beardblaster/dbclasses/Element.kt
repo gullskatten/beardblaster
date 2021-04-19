@@ -2,6 +2,7 @@ package no.ntnu.beardblaster.dbclasses
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import no.ntnu.beardblaster.commons.spell.Element
 
 @Entity(tableName = "element_table")
 data class Element(
@@ -9,3 +10,6 @@ data class Element(
     val elementID : Int,
     val elementName : String
     )
+
+
+

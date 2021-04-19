@@ -15,6 +15,9 @@ import ktx.scene2d.scene2d
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.commons.spell.Element
+import no.ntnu.beardblaster.commons.spell.Spell
+import no.ntnu.beardblaster.spell.SpellRepository
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData
@@ -44,13 +47,6 @@ class MenuScreen(
 
     override fun initScreen() {
 
-        if (UserData.instance.user == null && !UserData.instance.isLoading) {
-            KtxAsync.launch {
-                UserData.instance.loadUserData()
-            }
-            UserData.instance.addObserver(this)
-        }
-
         createGameBtn = scene2d.textButton(Nls.createGame())
         joinGameBtn = scene2d.textButton(Nls.joinGame())
         highScoreBtn = scene2d.textButton(Nls.leaderBeard())
@@ -76,6 +72,13 @@ class MenuScreen(
             add(exitBtn).colspan(2).center()
         }
         stage.addActor(table)
+
+        if (UserData.instance.user == null && !UserData.instance.isLoading) {
+            KtxAsync.launch {
+                UserData.instance.loadUserData()
+            }
+            UserData.instance.addObserver(this)
+        }
     }
 
     override fun setBtnEventListeners() {
