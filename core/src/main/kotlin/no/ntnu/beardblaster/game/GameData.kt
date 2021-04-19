@@ -29,16 +29,6 @@ class GameData private constructor() : Observable() {
         return null
     }
 
-    fun endCurrentGame(){
-        if(game != null && game!!.id.isNotEmpty()) {
-            game?.opponent?.id
-        }
-    }
-
-    fun forfeit() {
-
-    }
-
     companion object {
         val instance = GameData()
     }
