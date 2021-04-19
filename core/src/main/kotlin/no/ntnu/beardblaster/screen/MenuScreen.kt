@@ -36,7 +36,7 @@ class MenuScreen(
     private lateinit var exitBtn: TextButton
     private lateinit var wizardHeading: Label
     private val currentWizardLabel: Label =
-        bodyLabel(UserData.instance.getCurrentUserString()) // Kept it here as it can crash for lateinit since loading user can finish before screen has been initialized
+        bodyLabel(UserData.instance.getCurrentUserString(), 1.5f, LabelStyle.BodyOutlined.name) // Kept it here as it can crash for lateinit since loading user can finish before screen has been initialized
 
     override fun initScreen() {
 

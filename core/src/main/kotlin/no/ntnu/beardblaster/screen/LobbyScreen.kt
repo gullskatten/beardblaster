@@ -42,12 +42,13 @@ class LobbyScreen(
     override fun initScreen() {
         lobbyHandler.addObserver(this)
 
-        codeLabel = bodyLabel("Creating game..")
-        opponentLabel = bodyLabel("Waiting for opponent to join..")
+        codeLabel = bodyLabel("Creating game..", 1.5f, LabelStyle.BodyOutlined.name)
+        opponentLabel = bodyLabel("Waiting for opponent to join..", 1.5f, LabelStyle.BodyOutlined.name)
 
         KtxAsync.launch {
             lobbyHandler.createLobby()
         }
+
         infoLabel = scene2d.label(Nls.shareGameCodeMessage())
         startGameBtn = scene2d.textButton(Nls.startGame())
         backBtn = scene2d.button(ButtonStyle.Cancel.name)

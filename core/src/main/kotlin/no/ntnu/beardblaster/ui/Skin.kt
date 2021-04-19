@@ -16,6 +16,7 @@ import no.ntnu.beardblaster.ElementType
 import no.ntnu.beardblaster.assets.AtlasAsset
 import no.ntnu.beardblaster.assets.FontAsset
 import no.ntnu.beardblaster.assets.get
+import kotlin.math.roundToInt
 
 enum class Image(val atlasKey: String) {
     // Buttons
@@ -62,6 +63,7 @@ operator fun Skin.get(font: FontStyle): BitmapFont = this.getFont(font.name)
 enum class LabelStyle {
     Heading,
     Body,
+    BodyOutlined,
     Error,
     LightText,
 }
@@ -95,6 +97,12 @@ fun createSkin(assets: AssetStorage): Skin {
         label(LabelStyle.Body.name) {
             font = skin[FontStyle.Default]
             fontColor = Color.WHITE
+        }
+
+        label(LabelStyle.BodyOutlined.name) {
+            font = skin[FontStyle.Default]
+            fontColor = Color.WHITE
+            background = dimmedLabelBackground()
         }
 
         label(LabelStyle.Error.name) {
@@ -185,6 +193,22 @@ private fun dimmedBackground(): Drawable {
             )
         ).apply {
             color = Color(1f, 1f, 1f, 0.85f)
+        }
+    )
+}
+
+private fun dimmedLabelBackground(): Drawable {
+    return SpriteDrawable(
+        Sprite(
+            Texture(
+                Pixmap(
+                    (Gdx.graphics.width * 0.40).roundToInt(),
+                    70,
+                    Pixmap.Format.RGB888
+                )
+            )
+        ).apply {
+            color = Color(1f, 1f, 1f, 0.25f)
         }
     )
 }
