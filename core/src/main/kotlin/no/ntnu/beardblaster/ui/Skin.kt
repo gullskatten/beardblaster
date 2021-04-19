@@ -23,6 +23,10 @@ enum class Image(val atlasKey: String) {
     ButtonHover("button_default_hover"),
     ButtonPressed("button_default_pressed"),
 
+    ButtonPrimary("button_green"),
+    ButtonPrimaryHover("button_green_hover"),
+    ButtonPrimaryPressed("button_green_pressed"),
+
     // Dialog buttons
     DialogButtonOK("modal_fancy_header_button_green_check"),
     DialogButtonOKDisabled("modal_fancy_header_button_green_check_disabled"),
@@ -38,6 +42,7 @@ enum class Image(val atlasKey: String) {
     Modal("modal_fancy"),
     ModalSkull("modal_fancy_skull"),
     ModalHeader("modal_fancy_header"),
+    ModalDark("modal_fancy_dark"),
 
     // Spellbar and Elements
     ElementFire("element_fire"),
@@ -58,11 +63,13 @@ enum class LabelStyle {
     Heading,
     Body,
     Error,
+    LightText,
 }
 
 enum class ButtonStyle {
     OK,
     Cancel,
+    Primary,
 }
 
 enum class Style {
@@ -93,6 +100,11 @@ fun createSkin(assets: AssetStorage): Skin {
         label(LabelStyle.Error.name) {
             font = skin[FontStyle.Default]
             fontColor = Color.ORANGE
+        }
+
+        label(LabelStyle.LightText.name) {
+            font = skin[FontStyle.Default]
+            fontColor = Color.LIGHT_GRAY
         }
 
         button(ButtonStyle.OK.name) {
@@ -127,6 +139,15 @@ fun createSkin(assets: AssetStorage): Skin {
             up = skin[Image.Button]
             over = skin[Image.ButtonHover]
             down = skin[Image.ButtonPressed]
+            pressedOffsetX = 4f
+            pressedOffsetY = 4f
+        }
+
+        textButton(ButtonStyle.Primary.name) {
+            font = skin[FontStyle.Default]
+            up = skin[Image.ButtonPrimary]
+            over = skin[Image.ButtonPrimaryHover]
+            down = skin[Image.ButtonPrimaryPressed]
             pressedOffsetX = 4f
             pressedOffsetY = 4f
         }
