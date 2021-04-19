@@ -15,6 +15,7 @@ import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.*
+import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData
 import java.util.*
 
@@ -85,10 +86,10 @@ class MenuScreen(
             game.setScreen<TutorialScreen>()
         }
         logoutBtn.onClick {
-            /*if (UserAuth().isLoggedIn()) {
+            if (UserAuth().isLoggedIn()) {
                 UserData.instance.setUserData(null)
                 UserAuth().signOut()
-            }*/
+            }
             game.setScreen<LoginMenuScreen>()
         }
         exitBtn.onClick {
@@ -113,6 +114,6 @@ class MenuScreen(
 
     override fun dispose() {
         super.dispose()
-        /*UserData.instance.deleteObserver(this)*/
+        UserData.instance.deleteObserver(this)
     }
 }
