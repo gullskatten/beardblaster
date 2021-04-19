@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
+import ktx.log.logger
 import ktx.scene2d.scene2d
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
@@ -14,6 +15,8 @@ import no.ntnu.beardblaster.ui.Image
 import no.ntnu.beardblaster.ui.fullSizeTable
 import no.ntnu.beardblaster.ui.get
 import no.ntnu.beardblaster.ui.headingLabel
+
+private val LOG = logger<TutorialScreen>()
 
 class TutorialScreen(
     game: BeardBlasterGame,

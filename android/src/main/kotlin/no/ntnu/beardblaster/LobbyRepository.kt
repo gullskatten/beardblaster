@@ -1,10 +1,7 @@
 package no.ntnu.beardblaster
 
 import android.util.Log
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -17,7 +14,8 @@ import kotlinx.coroutines.tasks.await
 import no.ntnu.beardblaster.commons.AbstractLobbyRepository
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
-import no.ntnu.beardblaster.commons.game.GameOpponent
+import no.ntnu.beardblaster.commons.game.GamePlayer
+import no.ntnu.beardblaster.user.UserData
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -27,9 +25,9 @@ private val availableCodeCharacters: List<Char> = ('0'..'9').toList()
 class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
     AbstractLobbyRepository<Game> {
     private val TAG = "LobbyRepository"
-    private val GAME_COLLECTION = "game"
+    private val GAME_COLLECTION = "games"
 
-    override fun joinLobbyWithCode(code: String, opponent: GameOpponent): Flow<State<Game>> = flow {
+    override fun joinLobbyWithCode(code: String, opponent: GamePlayer): Flow<State<Game>> = flow {
         emit(State.loading())
 
         if (code.isEmpty()) {
@@ -53,7 +51,8 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
             // Find first element (limit: 1)
             val doc = snapshot.documents[0]
             // Update the document with a new opponent
-            db.collection(GAME_COLLECTION).document(doc.id).update("opponent", opponent).await()
+            db.collection(GAME_COLLECTION).document(doc.id)
+                .update("opponent", opponent).await()
 
             // Parse the document found
             val game = doc.toObject<Game>()
@@ -74,7 +73,7 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
             val message = "Id of document cannot be empty"
             Log.e(TAG, message)
             offer(State.failed(message))
-            awaitClose {  }
+            awaitClose { }
             return@callbackFlow
         }
         val subscription = db
@@ -82,17 +81,19 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
             .document(id)
             .addSnapshotListener { snapshot, _ ->
                 Log.i(TAG, "Game was updated externally! Checking if snapshot exists")
-                if (snapshot!!.exists()) {
-                    Log.i(TAG, "Serializing Game object")
-                    val updatedGameObject = snapshot.toObject<Game>()
-                    if (updatedGameObject != null) {
-                        Log.i(TAG, "Pushing offer of new game object.")
-                        // Ensure id is set on game object
-                        updatedGameObject.id = snapshot.id
-                        offer(State.Success(updatedGameObject))
+                if (snapshot != null) {
+                    if (snapshot.exists()) {
+                        Log.i(TAG, "Serializing Game object")
+                        val updatedGameObject = snapshot.toObject<Game>()
+                        if (updatedGameObject != null) {
+                            Log.i(TAG, "Pushing offer of new game object.")
+                            // Ensure id is set on game object
+                            updatedGameObject.id = snapshot.id
+                            offer(State.Success(updatedGameObject))
+                        }
+                    } else {
+                        offer(State.Failed<Game>("The lobby has been deleted."))
                     }
-                } else {
-                    offer(State.Failed<Game>("The lobby has been deleted."))
                 }
             }
 
@@ -106,22 +107,23 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         val code = (1..6)
             .map { i -> kotlin.random.Random.nextInt(0, availableCodeCharacters.size) }
             .map(availableCodeCharacters::get)
-            .joinToString("");
+            .joinToString("")
 
         Log.d(TAG, "Creating a new game (lobby) with code $code")
 
         val doc = Game(
             code,
+            host = GamePlayer.fromUser(UserData.instance.user!!),
             createdAt = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC),
-            started = 0,
-            ended = 0,
+            startedAt = 0,
+            endedAt = 0,
         )
 
         val newDocRef = db.collection(GAME_COLLECTION).add(doc).await()
-
         Log.d(TAG, "Lobby created successfully")
 
         doc.id = newDocRef.id
+
         emit(State.success(doc))
     }
 
@@ -136,7 +138,7 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         emit(State.loading<Boolean>())
         try {
             db.collection(GAME_COLLECTION).document(id).update(
-                "started", LocalDateTime.now(ZoneOffset.UTC)
+                "startedAt", LocalDateTime.now(ZoneOffset.UTC)
                     .toEpochSecond(ZoneOffset.UTC)
             ).await()
             emit(State.success(true))
@@ -151,7 +153,7 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
             db.collection(GAME_COLLECTION)
                 .document(id)
                 .update(
-                    "ended", LocalDateTime.now(ZoneOffset.UTC)
+                    "endedAt", LocalDateTime.now(ZoneOffset.UTC)
                         .toEpochSecond(ZoneOffset.UTC)
                 )
                 .await()

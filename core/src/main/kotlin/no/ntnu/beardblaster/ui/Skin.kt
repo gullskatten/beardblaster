@@ -1,9 +1,14 @@
 package no.ntnu.beardblaster.ui
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Pixmap
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.Scene2DSkin
 import ktx.style.*
@@ -11,6 +16,7 @@ import no.ntnu.beardblaster.ElementType
 import no.ntnu.beardblaster.assets.AtlasAsset
 import no.ntnu.beardblaster.assets.FontAsset
 import no.ntnu.beardblaster.assets.get
+import kotlin.math.roundToInt
 
 enum class Image(val atlasKey: String) {
     // Buttons
@@ -18,9 +24,15 @@ enum class Image(val atlasKey: String) {
     ButtonHover("button_default_hover"),
     ButtonPressed("button_default_pressed"),
 
+    ButtonPrimary("button_green"),
+    ButtonPrimaryHover("button_green_hover"),
+    ButtonPrimaryPressed("button_green_pressed"),
+
     // Dialog buttons
     DialogButtonOK("modal_fancy_header_button_green_check"),
+    DialogButtonOKDisabled("modal_fancy_header_button_green_check_disabled"),
     DialogButtonCancel("modal_fancy_header_button_red_cross_left"),
+    DialogButtonCancelDisabled("modal_fancy_header_button_red_cross_left_disabled"),
 
     // Input elements
     InputDark("input_texture_dark"),
@@ -31,6 +43,7 @@ enum class Image(val atlasKey: String) {
     Modal("modal_fancy"),
     ModalSkull("modal_fancy_skull"),
     ModalHeader("modal_fancy_header"),
+    ModalDark("modal_fancy_dark"),
 
     // Spellbar and Elements
     ElementFire("element_fire"),
@@ -53,12 +66,20 @@ operator fun Skin.get(font: FontStyle): BitmapFont = this.getFont(font.name)
 enum class LabelStyle {
     Heading,
     Body,
-    Error
+    BodyOutlined,
+    Error,
+    LightText,
 }
 
 enum class ButtonStyle {
     OK,
     Cancel,
+    Primary,
+}
+
+enum class Style {
+    Default,
+    Dialog,
 }
 
 fun createSkin(assets: AssetStorage): Skin {
@@ -75,9 +96,16 @@ fun createSkin(assets: AssetStorage): Skin {
             fontColor = Color.BROWN
             background = skin[Image.ModalHeader]
         }
+
         label(LabelStyle.Body.name) {
             font = skin[FontStyle.Default]
             fontColor = Color.WHITE
+        }
+
+        label(LabelStyle.BodyOutlined.name) {
+            font = skin[FontStyle.Default]
+            fontColor = Color.WHITE
+            background = dimmedLabelBackground()
         }
 
         label(LabelStyle.Error.name) {
@@ -85,14 +113,21 @@ fun createSkin(assets: AssetStorage): Skin {
             fontColor = Color.ORANGE
         }
 
+        label(LabelStyle.LightText.name) {
+            font = skin[FontStyle.Default]
+            fontColor = Color.LIGHT_GRAY
+        }
+
         button(ButtonStyle.OK.name) {
             up = skin[Image.DialogButtonOK]
             down = skin[Image.DialogButtonOK]
+            disabled = skin[Image.DialogButtonOKDisabled]
         }
 
         button(ButtonStyle.Cancel.name) {
             up = skin[Image.DialogButtonCancel]
             down = skin[Image.DialogButtonCancel]
+            disabled = skin[Image.DialogButtonCancelDisabled]
         }
 
         button(ElementType.Fire.name) {
@@ -119,13 +154,64 @@ fun createSkin(assets: AssetStorage): Skin {
             pressedOffsetY = 4f
         }
 
+        textButton(ButtonStyle.Primary.name) {
+            font = skin[FontStyle.Default]
+            up = skin[Image.ButtonPrimary]
+            over = skin[Image.ButtonPrimaryHover]
+            down = skin[Image.ButtonPrimaryPressed]
+            pressedOffsetX = 4f
+            pressedOffsetY = 4f
+        }
+
         textField {
             font = skin[FontStyle.Default]
-            fontColor = Color.BROWN
-            messageFontColor = Color.GRAY
-            background = skin[Image.InputDark]
-            focusedBackground = skin[Image.InputLight]
+            fontColor = Color.DARK_GRAY
+            messageFontColor = Color.BROWN
+            background = skin[Image.InputLight]
+            focusedBackground = skin[Image.InputDark]
+        }
+
+        window {
+            titleFont = skin[FontStyle.Default]
+        }
+
+        window(Style.Dialog.name) {
+            titleFont = skin[FontStyle.Default]
+            titleFontColor = Color.BROWN
+            stageBackground = dimmedBackground()
         }
     }
     return Scene2DSkin.defaultSkin
+}
+
+private fun dimmedBackground(): Drawable {
+    return SpriteDrawable(
+        Sprite(
+            Texture(
+                Pixmap(
+                    Gdx.graphics.width,
+                    Gdx.graphics.height,
+                    Pixmap.Format.RGB888
+                )
+            )
+        ).apply {
+            color = Color(1f, 1f, 1f, 0.85f)
+        }
+    )
+}
+
+private fun dimmedLabelBackground(): Drawable {
+    return SpriteDrawable(
+        Sprite(
+            Texture(
+                Pixmap(
+                    (Gdx.graphics.width * 0.40).roundToInt(),
+                    70,
+                    Pixmap.Format.RGB888
+                )
+            )
+        ).apply {
+            color = Color(1f, 1f, 1f, 0.25f)
+        }
+    )
 }

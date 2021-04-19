@@ -2,7 +2,6 @@ package no.ntnu.beardblaster.lobby
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ktx.async.KtxAsync
@@ -11,14 +10,14 @@ import ktx.log.info
 import ktx.log.logger
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
-import no.ntnu.beardblaster.commons.game.GameOpponent
-import no.ntnu.beardblaster.screen.GameplayScreen
+import no.ntnu.beardblaster.commons.game.GamePlayer
+import no.ntnu.beardblaster.game.GameData
 import no.ntnu.beardblaster.user.UserData
 import java.util.*
 
-private val LOG = logger<LobbyData>()
+private val LOG = logger<LobbyHandler>()
 
-class LobbyData private constructor() : Observable() {
+class LobbyHandler : Observable() {
     var game: Game? = null
         private set
 
@@ -33,6 +32,7 @@ class LobbyData private constructor() : Observable() {
     }
 
     suspend fun createLobby() {
+        game = null
         LobbyRepository().createLobby().collect {
             setChanged()
             when (it) {
@@ -40,6 +40,7 @@ class LobbyData private constructor() : Observable() {
                     LOG.info { "Notifying observers of lobby with code ${it.data.code}" }
                     notifyObservers(it.data)
                     setGame(it.data)
+                    GameData.instance.isHost = true
                 }
                 is State.Loading -> {
                     notifyObservers("Loading..")
@@ -57,32 +58,32 @@ class LobbyData private constructor() : Observable() {
             LobbyRepository()
                 .joinLobbyWithCode(
                     code,
-                    GameOpponent.fromUser(UserData.instance.user!!)
+                    GamePlayer.fromUser(UserData.instance.user!!)
                 )
-            .collect {
-            when (it) {
-                is State.Success -> {
-                    LOG.info { "Joined lobby with id ${it.data.id}" }
-                    notifyObservers(it.data)
-                    game = it.data
-                    setChanged()
-                    isLoading = false
-                    subscribeToUpdatesOn(it.data.id)
-                }
-                is State.Failed -> {
-                    error = it.message
-                    LOG.error { it.message }
-                    notifyObservers(it.message)
-                    setChanged()
-                    isLoading = false
-                }
-                is State.Loading -> {
-                   isLoading = true
-                   setChanged()
+                .collect {
+                    when (it) {
+                        is State.Success -> {
+                            LOG.info { "Joined lobby with id ${it.data.id}" }
+                            notifyObservers(it.data)
+                            game = it.data
+                            setChanged()
+                            isLoading = false
+                            subscribeToUpdatesOn(it.data.id)
+                        }
+                        is State.Failed -> {
+                            error = it.message
+                            LOG.error { it.message }
+                            notifyObservers(it.message)
+                            setChanged()
+                            isLoading = false
+                        }
+                        is State.Loading -> {
+                            isLoading = true
+                            setChanged()
 
+                        }
+                    }
                 }
-            }
-        }
         }
     }
 
@@ -108,28 +109,26 @@ class LobbyData private constructor() : Observable() {
         }
     }
 
-    fun leaveLobby() : Flow<State<Boolean>>? {
-        if(game != null && game!!.id.isNotEmpty()) {
+    fun leaveLobby(): Flow<State<Boolean>>? {
+        if (game != null && game!!.id.isNotEmpty()) {
+            GameData.instance.isHost = false
             return LobbyRepository().leaveLobbyWithId(game!!.id)
         }
-        return null;
+        return null
     }
 
-    fun cancelLobby() : Flow<State<Boolean>>? {
-        if(game != null && game!!.id.isNotEmpty()) {
+    fun cancelLobby(): Flow<State<Boolean>>? {
+        if (game != null && game!!.id.isNotEmpty()) {
+            GameData.instance.isHost = false
             return LobbyRepository().cancelLobbyWithId(game!!.id)
         }
-        return null;
+        return null
     }
 
-    fun startGame() : Flow<State<Boolean>>? {
-        if(game != null && game!!.id.isNotEmpty()) {
+    fun startGame(): Flow<State<Boolean>>? {
+        if (game != null && game!!.id.isNotEmpty()) {
             return LobbyRepository().startGame(game!!.id)
         }
-        return null;
-    }
-
-    companion object {
-        val instance = LobbyData()
+        return null
     }
 }

@@ -1,8 +1,8 @@
 
 bb_gui.png
-size: 2048, 2048
+size: 2048,2048
 format: RGBA8888
-filter: Nearest, Nearest
+filter: Nearest,Nearest
 repeat: none
 background
   rotate: false
@@ -97,7 +97,7 @@ button_green_pressed
   index: -1
 button_icon
   rotate: false
-  xy: 1932, 1479
+  xy: 1848, 655
   size: 53, 53
   orig: 53, 53
   offset: 0, 0
@@ -188,7 +188,7 @@ health_bar_indicator
   index: -1
 icon_accept_fancy
   rotate: false
-  xy: 748, 34
+  xy: 1789, 655
   size: 57, 53
   orig: 57, 53
   offset: 0, 0
@@ -284,6 +284,13 @@ modal_fancy_header_button_green_check
   orig: 92, 136
   offset: 0, 0
   index: -1
+modal_fancy_header_button_green_check_disabled
+  rotate: false
+  xy: 1789, 710
+  size: 92, 136
+  orig: 92, 136
+  offset: 0, 0
+  index: -1
 modal_fancy_header_button_green_check_left
   rotate: false
   xy: 1813, 1124
@@ -315,6 +322,13 @@ modal_fancy_header_button_red_cross
 modal_fancy_header_button_red_cross_left
   rotate: false
   xy: 1929, 986
+  size: 91, 136
+  orig: 91, 136
+  offset: 0, 0
+  index: -1
+modal_fancy_header_button_red_cross_left_disabled
+  rotate: false
+  xy: 1883, 710
   size: 91, 136
   orig: 91, 136
   offset: 0, 0
