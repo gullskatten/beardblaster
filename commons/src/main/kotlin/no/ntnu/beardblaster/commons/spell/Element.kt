@@ -4,8 +4,3 @@ class Element(
     val elementID : Int,
     val elementName : String
 )
-
-class ElementList(
-    val elements : List<Element>
-)
-

@@ -15,4 +15,9 @@ interface ElementDao {
     @Query("SELECT * FROM element_table JOIN spell_table")
     fun getElementsOfSpell(): LiveData<List<ElementsOfSpell>>
 
+
+    @Transaction
+    @Query("SELECT * FROM element_table JOIN wizard_table WHERE wizardID = :wizardID")
+    fun getElementsOfWizard(wizardID : Int): List<ElementsOfWizard>
+
 }
