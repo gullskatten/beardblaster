@@ -7,7 +7,7 @@ import ktx.log.debug
 import ktx.log.logger
 import ktx.scene2d.*
 import no.ntnu.beardblaster.ElementType
-import no.ntnu.beardblaster.models.Element
+import no.ntnu.beardblaster.commons.spell.Element
 import no.ntnu.beardblaster.models.SpellCasting
 import no.ntnu.beardblaster.ui.Image
 import no.ntnu.beardblaster.ui.get
@@ -42,7 +42,7 @@ class SpellBar(
             }
 
             if (element != null) {
-                val elementType = ElementType.valueOf(element.name)
+                val elementType = ElementType.valueOf(element.elementName)
                 val elementButton = scene2d.button(elementType.name) {
                     this.setPosition((7 + count * 57).toFloat(), 8f)
                 }

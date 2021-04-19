@@ -47,7 +47,7 @@ class GameplayScreen(
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    val PREPARATION_TIME = 5f
+    val PREPARATION_TIME = 2255f
     private lateinit var quitBtn: TextButton
     private lateinit var fireElementBtn: Button
     private lateinit var iceElementBtn: Button
@@ -221,7 +221,7 @@ class GameplayScreen(
     override fun update(delta: Float) {
         when (currentPhase) {
             Phase.Preparation -> {
-                countDown -= delta
+                countDown -= delta * 0.5f
 
                 if (countDown <= PREPARATION_TIME) {
                     countDownLabel.setText(countDown.toInt().toString())

@@ -1,9 +1,13 @@
 package no.ntnu.beardblaster.spell
 
+import ktx.log.info
+import ktx.log.logger
 import no.ntnu.beardblaster.commons.spell.AbstractSpellRepository
 import no.ntnu.beardblaster.commons.spell.Element
 import no.ntnu.beardblaster.commons.spell.Spell
 import pl.mk5.gdx.fireapp.PlatformDistributor
+
+private val LOG = logger<SpellRepository>()
 
 class SpellRepository : PlatformDistributor<AbstractSpellRepository>(), AbstractSpellRepository {
     override fun getIOSClassName(): String {
@@ -19,6 +23,7 @@ class SpellRepository : PlatformDistributor<AbstractSpellRepository>(), Abstract
     }
 
     override fun getSpellById(id: Int): Spell? {
+        LOG.info { "Retrieving spell by ID: $id"}
        return platformObject.getSpellById(id)
     }
 

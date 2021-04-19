@@ -3,16 +3,18 @@ package no.ntnu.beardblaster.models
 import ktx.log.debug
 import ktx.log.error
 import ktx.log.logger
+import no.ntnu.beardblaster.commons.spell.Spell
 import no.ntnu.beardblaster.hud.ElementChangedObserver
 import no.ntnu.beardblaster.hud.ElementClickedObserver
+import no.ntnu.beardblaster.spell.SpellRepository
 import java.util.*
-
+import no.ntnu.beardblaster.commons.spell.Element
 private val LOG = logger<SpellCasting>()
 
 class SpellCasting : Observer, Observable() {
-    private val fire: Element = Element("Fire", 1)
-    private val ice: Element = Element("Ice", 2)
-    private val nature: Element = Element("Nature", 3)
+    private val fire: Element = Element(1, "Fire")
+    private val ice:  Element =  Element(2, "Ice")
+    private val nature:  Element =  Element(3, "Nature")
     var selectedElements: MutableList<Element?> = mutableListOf(null, null, null)
 
     init {
@@ -33,7 +35,7 @@ class SpellCasting : Observer, Observable() {
         if (null in selectedElements) {
             selectedElements[selectedElements.indexOfFirst { it == null }] = element
             ElementChangedObserver.instance.notifyChanged()
-            LOG.debug { "Added ${element.name}: $selectedElements" }
+            LOG.debug { "Added ${element.elementName}: $selectedElements" }
         } else {
             LOG.debug { "Cannot select more than 3 elements for a spell: $selectedElements" }
         }
@@ -53,8 +55,7 @@ class SpellCasting : Observer, Observable() {
 
     fun getSelectedSpell(): Spell? {
         if (null in selectedElements) return null
-        // Here you would query the database I guess to get data to initialize the spell model
-        return Spell(1, "Fireball", 12, "Blasts the enemy to pieces.")
+        return SpellRepository().getSpellById(selectedElements.map { elem -> elem?.elementID!! }.reduce { sum, element -> sum * element })
     }
 
     /*    fun getSpellID(): Int {

@@ -6,6 +6,7 @@ class Spell (
     val spellHealing : Int,
     val spellDamage : Int,
     val spellMitigation : Int,
-    val spellDescription : String
+    val spellDescription : String,
+    val duration : Int,
 )
 

@@ -10,8 +10,8 @@ import ktx.scene2d.*
 import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.commons.spell.Spell
 import no.ntnu.beardblaster.hud.ElementChangedObserver
-import no.ntnu.beardblaster.models.Spell
 import no.ntnu.beardblaster.models.SpellCasting
 
 private val log = logger<SpellInfo>()
@@ -55,9 +55,9 @@ class SpellInfo (
         log.debug { "Update spell info" }
         val spell: Spell? = spellCasting.getSelectedSpell()
         if (spell != null) {
-            log.debug { "Spell (${spell.name}, ${spell.description})" }
-            nameLabel.setText(spell.name)
-            descLabel.setText(spell.description)
+            log.debug { "Spell (${spell.spellName}, ${spell.spellDescription})" }
+            nameLabel.setText(spell.spellName)
+            descLabel.setText(spell.spellDescription)
         } else {
             log.debug { "Spell is not completed" }
             val maxSlots = spellCasting.selectedElements.count()

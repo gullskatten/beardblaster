@@ -12,7 +12,8 @@ data class Spell (
         val spellHealing : Int,
         val spellDamage : Int,
         val spellMitigation : Int,
-        val spellDescription : String
+        val spellDescription : String,
+        val duration : Int
         ) {
     fun toEntity(): Spell {
         return Spell(
@@ -21,7 +22,8 @@ data class Spell (
             spellHealing,
             spellDamage,
             spellMitigation,
-            spellDescription
+            spellDescription,
+            duration
         )
     }
 }

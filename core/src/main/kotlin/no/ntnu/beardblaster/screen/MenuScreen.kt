@@ -15,6 +15,8 @@ import ktx.scene2d.scene2d
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.commons.spell.Element
+import no.ntnu.beardblaster.commons.spell.Spell
 import no.ntnu.beardblaster.spell.SpellRepository
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
@@ -44,6 +46,9 @@ class MenuScreen(
         ) // Kept it here as it can crash for lateinit since loading user can finish before screen has been initialized
 
     override fun initScreen() {
+        val selectedElements = listOf(Element(1, "spell"), Element(2, "2"), Element(2, "3"))
+        val s = SpellRepository().getSpellById(selectedElements.map { elem: Element -> elem.elementID }.reduce { sum, element -> sum * element })
+        LOG.info { "YOLO: ${s?.spellName} - ${s?.spellDescription} " }
 
         if (UserData.instance.user == null && !UserData.instance.isLoading) {
             KtxAsync.launch {
@@ -57,7 +62,7 @@ class MenuScreen(
 
         val foundSpell = SpellRepository().getSpellById(1)
         if(foundSpell != null) {
-            LOG.info {foundSpell.spellName}
+            LOG.info { foundSpell.spellName }
         } else {
             LOG.info { "Spell not found!" }
         }
