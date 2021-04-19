@@ -79,12 +79,6 @@ class MenuScreen(
             }
             UserData.instance.addObserver(this)
         }
-        KtxAsync.launch {
-            UserData.instance.loadUserData()
-        }
-
-        UserData.instance.addObserver(this)
-
     }
 
     override fun setBtnEventListeners() {
