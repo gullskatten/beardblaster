@@ -107,7 +107,7 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         val code = (1..6)
             .map { i -> kotlin.random.Random.nextInt(0, availableCodeCharacters.size) }
             .map(availableCodeCharacters::get)
-            .joinToString("");
+            .joinToString("")
 
         Log.d(TAG, "Creating a new game (lobby) with code $code")
 

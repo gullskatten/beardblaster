@@ -51,7 +51,7 @@ class JoinLobbyScreen(
         submitCodeBtn = scene2d.textButton(Nls.submit())
         backBtn = scene2d.button(ButtonStyle.Cancel.name)
 
-        waitingLabel = bodyLabel("")
+        waitingLabel = bodyLabel("", 1.5f, LabelStyle.BodyOutlined.name)
         errorLabel = bodyLabel("")
         waitingLabel.isVisible = false
         errorLabel.isVisible = false
@@ -136,6 +136,7 @@ class JoinLobbyScreen(
                     waitingLabel.isVisible = true
                     waitingLabel.setFontScale(0.8f)
                     waitingLabel.setText("Success! Waiting for player to start the game.")
+                    submitCodeBtn.isVisible = false
                 }
             }
         }
