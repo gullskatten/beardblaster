@@ -70,15 +70,15 @@ class LoginMenuScreen(
         LoginDialog().apply {
             okBtn.onChange {
                 if (!UserAuth().isLoggedIn() && isValid) {
-                    LOG.debug { "Signing in user: ($email, $password)" }
                     UserAuth().signIn(email, password)
-                        .then<GdxFirebaseUser> { game.setScreen<MenuScreen>() }
+                        .then<GdxFirebaseUser> {
+                            game.setScreen<MenuScreen>()
+                        }
                         .fail { message, _ ->
                             LOG.error { message }
                             errorLabel.setText(message)
                         }
                 }
-                hide()
             }
         }.show(stage)
     }
@@ -110,7 +110,6 @@ class LoginMenuScreen(
                         LOG.error { message }
                         errorLabel.setText(message)
                     }
-                hide()
             }
         }.show(stage)
     }

@@ -46,28 +46,6 @@ class MenuScreen(
         ) // Kept it here as it can crash for lateinit since loading user can finish before screen has been initialized
 
     override fun initScreen() {
-        val selectedElements = listOf(Element(1, "spell"), Element(2, "2"), Element(2, "3"))
-        val s = SpellRepository().getSpellById(selectedElements.map { elem: Element -> elem.elementID }.reduce { sum, element -> sum * element })
-        LOG.info { "YOLO: ${s?.spellName} - ${s?.spellDescription} " }
-
-        if (UserData.instance.user == null && !UserData.instance.isLoading) {
-            KtxAsync.launch {
-                UserData.instance.loadUserData()
-            }
-            UserData.instance.addObserver(this)
-        }
-        KtxAsync.launch {
-            UserData.instance.loadUserData()
-        }
-
-        val foundSpell = SpellRepository().getSpellById(1)
-        if(foundSpell != null) {
-            LOG.info { foundSpell.spellName }
-        } else {
-            LOG.info { "Spell not found!" }
-        }
-
-        UserData.instance.addObserver(this)
 
         createGameBtn = scene2d.textButton(Nls.createGame())
         joinGameBtn = scene2d.textButton(Nls.joinGame())
@@ -94,6 +72,19 @@ class MenuScreen(
             add(exitBtn).colspan(2).center()
         }
         stage.addActor(table)
+
+        if (UserData.instance.user == null && !UserData.instance.isLoading) {
+            KtxAsync.launch {
+                UserData.instance.loadUserData()
+            }
+            UserData.instance.addObserver(this)
+        }
+        KtxAsync.launch {
+            UserData.instance.loadUserData()
+        }
+
+        UserData.instance.addObserver(this)
+
     }
 
     override fun setBtnEventListeners() {
