@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
+import ktx.log.info
 import ktx.scene2d.button
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
@@ -16,6 +17,8 @@ import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.ui.*
+import no.ntnu.beardblaster.user.UserAuth
+import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
 
 
 class LoginScreen(
@@ -62,18 +65,18 @@ class LoginScreen(
 
     override fun setBtnEventListeners() {
         loginBtn.onClick {
-            /*if (!UserAuth().isLoggedIn() && emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty()) {
+            if (!UserAuth().isLoggedIn() && emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty()) {
                 UserAuth().signIn(emailInput.text, passwordInput.text)
-                    .then<GdxFirebaseUser> { gdxFirebaseUser ->*/
+                    .then<GdxFirebaseUser> { gdxFirebaseUser ->
                         game.setScreen<MenuScreen>()
-                    /*}
+                    }
                     .fail { s, _ ->
                         LOG.info { s }
                         error.setText(s)
                     }
             } else {
                 error.setText("Username or password cannot be empty!")
-            }*/
+            }
         }
         backBtn.onClick {
             error.setText("")

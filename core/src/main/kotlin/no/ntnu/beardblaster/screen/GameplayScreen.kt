@@ -41,17 +41,10 @@ class GameplayScreen(
     private var countDownTimer = 5f
     private var goodWizard: WizardTexture = WizardTexture()
     private var evilWizard: WizardTexture = WizardTexture()
-    private enum class Phase {
-        PREP,
-        ACTION1,
-        ACTION2,
-        ACTION3
-    }
-    private lateinit var gamePhase: Phase
+
     override fun initScreen() {
         log.debug { "Gameplay screen" }
         initPreparationPhase()
-        gamePhase = Phase.PREP
     }
 
     private fun initPreparationPhase() {
@@ -114,16 +107,6 @@ class GameplayScreen(
         evilWizard.setAnimation(0f, 0f, assets, WizardTextures.EvilWizardTakeHit)
     }
 
-    private fun initSecondActionPhase() {
-        goodWizard.setAnimation(0f,0f, assets, WizardTextures.GoodWizardHit)
-        evilWizard.setAnimation(0f, 0f, assets, WizardTextures.EvilWizardAttack)
-    }
-
-    private fun initSecondDeathPhase() {
-        goodWizard.setAnimation(0f,0f, assets, WizardTextures.GoodWizardIdle)
-        evilWizard.setAnimation(0f, 0f, assets, WizardTextures.EvilWizardDeath)
-    }
-
 
     override fun setBtnEventListeners() {
         quitBtn.onClick {
@@ -156,21 +139,6 @@ class GameplayScreen(
         if (countDownTimer <= 10) {
             stage.addActor(table)
         }
-
-        if (countDownTimer <= 0 && gamePhase == Phase.PREP) {
-            gamePhase = Phase.ACTION1
-            initActionPhase()
-
-        }
-        if (countDownTimer <= -5f && gamePhase == Phase.ACTION1) {
-            gamePhase = Phase.ACTION2
-            initSecondActionPhase()
-        }
-
-        if (countDownTimer <= -10f && gamePhase == Phase.ACTION2){
-            gamePhase = Phase.ACTION3
-            initSecondDeathPhase()
-        }
         camera.update()
     }
 
@@ -178,19 +146,19 @@ class GameplayScreen(
         update(delta)
         stage.act(delta)
         stage.draw()
-        if (gamePhase == Phase.PREP)
-        {
+
+        //If gamephase == preperation draw only your wizard
+        batch.use() {
+            it.projectionMatrix = camera.combined
+            it.draw(goodWizard.getWizard(), -400f, -230f, goodWizard.getBounds().width*5, goodWizard.getBounds().height*5)
+            }
+        // If gamephase != preperation draw both wizards
+        /*if (gamePhase != Phase.PREP) {
             batch.use() {
-                it.projectionMatrix = camera.combined
-                it.draw(goodWizard.getWizard(), -300f, -200f, goodWizard.getBounds().width*5f, goodWizard.getBounds().height*5f)
-                }
-        }
-        if (gamePhase != Phase.PREP) {
-            batch.use() {
-                it.draw(goodWizard.getWizard(), -300f,-200f, goodWizard.getBounds().width*4f, goodWizard.getBounds().height*4f)
-                it.draw(evilWizard.getWizard(), camera.viewportWidth - evilWizard.getBounds().width + 520f, -440f, -evilWizard.getBounds().width*9, evilWizard.getBounds().height*9)
+                it.draw(goodWizard.getWizard(), -400f,-230f, goodWizard.getBounds().width*5f, goodWizard.getBounds().height*5f)
+                it.draw(evilWizard.getWizard(), 2300f, -370f, -evilWizard.getBounds().width*8, evilWizard.getBounds().height*8)
 
             }
-        }
+        }*/
     }
 }
