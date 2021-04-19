@@ -46,3 +46,10 @@ fun fullSizeTable(pad: Float = 0f): Table {
         defaults().pad(pad)
     }
 }
+
+fun smallTable(pad: Float = 0f): Table {
+    return scene2d.table {
+        setBounds(WORLD_WIDTH-250f, WORLD_HEIGHT-150f, 250f, 150f )
+        defaults().pad(pad)
+    }
+}

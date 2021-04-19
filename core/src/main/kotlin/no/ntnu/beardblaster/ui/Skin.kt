@@ -50,6 +50,9 @@ enum class Image(val atlasKey: String) {
     ElementIce("element_ice"),
     ElementNature("element_nature"),
     SpellBarSlot("button_icon"),
+
+    //Timer
+    TimerSlot("button_icon")
 }
 
 operator fun Skin.get(image: Image): Drawable = this.getDrawable(image.atlasKey)

@@ -1,11 +1,12 @@
 package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ktx.actors.onClick
@@ -28,7 +29,7 @@ private val LOG = logger<LobbyScreen>()
 
 class LobbyScreen(
     game: BeardBlasterGame,
-    batch: Batch,
+    batch: SpriteBatch,
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera), Observer {
@@ -77,6 +78,7 @@ class LobbyScreen(
         stage.addActor(table)
     }
 
+    @InternalCoroutinesApi
     override fun setBtnEventListeners() {
         startGameBtn.onClick {
             KtxAsync.launch {
@@ -116,7 +118,6 @@ class LobbyScreen(
                         }
                     }
                 }
-
             }
         }
     }
