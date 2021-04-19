@@ -290,7 +290,7 @@ class GameplayScreen(
                 }
             }
             Phase.GameOver -> {
-                GameData.instance.endCurrentGame()
+                
             }
         }
         if (currentTurn > 3 && !canDo) {
