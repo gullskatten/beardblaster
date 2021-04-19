@@ -52,6 +52,7 @@ class GameplayScreen(
     private lateinit var natureElementBtn: Button
     private lateinit var elementButtonsTable: Table
     private lateinit var spellBar: SpellBar
+    private lateinit var spellInfo: SpellInfo
     private lateinit var spellCasting: SpellCasting
     private lateinit var hostLabel: Label
     private lateinit var opponentLabel: Label
@@ -82,6 +83,12 @@ class GameplayScreen(
         iceElementBtn = scene2d.button(ElementType.Ice.name)
         natureElementBtn = scene2d.button(ElementType.Nature.name)
 
+        spellInfo = scene2d.spellInfo(spellCasting) {
+            setPosition(
+                (WORLD_WIDTH / 2) - (width / 2),
+                (WORLD_HEIGHT / 2) - (height / 2),
+            )
+        }
         spellBar = scene2d.spellbar(spellCasting = spellCasting)
         spellBar.setPosition(WORLD_WIDTH / 2 - spellBar.width, spellBar.height + 130f)
         val elementBtnSize = 200f
@@ -124,6 +131,7 @@ class GameplayScreen(
         stage.addActor(countDownLabel)
         stage.addActor(elementButtonsTable)
         stage.addActor(spellBar)
+        stage.addActor(spellInfo)
     }
 
     private fun initWaitingForPlayerPhase() {
@@ -189,6 +197,11 @@ class GameplayScreen(
         }
         natureElementBtn.onClick {
             spellCasting.addNature()
+        }
+
+        spellInfo.lockBtn.onClick {
+            // TODO Implement spell locking
+            LOG.debug { "Wizard locks selected spell" }
         }
     }
 
