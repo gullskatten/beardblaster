@@ -12,7 +12,6 @@ import java.util.*
 class GameData private constructor() : Observable() {
     var game: Game? = null
     var isHost: Boolean = false
-
     var error: String? = null
         private set
 
@@ -28,6 +27,16 @@ class GameData private constructor() : Observable() {
             return GameRepository().endTurn(currentTurn, chosenSpell?.id ?: 0)
         }
         return null
+    }
+
+    fun endCurrentGame(){
+        if(game != null && game!!.id.isNotEmpty()) {
+            game?.opponent?.id
+        }
+    }
+
+    fun forfeit() {
+
     }
 
     companion object {
