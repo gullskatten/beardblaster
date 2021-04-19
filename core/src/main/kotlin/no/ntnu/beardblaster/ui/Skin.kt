@@ -16,12 +16,17 @@ import no.ntnu.beardblaster.ElementType
 import no.ntnu.beardblaster.assets.AtlasAsset
 import no.ntnu.beardblaster.assets.FontAsset
 import no.ntnu.beardblaster.assets.get
+import kotlin.math.roundToInt
 
 enum class Image(val atlasKey: String) {
     // Buttons
     Button("button_default"),
     ButtonHover("button_default_hover"),
     ButtonPressed("button_default_pressed"),
+
+    ButtonPrimary("button_green"),
+    ButtonPrimaryHover("button_green_hover"),
+    ButtonPrimaryPressed("button_green_pressed"),
 
     // Dialog buttons
     DialogButtonOK("modal_fancy_header_button_green_check"),
@@ -38,12 +43,16 @@ enum class Image(val atlasKey: String) {
     Modal("modal_fancy"),
     ModalSkull("modal_fancy_skull"),
     ModalHeader("modal_fancy_header"),
+    ModalDark("modal_fancy_dark"),
 
     // Spellbar and Elements
     ElementFire("element_fire"),
     ElementIce("element_ice"),
     ElementNature("element_nature"),
     SpellBarSlot("button_icon"),
+
+    //Timer
+    TimerSlot("button_icon")
 }
 
 operator fun Skin.get(image: Image): Drawable = this.getDrawable(image.atlasKey)
@@ -57,12 +66,15 @@ operator fun Skin.get(font: FontStyle): BitmapFont = this.getFont(font.name)
 enum class LabelStyle {
     Heading,
     Body,
+    BodyOutlined,
     Error,
+    LightText,
 }
 
 enum class ButtonStyle {
     OK,
     Cancel,
+    Primary,
 }
 
 enum class Style {
@@ -90,9 +102,20 @@ fun createSkin(assets: AssetStorage): Skin {
             fontColor = Color.WHITE
         }
 
+        label(LabelStyle.BodyOutlined.name) {
+            font = skin[FontStyle.Default]
+            fontColor = Color.WHITE
+            background = dimmedLabelBackground()
+        }
+
         label(LabelStyle.Error.name) {
             font = skin[FontStyle.Default]
             fontColor = Color.ORANGE
+        }
+
+        label(LabelStyle.LightText.name) {
+            font = skin[FontStyle.Default]
+            fontColor = Color.LIGHT_GRAY
         }
 
         button(ButtonStyle.OK.name) {
@@ -131,6 +154,15 @@ fun createSkin(assets: AssetStorage): Skin {
             pressedOffsetY = 4f
         }
 
+        textButton(ButtonStyle.Primary.name) {
+            font = skin[FontStyle.Default]
+            up = skin[Image.ButtonPrimary]
+            over = skin[Image.ButtonPrimaryHover]
+            down = skin[Image.ButtonPrimaryPressed]
+            pressedOffsetX = 4f
+            pressedOffsetY = 4f
+        }
+
         textField {
             font = skin[FontStyle.Default]
             fontColor = Color.DARK_GRAY
@@ -164,6 +196,22 @@ private fun dimmedBackground(): Drawable {
             )
         ).apply {
             color = Color(1f, 1f, 1f, 0.85f)
+        }
+    )
+}
+
+private fun dimmedLabelBackground(): Drawable {
+    return SpriteDrawable(
+        Sprite(
+            Texture(
+                Pixmap(
+                    (Gdx.graphics.width * 0.40).roundToInt(),
+                    70,
+                    Pixmap.Format.RGB888
+                )
+            )
+        ).apply {
+            color = Color(1f, 1f, 1f, 0.25f)
         }
     )
 }

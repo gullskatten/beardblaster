@@ -2,7 +2,7 @@ package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import kotlinx.coroutines.launch
@@ -25,7 +25,7 @@ private val LOG = logger<MenuScreen>()
 
 class MenuScreen(
     game: BeardBlasterGame,
-    batch: Batch,
+    batch: SpriteBatch,
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera), Observer {
@@ -37,7 +37,11 @@ class MenuScreen(
     private lateinit var exitBtn: TextButton
     private lateinit var wizardHeading: Label
     private val currentWizardLabel: Label =
-        bodyLabel(UserData.instance.getCurrentUserString()) // Kept it here as it can crash for lateinit since loading user can finish before screen has been initialized
+        bodyLabel(
+            UserData.instance.getCurrentUserString(),
+            1.5f,
+            LabelStyle.BodyOutlined.name
+        ) // Kept it here as it can crash for lateinit since loading user can finish before screen has been initialized
 
     override fun initScreen() {
 
@@ -89,6 +93,8 @@ class MenuScreen(
 
     override fun setBtnEventListeners() {
         createGameBtn.onClick {
+            // Handle creation of game, and then go to Lobby screen to display code and wait for player 2
+            game.setScreen<GameplayScreen>()
             if (UserData.instance.user != null) {
                 game.setScreen<LobbyScreen>()
             }

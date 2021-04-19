@@ -1,17 +1,17 @@
 package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
+import ktx.graphics.use
 import ktx.log.debug
 import ktx.log.logger
 import ktx.scene2d.button
@@ -28,6 +28,8 @@ import no.ntnu.beardblaster.game.GameData
 import no.ntnu.beardblaster.hud.SpellBar
 import no.ntnu.beardblaster.hud.spellbar
 import no.ntnu.beardblaster.models.SpellCasting
+import no.ntnu.beardblaster.sprites.WizardTexture
+import no.ntnu.beardblaster.sprites.WizardTextures
 import no.ntnu.beardblaster.ui.*
 
 private val LOG = logger<GameplayScreen>()
@@ -41,7 +43,7 @@ enum class Phase {
 
 class GameplayScreen(
     game: BeardBlasterGame,
-    batch: Batch,
+    batch: SpriteBatch,
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
@@ -52,7 +54,10 @@ class GameplayScreen(
     private lateinit var natureElementBtn: Button
     private lateinit var elementButtonsTable: Table
     private lateinit var spellBar: SpellBar
+    private lateinit var spellInfo: SpellInfo
     private lateinit var spellCasting: SpellCasting
+    private var goodWizard: WizardTexture = WizardTexture()
+    private var evilWizard: WizardTexture = WizardTexture()
     private lateinit var hostLabel: Label
     private lateinit var opponentLabel: Label
     private lateinit var countDownLabel: Label
@@ -82,6 +87,12 @@ class GameplayScreen(
         iceElementBtn = scene2d.button(ElementType.Ice.name)
         natureElementBtn = scene2d.button(ElementType.Nature.name)
 
+        spellInfo = scene2d.spellInfo(spellCasting) {
+            setPosition(
+                (WORLD_WIDTH / 2) - (width / 2),
+                (WORLD_HEIGHT / 2) - (height / 2),
+            )
+        }
         spellBar = scene2d.spellbar(spellCasting = spellCasting)
         spellBar.setPosition(WORLD_WIDTH / 2 - spellBar.width, spellBar.height + 130f)
         val elementBtnSize = 200f
@@ -110,6 +121,7 @@ class GameplayScreen(
         LOG.debug { "Init $currentPhase turn $currentTurn" }
         spellCasting.reset()
         spellBar.update()
+        goodWizard.setAnimation(0f, 0f, assets, WizardTextures.GoodWizardIdle)
 
         headingLabel.setText(Nls.preparationPhase())
 
@@ -124,6 +136,7 @@ class GameplayScreen(
         stage.addActor(countDownLabel)
         stage.addActor(elementButtonsTable)
         stage.addActor(spellBar)
+        stage.addActor(spellInfo)
     }
 
     private fun initWaitingForPlayerPhase() {
@@ -143,15 +156,23 @@ class GameplayScreen(
         headingLabel.setText(Nls.actionPhase())
 
         val table = fullSizeTable().apply {
-            add(headingLabel).pad(50f)
+            background = skin[Image.Background]
+            add(headingLabel("FIGHT"))
             row()
-            add(quitBtn)
+            row()
+            row()
+            add(bodyLabel("BOOM, BLAST, POOF, BEARD GONE"))
         }
-        // When prep. phase is done this needs to be updated to update and not clear the stage
+
         stage.clear()
         addWizards()
         stage.addActor(countDownLabel)
         stage.addActor(table)
+
+        //If wizardA attacks first -> wizardA.setAnimation(Attack) + wizardB.setAnimation(takeHit)
+        //If wizardA | B is dead -> setAnimation(dead)
+        goodWizard.setAnimation(0f, 0f, assets, WizardTextures.GoodWizardAttack1)
+        evilWizard.setAnimation(0f, 0f, assets, WizardTextures.EvilWizardTakeHit)
     }
 
     private fun initGameOver() {
@@ -190,9 +211,13 @@ class GameplayScreen(
         natureElementBtn.onClick {
             spellCasting.addNature()
         }
+
+        spellInfo.lockBtn.onClick {
+            // TODO Implement spell locking
+            LOG.debug { "Wizard locks selected spell" }
+        }
     }
 
-    @InternalCoroutinesApi
     override fun update(delta: Float) {
         when (currentPhase) {
             Phase.Preparation -> {
@@ -273,5 +298,35 @@ class GameplayScreen(
             initGameOver()
             canDo = true
         }
+        camera.update()
+        goodWizard.update(delta)
+        evilWizard.update(delta)
+    }
+
+    override fun additionalRender(delta: Float) {
+        update(delta)
+        stage.act(delta)
+        stage.draw()
+
+        batch.use {
+            it.projectionMatrix = camera.combined
+            it.draw(
+                goodWizard.getWizard(),
+                -400f,
+                -230f,
+                goodWizard.getBounds().width * 5,
+                goodWizard.getBounds().height * 5
+            )
+            if (currentPhase != Phase.Preparation) {
+                it.draw(
+                    evilWizard.getWizard(),
+                    2300f,
+                    -370f,
+                    -evilWizard.getBounds().width * 8,
+                    evilWizard.getBounds().height * 8
+                )
+            }
+        }
     }
 }
+
