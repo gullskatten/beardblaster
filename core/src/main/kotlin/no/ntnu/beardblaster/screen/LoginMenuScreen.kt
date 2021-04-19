@@ -72,7 +72,7 @@ class LoginMenuScreen(
                 if (!UserAuth().isLoggedIn() && isValid) {
                     UserAuth().signIn(email, password)
                         .then<GdxFirebaseUser> {
-                            game.setScreen<MenuScreen>()
+                            Gdx.app.postRunnable { game.setScreen<MenuScreen>() }
                         }
                         .fail { message, _ ->
                             LOG.error { message }
