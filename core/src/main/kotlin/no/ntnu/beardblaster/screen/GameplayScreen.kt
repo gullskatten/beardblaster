@@ -14,10 +14,7 @@ import ktx.async.KtxAsync
 import ktx.graphics.use
 import ktx.log.debug
 import ktx.log.logger
-import ktx.scene2d.button
-import ktx.scene2d.scene2d
-import ktx.scene2d.table
-import ktx.scene2d.textButton
+import ktx.scene2d.*
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.ElementType
 import no.ntnu.beardblaster.WORLD_HEIGHT
@@ -75,11 +72,14 @@ class GameplayScreen(
     private var currentPhase: Phase = Phase.Preparation
     private var currentTurn = 1
     private var canDo = false // TODO: To be removed when things come together properly
+    private var hostHealthbar = Healthbar()
+    private val opponentHealthbar = Healthbar()
+
 
     override fun initComponents() {
         LOG.debug { "Set up components" }
-        hostWizard = Wizard(GameData.instance.game?.host!!.beardLength)
-        opponentWizard = Wizard(GameData.instance.game?.opponent!!.beardLength)
+        hostWizard = Wizard(10f)
+        opponentWizard = Wizard(10f)
         spellCasting = SpellCasting()
 
         headingLabel = headingLabel(Nls.preparationPhase())
@@ -92,16 +92,16 @@ class GameplayScreen(
             add(hostLabel)
             row()
             row()
-            add(hostHP)
+            add(hostHealthbar.healthbarContainer).width(300f).height(70f)
         }
         opponentInfo = scene2d.table {
             add(opponentLabel)
             row()
             row()
-            add(opponentHP)
+            add(opponentHealthbar.healthbarContainer).width(300f).height(70f)
         }
 
-        hostInfo.setPosition(hostLabel.width + 10f, WORLD_HEIGHT / 2 + 50f)
+        hostInfo.setPosition(hostLabel.width + 100f, WORLD_HEIGHT / 2 + 50f)
         opponentInfo.setPosition(WORLD_WIDTH - 100f - opponentLabel.width, WORLD_HEIGHT / 2 + 50f)
         waitingLabel = headingLabel(Nls.waitingPhase())
 
@@ -252,8 +252,8 @@ class GameplayScreen(
     override fun update(delta: Float) {
         when (currentPhase) {
             Phase.Preparation -> {
-                hostHP.setText(hostWizard.getCurrentHPString())
-                opponentHP.setText(opponentWizard.getCurrentHPString())
+                hostHealthbar.updateWidth(hostWizard.currentHP, hostWizard.maxHP)
+                opponentHealthbar.updateWidth(opponentWizard.currentHP, opponentWizard.maxHP)
                 countDown -= delta * 0.5f
 
                 if (countDown <= PREPARATION_TIME) {
@@ -310,7 +310,6 @@ class GameplayScreen(
             Phase.Action -> {
                 // Simulate time taken for animations to fly across the screen
                 countDown -= delta
-
                 if (countDown <= PREPARATION_TIME) {
                     countDownLabel.setText(countDown.toInt().toString())
                 }
