@@ -15,9 +15,7 @@ import ktx.scene2d.scene2d
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
-import no.ntnu.beardblaster.commons.spell.Element
-import no.ntnu.beardblaster.commons.spell.Spell
-import no.ntnu.beardblaster.spell.SpellRepository
+import no.ntnu.beardblaster.spell.FunctionalSpellTest
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData
@@ -72,6 +70,7 @@ class MenuScreen(
             add(exitBtn).colspan(2).center()
         }
         stage.addActor(table)
+        FunctionalSpellTest().test()
 
         if (UserData.instance.user == null && !UserData.instance.isLoading) {
             KtxAsync.launch {
