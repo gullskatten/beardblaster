@@ -78,8 +78,8 @@ class GameplayScreen(
 
     override fun initComponents() {
         LOG.debug { "Set up components" }
-        hostWizard = Wizard(10f)
-        opponentWizard = Wizard(10f)
+        hostWizard = Wizard(0f)
+        opponentWizard = Wizard(0f)
         spellCasting = SpellCasting()
 
         headingLabel = headingLabel(Nls.preparationPhase())

@@ -23,7 +23,7 @@ import no.ntnu.beardblaster.user.UserData
 class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
     AbstractGameRepository<Game> {
     private val TAG = "GameRepository"
-    private val GAME_COLLECTION = "games"
+    private val GAMES_COLLECTION = "games"
     private val TURNS_COLLECTION = "turns"
     private val SPELLS_COLLECTION = "spells"
 
@@ -31,14 +31,14 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         GameData.instance.game.let { }
         emit(State.loading<Turn>())
         val doc = Turn()
-        val documentReference = db.collection(GAME_COLLECTION)
+        val documentReference = db.collection(GAMES_COLLECTION)
             .document(GameData.instance.game!!.id)
             .collection(TURNS_COLLECTION)
             .document("$currentTurn")
 
         val turnDocument = documentReference.get().await()
 
-        if(!turnDocument.exists()) {
+        if (!turnDocument.exists()) {
             documentReference.set(doc).await()
         }
         Log.d(TAG, "Created turn $currentTurn successfully")
@@ -51,7 +51,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         GameData.instance.game.let { }
         emit(State.loading<SpellCast>())
 
-        val turnDocRef = db.collection(GAME_COLLECTION)
+        val turnDocRef = db.collection(GAMES_COLLECTION)
             .document(GameData.instance.game!!.id)
             .collection(TURNS_COLLECTION)
             .document("$currentTurn")
@@ -62,7 +62,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         ).await()
 
         val spellDoc = SpellCast(chosenSpell = chosenSpellId)
-        val newSpellDocRef = db.collection(GAME_COLLECTION)
+        val newSpellDocRef = db.collection(GAMES_COLLECTION)
             .document(GameData.instance.game!!.id)
             .collection(TURNS_COLLECTION)
             .document(turnDocRef.id)
@@ -86,7 +86,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
             return@callbackFlow
         }
         val subscription = db
-            .collection(GAME_COLLECTION)
+            .collection(GAMES_COLLECTION)
             .document(id)
             .addSnapshotListener { snapshot, _ ->
                 Log.i(TAG, "Game was updated externally! Checking if snapshot exists")
