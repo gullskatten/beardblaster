@@ -18,6 +18,13 @@ bar_container
   orig: 570, 81
   offset: 0, 0
   index: -1
+beard_scale
+  rotate: false
+  xy: 823, 203
+  size: 538, 49
+  orig: 538, 49
+  offset: 0, 0
+  index: -1
 bg_modal_small
   rotate: false
   xy: 823, 508
@@ -62,14 +69,14 @@ button_default_hover
   index: -1
 button_default_pressed
   rotate: false
-  xy: 1417, 247
+  xy: 1395, 247
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_green
   rotate: false
-  xy: 1714, 247
+  xy: 1417, 111
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
@@ -125,21 +132,21 @@ button_orange_hover
   index: -1
 button_orange_pressed
   rotate: false
-  xy: 1120, 118
+  xy: 1120, 67
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_purple
   rotate: false
-  xy: 823, 118
+  xy: 823, 67
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_purple_disabled
   rotate: false
-  xy: 1417, 111
+  xy: 1692, 247
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
@@ -160,21 +167,21 @@ button_purple_pressed
   index: -1
 element_fire
   rotate: false
-  xy: 1418, 1398
+  xy: 574, 2
   size: 85, 85
   orig: 85, 85
   offset: 0, 0
   index: -1
 element_ice
   rotate: false
-  xy: 574, 2
+  xy: 661, 2
   size: 85, 85
   orig: 85, 85
   offset: 0, 0
   index: -1
 element_nature
   rotate: false
-  xy: 661, 2
+  xy: 1418, 1398
   size: 85, 85
   orig: 85, 85
   offset: 0, 0
@@ -237,7 +244,7 @@ mana_bar_indicator
   index: -1
 minimalpixelfont
   rotate: false
-  xy: 1113, 52
+  xy: 1707, 45
   size: 128, 64
   orig: 128, 64
   offset: 0, 0
@@ -370,7 +377,7 @@ scroll_indicator_fancy_arrows_vertical
   index: -1
 scroll_indicator_nugget
   rotate: false
-  xy: 1395, 361
+  xy: 704, 1374
   size: 20, 20
   orig: 20, 20
   offset: 0, 0
@@ -405,7 +412,7 @@ scroll_indicator_path_fancy_vertical
   index: -1
 skull
   rotate: false
-  xy: 823, 12
+  xy: 1417, 5
   size: 288, 104
   orig: 288, 104
   offset: 0, 0
