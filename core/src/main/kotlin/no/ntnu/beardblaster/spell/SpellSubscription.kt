@@ -20,6 +20,7 @@ class SpellSubscription : Observable() {
             GameRepository().subscribeToSpellsOnTurn(id).collect {
                 when (it) {
                     is State.Success -> {
+                        LOG.info { "Spell retrieved from FireStore ${it.data.spell.spellName}" }
                         notifyObservers(it.data)
                     }
                     is State.Loading -> {

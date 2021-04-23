@@ -1,22 +1,23 @@
 package no.ntnu.beardblaster.spell
 
+import ktx.log.debug
+import ktx.log.info
+import ktx.log.logger
 import no.ntnu.beardblaster.commons.spell.SpellAction
 import java.util.*
 import java.util.function.Consumer
 import java.util.stream.Collectors
+
+private val LOG = logger<SpellExecutor>()
 
 class SpellExecutor {
     val spellHistory: MutableMap<Int, MutableList<SpellAction>> = HashMap()
     private val mitigationSpells: MutableList<MitigationSpell> = ArrayList()
 
     fun addSpell(spell: SpellAction, turn: Int) {
-        spellHistory.computeIfPresent(turn) { _: Int?, spellsUsedInTurn: MutableList<SpellAction>? ->
-            if (spellsUsedInTurn != null) {
-                spellsUsedInTurn.add(spell)
-                return@computeIfPresent spellsUsedInTurn
-            } else {
-                return@computeIfPresent mutableListOf(spell)
-            }
+        LOG.info { "Adding spell ${spell.spell.spellName} cast by ${spell.caster}" }
+        if(spellHistory.containsKey(turn)) {
+            spellHistory[turn]?.add(spell)
         }
         spellHistory.putIfAbsent(turn, mutableListOf(spell))
 
@@ -34,6 +35,15 @@ class SpellExecutor {
                 )
             )
         }
+        LOG.debug { "Current Spell History \n" }
+        spellHistory.keys.forEach { i ->
+            LOG.debug { "Turn $i" }
+            spellHistory[i]!!.forEach {
+                item ->
+                LOG.debug { "Caster ${item.caster}: ${item.spell.spellName}" }
+            }
+        }
+
     }
 
     // Actions are simply snapshots of spells that occurs (like a log of spells for a turn)
@@ -60,6 +70,19 @@ class SpellExecutor {
         actions.forEach(Consumer { spellAction: SpellAction ->
             wizardState.update(spellAction)
         })
+
+
+            actions.forEach {
+                    item ->
+                LOG.debug { "Caster ${item.caster}" }
+                LOG.debug { "Spell ${item.spell.spellName}" }
+                LOG.debug { "CasterWizard: ${item.casterWizard?.displayName}" }
+                LOG.debug { "CasterWizard HP: ${item.casterWizard?.getHealthPoints()}" }
+                LOG.debug { "ReceiverWizard: ${item.receiverWizard?.displayName}" }
+                LOG.debug { "Damage: ${item.damageDealt}" }
+                LOG.debug { "Healing: ${item.healing}" }
+                LOG.debug { "Absorbed: ${item.damageAbsorbed}" }
+            }
 
         return actions.map { spellAction ->  SpellActionWithAnimation(spellAction)}
     }

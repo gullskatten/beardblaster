@@ -28,6 +28,10 @@ enum class Image(val atlasKey: String) {
     ButtonPrimaryHover("button_green_hover"),
     ButtonPrimaryPressed("button_green_pressed"),
 
+    ButtonCancel("button_orange"),
+    ButtonCancelHover("button_orange_hover"),
+    ButtonCancelPressed("button_orange_pressed"),
+
     // Dialog buttons
     DialogButtonOK("modal_fancy_header_button_green_check"),
     DialogButtonOKDisabled("modal_fancy_header_button_green_check_disabled"),
@@ -163,6 +167,15 @@ fun createSkin(assets: AssetStorage): Skin {
             up = skin[Image.ButtonPrimary]
             over = skin[Image.ButtonPrimaryHover]
             down = skin[Image.ButtonPrimaryPressed]
+            pressedOffsetX = 4f
+            pressedOffsetY = 4f
+        }
+
+        textButton(ButtonStyle.Cancel.name) {
+            font = skin[FontStyle.Default]
+            up = skin[Image.ButtonCancel]
+            over = skin[Image.ButtonCancelHover]
+            down = skin[Image.ButtonCancelPressed]
             pressedOffsetX = 4f
             pressedOffsetY = 4f
         }

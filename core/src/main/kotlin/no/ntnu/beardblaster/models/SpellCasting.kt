@@ -36,9 +36,6 @@ class SpellCasting : Observer, Observable() {
         if (null in selectedElements) {
             selectedElements[selectedElements.indexOfFirst { it == null }] = element
             ElementChangedObserver.instance.notifyChanged()
-            LOG.debug { "Added ${element.elementName}: $selectedElements" }
-        } else {
-            LOG.debug { "Cannot select more than 3 elements for a spell: $selectedElements" }
         }
     }
 
@@ -60,7 +57,6 @@ class SpellCasting : Observer, Observable() {
     }
 
     fun reset() {
-        LOG.debug { "Reset selected elements" }
         selectedElements = mutableListOf(null, null, null)
         ElementChangedObserver.instance.notifyChanged()
     }

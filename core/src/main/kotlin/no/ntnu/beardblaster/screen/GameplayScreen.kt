@@ -7,11 +7,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.assets.disposeSafely
+import ktx.async.KtxAsync
 import ktx.graphics.use
 import ktx.log.debug
+import ktx.log.info
 import ktx.log.logger
 import ktx.scene2d.button
 import ktx.scene2d.scene2d
@@ -22,10 +26,12 @@ import no.ntnu.beardblaster.ElementType
 import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.game.GameData
 import no.ntnu.beardblaster.game.GameInstance
 import no.ntnu.beardblaster.hud.SpellBar
 import no.ntnu.beardblaster.hud.spellbar
+import no.ntnu.beardblaster.spell.SpellLockState
 import no.ntnu.beardblaster.sprites.WizardTexture
 import no.ntnu.beardblaster.sprites.WizardTextures
 import no.ntnu.beardblaster.ui.*
@@ -117,7 +123,12 @@ class GameplayScreen(
                 (WORLD_HEIGHT / 2) - (height / 2),
             )
         }
-
+        spellAction = scene2d.spellActionsDialog {
+            setPosition(
+                (WORLD_WIDTH / 2) - (width / 2),
+                (WORLD_HEIGHT / 2) - (height / 2),
+            )
+        }
         spellBar = scene2d.spellbar(spellCasting = gameInstance.spellCasting)
         spellBar.setPosition(WORLD_WIDTH / 2 - spellBar.width, spellBar.height + 130f)
         val elementBtnSize = 200f
@@ -154,6 +165,7 @@ class GameplayScreen(
             row()
         }
         stage.clear()
+        spellAction.isVisible = false
 
         addWizards()
         stage.addActor(table)
@@ -174,6 +186,8 @@ class GameplayScreen(
 
 
     private fun initActionPhase() {
+        spellInfo.updateButtonLabel(SpellLockState.UNLOCKED)
+
         headingLabel.setText(Nls.actionPhase())
         val table = fullSizeTable().apply {
             background = skin[Image.Background]
@@ -182,12 +196,8 @@ class GameplayScreen(
         stage.clear()
 
         addWizards()
-        spellAction = scene2d.spellActionsDialog {
-            setPosition(
-                (WORLD_WIDTH / 2) - (width / 2),
-                (WORLD_HEIGHT / 2) - (height / 2),
-            )
-        }
+
+        spellAction.isVisible = true
         stage.addActor(spellAction)
         stage.addActor(table)
         stage.addActor(quitBtn)
@@ -197,16 +207,24 @@ class GameplayScreen(
     private fun cycleSpells() {
         if(gameInstance.spellsForTurn != null && gameInstance.spellsForTurn!!.isNotEmpty())
         gameInstance.spellsForTurn?.forEach {
+
             Timer("HealthPointUpdate", true).schedule(3000) {
-                if(it.caster == UserData.instance.user!!.id) {
-                    myHealthPointsLabel.setText(it.casterWizard!!.getHealthPoints())
-                    opponentHealthPointsLabel.setText(it.receiverWizard!!.getHealthPoints())
+                LOG.info { "Pushing health point updates!" }
+                if(UserData.instance.user == null) {
+                    LOG.info { "Woot, user was null!!" }
                 } else {
-                    myHealthPointsLabel.setText(it.receiverWizard!!.getHealthPoints())
-                    opponentHealthPointsLabel.setText(it.casterWizard!!.getHealthPoints())
+                    if(it.caster == UserData.instance.user!!.id) {
+                        myHealthPointsLabel.setText(it.casterWizard?.getHealthPoints())
+                        opponentHealthPointsLabel.setText(it.receiverWizard?.getHealthPoints())
+                    } else {
+                        myHealthPointsLabel.setText(it.receiverWizard?.getHealthPoints())
+                        opponentHealthPointsLabel.setText(it.casterWizard?.getHealthPoints())
+                    }
                 }
             }
+
             Timer("SpellDialog", false).schedule(4000) {
+                LOG.info { "Updating spell dialog" }
                 spellAction.updateNameLabelText(it.casterWizard!!.displayName)
                 spellAction.updateDescLabelText(it.toString())
                 goodWizard.setAnimation(0f, 0f, assets, it.myWizardAnimation)
@@ -214,7 +232,8 @@ class GameplayScreen(
             }
 
             val delay: Long = 4000L * gameInstance.spellsForTurn!!.size
-            Timer("SwapToPreparePhase", false).schedule(delay)  {
+            Timer("SwapToPreparePhase", true).schedule(delay)  {
+                LOG.info { "Swapping to PREPARE phase" }
                 gameInstance.resetPhase()
             }
         }
@@ -263,13 +282,27 @@ class GameplayScreen(
         }
 
         spellInfo.lockBtn.onClick {
-           gameInstance.lockTurn()
+            LOG.debug { "User locked turn!" }
+            KtxAsync.launch {
+                gameInstance.lockTurn().collect {
+                when(it) {
+                    is State.Success -> {
+                        spellInfo.updateButtonLabel(SpellLockState.LOCKED)
+                    }
+                    is State.Loading -> {
+                        spellInfo.updateButtonLabel(SpellLockState.LOCKING)
+                    }
+                    is State.Failed -> {
+                        spellInfo.updateButtonLabel(SpellLockState.FAILED)
+                    }
+                }
+            }
+            }
         }
     }
 
     override fun update(delta: Float) {
         gameInstance.updateCounter(delta)
-
         when (gameInstance.currentPhase) {
             Phase.Preparation -> {
                 myHealthPointsLabel.setText(gameInstance.wizardState.getCurrentUserAsWizard()?.getHealthPoints())
@@ -280,9 +313,11 @@ class GameplayScreen(
                 initWaitingForPlayerPhase()
             }
             Phase.Action -> {
-                initActionPhase()
+                if(gameInstance.lastActionTurn < gameInstance.currentTurn) {
+                    gameInstance.incrementActionTurn()
+                    initActionPhase()
+                }
             }
-
             Phase.GameOver -> {
                 initGameOver()
             }

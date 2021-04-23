@@ -9,9 +9,9 @@ import no.ntnu.beardblaster.commons.wizard.Wizard
 import java.util.*
 import java.util.function.Consumer
 
-private val LOG = logger<FunctionalSpellTest>()
 
 class FunctionalSpellTest {
+    private val LOG = logger<FunctionalSpellTest>()
     // generates a set of spells and wizards,
     // Wizard pick spells randomly
     // game is over when one wizards' health is reduced to 0.

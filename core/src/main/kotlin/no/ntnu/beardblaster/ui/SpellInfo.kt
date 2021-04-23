@@ -1,18 +1,19 @@
 package no.ntnu.beardblaster.ui
 
-import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
-import ktx.log.debug
 import ktx.log.logger
 import ktx.scene2d.*
+import ktx.style.textButton
 import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.spell.Spell
 import no.ntnu.beardblaster.hud.ElementChangedObserver
 import no.ntnu.beardblaster.models.SpellCasting
+import no.ntnu.beardblaster.spell.SpellLockState
 
 private val log = logger<SpellInfo>()
 
@@ -31,7 +32,7 @@ class SpellInfo (
         setFontScale(1.5f)
         wrap = true
     }
-    var lockBtn: Button = scene2d.textButton("Lock spell", ButtonStyle.Primary.name)
+    var lockBtn: TextButton = scene2d.textButton("Lock Spell", ButtonStyle.Primary.name)
 
     companion object {
         const val PADDING = 20f
@@ -54,11 +55,9 @@ class SpellInfo (
     private fun update() {
         val spell: Spell? = spellCasting.getSelectedSpell()
         if (spell != null) {
-            log.debug { "Spell (${spell.spellName}, ${spell.spellDescription})" }
             nameLabel.setText(spell.spellName)
             descLabel.setText(spell.spellDescription)
         } else {
-            log.debug { "Spell is not completed" }
             val maxSlots = spellCasting.selectedElements.count()
             val selected = spellCasting.selectedElements.filterNotNull().count()
             val message = when(maxSlots - selected) {
@@ -74,6 +73,58 @@ class SpellInfo (
 
     override fun getPrefWidth(): Float = WORLD_WIDTH * 0.5f
     override fun getPrefHeight(): Float = WORLD_HEIGHT * 0.5f
+    fun updateButtonLabel(lockState: SpellLockState) {
+        when(lockState) {
+            SpellLockState.UNLOCKED -> {
+                lockBtn.style = skin.textButton(ButtonStyle.Primary.name) {
+                    font = skin[FontStyle.Default]
+                    up = skin[Image.ButtonPrimary]
+                    over = skin[Image.ButtonPrimaryHover]
+                    down = skin[Image.ButtonPrimaryPressed]
+                    pressedOffsetX = 4f
+                    pressedOffsetY = 4f
+                }
+                lockBtn.label.setText("Lock Spell")
+                lockBtn.isDisabled = false
+            }
+            SpellLockState.LOCKING -> {
+                lockBtn.style = skin.textButton(ButtonStyle.Primary.name) {
+                    font = skin[FontStyle.Default]
+                    up = skin[Image.Button]
+                    over = skin[Image.ButtonHover]
+                    down = skin[Image.ButtonPressed]
+                    pressedOffsetX = 4f
+                    pressedOffsetY = 4f
+                }
+                lockBtn.label.setText("Please Wait..")
+                lockBtn.isDisabled = true
+            }
+            SpellLockState.LOCKED -> {
+                lockBtn.style = skin.textButton {
+                    font = skin[FontStyle.Default]
+                    up = skin[Image.Button]
+                    over = skin[Image.ButtonHover]
+                    down = skin[Image.ButtonPressed]
+                    pressedOffsetX = 4f
+                    pressedOffsetY = 4f
+                }
+                lockBtn.label.setText("Waiting For Opponent")
+                lockBtn.isDisabled = true
+            }
+            SpellLockState.FAILED -> {
+                lockBtn.style = skin.textButton(ButtonStyle.Cancel.name) {
+                    font = skin[FontStyle.Default]
+                    up = skin[Image.ButtonCancel]
+                    over = skin[Image.ButtonCancelHover]
+                    down = skin[Image.ButtonCancelPressed]
+                    pressedOffsetX = 4f
+                    pressedOffsetY = 4f
+                }
+                lockBtn.label.setText("Try Again")
+                lockBtn.isDisabled = false
+            }
+        }
+    }
 }
 
 @Scene2dDsl

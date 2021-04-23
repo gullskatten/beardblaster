@@ -6,7 +6,7 @@ import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.AbstractGameRepository
 import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.commons.game.Prize
-import no.ntnu.beardblaster.commons.spell.Spell
+import no.ntnu.beardblaster.commons.game.Turn
 import no.ntnu.beardblaster.commons.spell.SpellAction
 import pl.mk5.gdx.fireapp.PlatformDistributor
 
@@ -31,7 +31,7 @@ class GameRepository : PlatformDistributor<AbstractGameRepository<Game>>(),
     }
 
     @ExperimentalCoroutinesApi
-    override fun subscribeToSpellsOnTurn(collection: String): Flow<State<Spell>> {
+    override fun subscribeToSpellsOnTurn(collection: String): Flow<State<SpellAction>> {
        return platformObject.subscribeToSpellsOnTurn(collection)
     }
 
@@ -45,5 +45,9 @@ class GameRepository : PlatformDistributor<AbstractGameRepository<Game>>(),
 
     override fun distributePrizes(prizes: List<Prize>): Flow<State<Boolean>> {
         return platformObject.distributePrizes(prizes)
+    }
+
+    override fun createTurn(currentTurn: Int): Flow<State<Turn>> {
+        return platformObject.createTurn(currentTurn)
     }
 }
