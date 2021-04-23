@@ -24,20 +24,6 @@ import no.ntnu.beardblaster.leaderboard.LeaderBoardHandler
 import no.ntnu.beardblaster.ui.*
 import java.util.*
 
-// XXX Dummy data for testing
-private val scores = listOf(
-    BeardScore(105f, "Merlin"),
-    BeardScore(95f, "Gandalf the Gray"),
-    BeardScore(85f, "Saruman the White"),
-    BeardScore(75f, "Albus Dumbeldore"),
-    BeardScore(65f, "Khadgar"),
-    BeardScore(50f, "Grigori Rasputin"),
-    BeardScore(40f, "Jaffar"),
-    BeardScore(25f, "Diana Bishop"),
-    BeardScore(15f, "Hagrid"),
-    BeardScore(5f, "Sirius Black"),
-)
-
 private val LOG = logger<LeaderBoardScreen>()
 
 class LeaderBoardScreen(
@@ -81,13 +67,11 @@ class LeaderBoardScreen(
     }
 
     override fun initScreen() {
-        for (score in scores) {
-            leaderBoard.addScore(score)
+        leaderBoardHandler.addObserver(this)
+        KtxAsync.launch {
+            LOG.debug { "Summoning the beards…" }
+            leaderBoardHandler.getTopTenBeards()
         }
-        //leaderBoardHandler.addObserver(this)
-        //KtxAsync.launch {
-        //    leaderBoardHandler.getTopTenBeards()
-        //}
         stage.addActor(table)
         stage.addActor(backBtn)
     }
