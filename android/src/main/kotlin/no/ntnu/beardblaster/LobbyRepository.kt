@@ -147,22 +147,6 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         }
     }
 
-    override fun endGame(id: String): Flow<State<Boolean>> = flow {
-        emit(State.loading<Boolean>())
-        try {
-            db.collection(GAME_COLLECTION)
-                .document(id)
-                .update(
-                    "endedAt", LocalDateTime.now(ZoneOffset.UTC)
-                        .toEpochSecond(ZoneOffset.UTC)
-                )
-                .await()
-            emit(State.success(true))
-        } catch (e: Exception) {
-            emit(State.failed<Boolean>("Failed to end game!"))
-        }
-    }
-
     override fun leaveLobbyWithId(id: String): Flow<State<Boolean>> = flow {
         emit(State.loading<Boolean>())
         try {

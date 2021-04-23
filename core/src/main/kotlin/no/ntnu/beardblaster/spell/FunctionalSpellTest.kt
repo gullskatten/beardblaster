@@ -2,20 +2,23 @@ package no.ntnu.beardblaster.spell
 
 import ktx.log.info
 import ktx.log.logger
+import no.ntnu.beardblaster.commons.game.GamePlayer
 import no.ntnu.beardblaster.commons.spell.Spell
+import no.ntnu.beardblaster.commons.spell.SpellAction
+import no.ntnu.beardblaster.commons.wizard.Wizard
 import java.util.*
 import java.util.function.Consumer
 
 private val LOG = logger<FunctionalSpellTest>()
 
 class FunctionalSpellTest {
-
     // generates a set of spells and wizards,
     // Wizard pick spells randomly
     // game is over when one wizards' health is reduced to 0.
-    // log statements are used for verification..
+    // log statements are used for verification.. :-)
     fun test() {
         val spellExecutor = SpellExecutor()
+
         val pureHealing = Spell(1, "healing", 5, 0, 0, "", 1)
         val healingAndMitigation = Spell(2, "healingM", 4, 0, 2, "", 1)
         val mitigation = Spell(3, "mitigation", 0, 0, 2, "", 3)
@@ -23,7 +26,7 @@ class FunctionalSpellTest {
         val mitigationAndDamage = Spell(5, "mitigationDmg", 0, 2, 4, "", 1)
         val healingAndDamage = Spell(5, "healingDmg", 2, 4, 0, "", 1)
 
-        val spellList = Arrays.asList(
+        val spellList = listOf(
             pureHealing,
             healingAndDamage,
             healingAndMitigation,
@@ -32,27 +35,32 @@ class FunctionalSpellTest {
             mitigationAndDamage
         )
 
-        val me = WizardTemp(30, "Saruman the Wise")
-        val opponent = WizardTemp(30, "Gandalf the White")
+        val me = Wizard(30, gamePlayer = GamePlayer("1", 15f, "Gandalf the White" ))
+        val opponent = Wizard(30, GamePlayer("1", 15f, "Saruman the Wise" ))
+
         val wizardState = WizardState(me, opponent)
+
         val hasReachedZeroHp = booleanArrayOf(false)
+
         var turn = 0
+
         LOG.info { "BEGINNING! " }
         while (!hasReachedZeroHp[0]) {
             spellExecutor.addSpell(
                 spellList[Random().nextInt(spellList.size - 1)],
                 turn,
-                me.wizardId,
-                opponent.wizardId
+                me.id,
+                opponent.id
             )
             spellExecutor.addSpell(
                 spellList[Random().nextInt(spellList.size - 1)],
                 turn,
-                opponent.wizardId,
-                me.wizardId
+                opponent.id,
+                me.id
             )
 
             LOG.info { "<--- TURN $turn --->" }
+
             spellExecutor.getSpellResultForTurn(turn, wizardState)
                 .forEach(Consumer { spellAction: SpellAction ->
                     Thread.sleep(500)
@@ -80,9 +88,9 @@ class FunctionalSpellTest {
                     }
                     LOG.info{"\n____________________________\n" }
                     LOG.info{"Remaining health: " }
-                    wizardState.opponents.values.forEach(Consumer { w: WizardTemp -> LOG.info{w.wizardId + ": " + w.remainingHp } })
+                    wizardState.opponents.values.forEach(Consumer { w: Wizard -> LOG.info{w.id + ": " + w.currentHealthPoints } })
                     LOG.info{"\n____________________________\n" }
-                    if (wizardState.opponents.values.any { w : WizardTemp -> w.remainingHp <= 0 }) {
+                    if (wizardState.opponents.values.any { w : Wizard -> w.currentHealthPoints <= 0 }) {
                         hasReachedZeroHp[0] = true
                         LOG.info{"\n____________________________\n" }
                         LOG.info{"      <--- Game ended --->    \n" }

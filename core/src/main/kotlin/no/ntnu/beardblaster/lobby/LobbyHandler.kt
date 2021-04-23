@@ -1,6 +1,7 @@
 package no.ntnu.beardblaster.lobby
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -26,6 +27,7 @@ class LobbyHandler : Observable() {
 
     var isLoading: Boolean = false
         private set
+    var subscription: Job? = null
 
     fun setGame(game: Game?) {
         this.game = game
@@ -54,7 +56,7 @@ class LobbyHandler : Observable() {
 
     @ExperimentalCoroutinesApi
     fun joinLobbyWithCode(code: String) {
-        KtxAsync.launch {
+        subscription = KtxAsync.launch {
             LobbyRepository()
                 .joinLobbyWithCode(
                     code,
@@ -90,7 +92,6 @@ class LobbyHandler : Observable() {
     @ExperimentalCoroutinesApi
     private suspend fun subscribeToUpdatesOn(id: String) {
         LOG.info { "Subscribing to updates on $id" }
-
         LobbyRepository().subscribeToLobbyUpdates(id).collect {
             when (it) {
                 is State.Success -> {
@@ -112,12 +113,22 @@ class LobbyHandler : Observable() {
     fun leaveLobby(): Flow<State<Boolean>>? {
         if (game != null && game!!.id.isNotEmpty()) {
             GameData.instance.isHost = false
+
+            if(subscription != null && subscription!!.isActive) {
+                subscription!!.cancel()
+            }
+
             return LobbyRepository().leaveLobbyWithId(game!!.id)
         }
         return null
     }
 
     fun cancelLobby(): Flow<State<Boolean>>? {
+
+        if(subscription != null && subscription!!.isActive) {
+            subscription!!.cancel()
+        }
+
         if (game != null && game!!.id.isNotEmpty()) {
             GameData.instance.isHost = false
             return LobbyRepository().cancelLobbyWithId(game!!.id)
@@ -126,6 +137,10 @@ class LobbyHandler : Observable() {
     }
 
     fun startGame(): Flow<State<Boolean>>? {
+        if(subscription != null && subscription!!.isActive) {
+            subscription!!.cancel()
+        }
+
         if (game != null && game!!.id.isNotEmpty()) {
             return LobbyRepository().startGame(game!!.id)
         }

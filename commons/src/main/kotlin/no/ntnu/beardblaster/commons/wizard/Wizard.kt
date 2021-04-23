@@ -1,30 +1,22 @@
 package no.ntnu.beardblaster.commons.wizard
 
+import no.ntnu.beardblaster.commons.game.GamePlayer
+
 class Wizard(
-    var beardLength: Float,
-    var maxHP: Int = 30,
-    private val wizType: MutableList<Int> = mutableListOf(1, 2, 3)
-) {
-    var currentHP = maxHP
-    fun updateHP(hpChange: Int) {
-        if (currentHP + hpChange >= maxHP) {
-            currentHP = maxHP
-        } else if (currentHP + hpChange <= 0) {
-            currentHP = 0
-        } else {
-            currentHP += hpChange
-        }
+    var maxHealthPoints: Int,
+    id: String,
+    beardLength: Float = 0f,
+    displayName: String,
+) : GamePlayer(id, beardLength, displayName) {
+    constructor(maxHealthPoints: Int, gamePlayer: GamePlayer) :
+        this(maxHealthPoints, gamePlayer.id, gamePlayer.beardLength, gamePlayer.displayName)
+    var currentHealthPoints = maxHealthPoints
+
+    fun isWizardDefeated(): Boolean {
+        return currentHealthPoints <= 0
     }
 
-    fun getElements(): MutableList<Int> {
-        return wizType
-    }
-
-    fun wizardIsDead(): Boolean {
-        return currentHP == 0
-    }
-
-    fun getCurrentHPString(): String {
-        return "${currentHP}/${maxHP}"
+    fun getHealthPoints(): String {
+        return "${currentHealthPoints}/${maxHealthPoints}"
     }
 }

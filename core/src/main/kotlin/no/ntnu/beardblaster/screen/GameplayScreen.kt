@@ -6,11 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
-import ktx.async.KtxAsync
 import ktx.graphics.use
 import ktx.log.debug
 import ktx.log.logger
@@ -23,12 +21,10 @@ import no.ntnu.beardblaster.ElementType
 import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
-import no.ntnu.beardblaster.commons.State
-import no.ntnu.beardblaster.commons.wizard.Wizard
 import no.ntnu.beardblaster.game.GameData
+import no.ntnu.beardblaster.game.GameInstance
 import no.ntnu.beardblaster.hud.SpellBar
 import no.ntnu.beardblaster.hud.spellbar
-import no.ntnu.beardblaster.models.SpellCasting
 import no.ntnu.beardblaster.sprites.WizardTexture
 import no.ntnu.beardblaster.sprites.WizardTextures
 import no.ntnu.beardblaster.ui.*
@@ -48,9 +44,7 @@ class GameplayScreen(
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
-    private val PREPARATION_TIME = 10f
-    private lateinit var hostWizard: Wizard
-    private lateinit var opponentWizard: Wizard
+    private lateinit var gameInstance: GameInstance
     private lateinit var quitBtn: TextButton
     private lateinit var fireElementBtn: Button
     private lateinit var iceElementBtn: Button
@@ -58,54 +52,50 @@ class GameplayScreen(
     private lateinit var elementButtonsTable: Table
     private lateinit var spellBar: SpellBar
     private lateinit var spellInfo: SpellInfo
-    private lateinit var spellCasting: SpellCasting
     private var goodWizard: WizardTexture = WizardTexture()
     private var evilWizard: WizardTexture = WizardTexture()
     private lateinit var hostLabel: Label
     private lateinit var opponentLabel: Label
-    private lateinit var hostHP: Label
-    private lateinit var opponentHP: Label
+    private lateinit var myHealthPointsLabel: Label
+    private lateinit var opponentHealthPointsLabel: Label
     private lateinit var countDownLabel: Label
     private lateinit var headingLabel: Label
     private lateinit var waitingLabel: Label
     private lateinit var hostInfo: Table
     private lateinit var opponentInfo: Table
 
-    private var countDown = PREPARATION_TIME
-    private var currentPhase: Phase = Phase.Preparation
-    private var currentTurn = 1
-    private var canDo = false // TODO: To be removed when things come together properly
-
     override fun initComponents() {
-        LOG.debug { "Set up components" }
-        hostWizard = Wizard(GameData.instance.game?.host!!.beardLength)
-        opponentWizard = Wizard(GameData.instance.game?.opponent!!.beardLength)
-        spellCasting = SpellCasting()
 
+        if(GameData.instance.game == null) {
+            game.setScreen<MenuScreen>()
+            return
+        }
+
+        gameInstance = GameInstance(30, GameData.instance.game!!)
         headingLabel = headingLabel(Nls.preparationPhase())
-        hostLabel = bodyLabel("${GameData.instance.game?.host}", 1.25f)
-        hostHP = bodyLabel(hostWizard.getCurrentHPString())
+        hostLabel = bodyLabel("${gameInstance.wizardState.getCurrentUserAsWizard()}", 1.25f)
+        myHealthPointsLabel = gameInstance.wizardState.getCurrentUserAsWizard()?.let { bodyLabel(it.getHealthPoints()) } ?: bodyLabel("Unknown")
         opponentLabel = bodyLabel("${GameData.instance.game?.opponent}", 1.25f)
-        opponentHP = bodyLabel(opponentWizard.getCurrentHPString())
+        myHealthPointsLabel = gameInstance.wizardState.getEnemyAsWizard()?.let { bodyLabel(it.getHealthPoints()) } ?: bodyLabel("Unknown")
 
         hostInfo = scene2d.table {
             add(hostLabel)
             row()
             row()
-            add(hostHP)
+            add(myHealthPointsLabel)
         }
+
         opponentInfo = scene2d.table {
             add(opponentLabel)
             row()
             row()
-            add(opponentHP)
+            add(opponentHealthPointsLabel)
         }
 
         hostInfo.setPosition(hostLabel.width + 10f, WORLD_HEIGHT / 2 + 50f)
         opponentInfo.setPosition(WORLD_WIDTH - 100f - opponentLabel.width, WORLD_HEIGHT / 2 + 50f)
         waitingLabel = headingLabel(Nls.waitingPhase())
-
-        countDownLabel = headingLabel(countDown.toInt().toString())
+        countDownLabel = headingLabel(gameInstance.timeRemaining.toInt().toString())
         countDownLabel.setPosition(10f, WORLD_HEIGHT - countDownLabel.height - 100f)
 
         quitBtn = scene2d.textButton(Nls.quit())
@@ -114,13 +104,14 @@ class GameplayScreen(
         iceElementBtn = scene2d.button(ElementType.Ice.name)
         natureElementBtn = scene2d.button(ElementType.Nature.name)
 
-        spellInfo = scene2d.spellInfo(spellCasting) {
+        spellInfo = scene2d.spellInfo(gameInstance.spellCasting) {
             setPosition(
                 (WORLD_WIDTH / 2) - (width / 2),
                 (WORLD_HEIGHT / 2) - (height / 2),
             )
         }
-        spellBar = scene2d.spellbar(spellCasting = spellCasting)
+
+        spellBar = scene2d.spellbar(spellCasting = gameInstance.spellCasting)
         spellBar.setPosition(WORLD_WIDTH / 2 - spellBar.width, spellBar.height + 130f)
         val elementBtnSize = 200f
         elementButtonsTable = scene2d.table {
@@ -146,12 +137,9 @@ class GameplayScreen(
     }
 
     private fun initPreparationPhase() {
-        LOG.debug { "Init $currentPhase turn $currentTurn" }
-        spellCasting.reset()
         spellBar.update()
         goodWizard.setAnimation(0f, 0f, assets, WizardTextures.GoodWizardIdle)
         evilWizard.setAnimation(0f, 0f, assets, WizardTextures.EvilWizardIdle)
-
         headingLabel.setText(Nls.preparationPhase())
 
         val table = fullSizeTable().apply {
@@ -169,33 +157,22 @@ class GameplayScreen(
     }
 
     private fun initWaitingForPlayerPhase() {
-        LOG.debug { "Init $currentPhase turn $currentTurn" }
-
         val table = fullSizeTable().apply {
             add(waitingLabel).pad(50f)
         }
         stage.clear()
-        addWizards()
         stage.addActor(table)
     }
 
 
     private fun initActionPhase() {
-        LOG.debug { "Init $currentPhase turn $currentTurn" }
         headingLabel.setText(Nls.actionPhase())
-
         val table = fullSizeTable().apply {
             background = skin[Image.Background]
-            add(headingLabel("FIGHT"))
-            row()
-            row()
-            row()
-            add(bodyLabel("BOOM, BLAST, POOF, BEARD GONE"))
+            add(headingLabel("Action Phase"))
         }
-
         stage.clear()
         addWizards()
-        stage.addActor(countDownLabel)
         stage.addActor(table)
         stage.addActor(quitBtn)
 
@@ -206,7 +183,6 @@ class GameplayScreen(
     }
 
     private fun initGameOver() {
-        LOG.debug { "Init $currentPhase" }
         headingLabel.setText(Nls.gameOverPhase())
 
         val table = fullSizeTable().apply {
@@ -215,7 +191,6 @@ class GameplayScreen(
             add(quitBtn)
         }
         stage.clear()
-        addWizards()
         stage.addActor(table)
     }
 
@@ -226,111 +201,46 @@ class GameplayScreen(
 
     override fun setBtnEventListeners() {
         quitBtn.onClick {
-            // TODO: Notify firebase of player leaving
-            game.removeScreen<GameplayScreen>()
-            game.addScreen(GameplayScreen(game, batch, assets, camera))
-            game.setScreen<MenuScreen>()
+            gameInstance.forfeit()
         }
 
         fireElementBtn.onClick {
-            hostWizard.updateHP(-1)
-            spellCasting.addFire()
+            gameInstance.spellCasting.addFire()
         }
         iceElementBtn.onClick {
-            spellCasting.addIce()
+            gameInstance.spellCasting.addIce()
         }
         natureElementBtn.onClick {
-            hostWizard.updateHP(1)
-            spellCasting.addNature()
+            gameInstance.spellCasting.addNature()
         }
 
         spellInfo.lockBtn.onClick {
-            LOG.debug { "Wizard locks selected spell" }
+           gameInstance.lockTurn()
         }
     }
 
     override fun update(delta: Float) {
-        when (currentPhase) {
+        gameInstance.updateCounter(delta)
+
+        when (gameInstance.currentPhase) {
+
             Phase.Preparation -> {
-                hostHP.setText(hostWizard.getCurrentHPString())
-                opponentHP.setText(opponentWizard.getCurrentHPString())
-                countDown -= delta * 0.5f
-
-                if (countDown <= PREPARATION_TIME) {
-                    countDownLabel.setText(countDown.toInt().toString())
-                }
-
-                if (countDown <= 0) {
-                    currentPhase = Phase.Waiting
-                    initWaitingForPlayerPhase()
-                    KtxAsync.launch {
-                        GameData.instance.createTurn(currentTurn)
-                            ?.collect { it ->
-                                when (it) {
-                                    is State.Loading -> {
-                                        waitingLabel.setText("Creating turn")
-                                    }
-                                    is State.Failed -> {
-                                        waitingLabel.setText(it.message)
-                                    }
-                                    is State.Success -> {
-                                        KtxAsync.launch {
-                                            GameData.instance.endTurn(
-                                                currentTurn,
-                                                spellCasting.getSelectedSpell()
-                                            )
-                                                ?.collect { iti ->
-                                                    when (iti) {
-                                                        is State.Loading -> {
-                                                            waitingLabel.setText("Ending your turn")
-                                                        }
-                                                        is State.Failed -> {
-                                                            waitingLabel.setText(iti.message)
-                                                        }
-                                                        is State.Success -> {
-                                                            currentTurn += 1
-                                                        }
-                                                    }
-                                                }
-                                        }
-                                    }
-                                }
-                            }
-                    }
-                }
+                myHealthPointsLabel.setText(gameInstance.wizardState.getCurrentUserAsWizard()?.getHealthPoints())
+                opponentHealthPointsLabel.setText(gameInstance.wizardState.getEnemyAsWizard()?.getHealthPoints())
+                countDownLabel.setText(gameInstance.timeRemaining.toInt().toString())
             }
             Phase.Waiting -> {
-                // TODO: Wait for other player and fetch the latest game updates
-                currentPhase = Phase.Action
 
-                initActionPhase()
-
-                countDown = PREPARATION_TIME
             }
             Phase.Action -> {
-                // Simulate time taken for animations to fly across the screen
-                countDown -= delta
-
-                if (countDown <= PREPARATION_TIME) {
-                    countDownLabel.setText(countDown.toInt().toString())
-                }
-
-                if (countDown <= 0) {
-                    currentPhase = Phase.Preparation
-                    initPreparationPhase()
-                    countDown = PREPARATION_TIME
-                }
+                gameInstance.spellsForTurn
             }
+
             Phase.GameOver -> {
 
             }
         }
-        if (currentTurn > 3 && !canDo) {
-            // Temporary solution to get game over
-            currentPhase = Phase.GameOver
-            initGameOver()
-            canDo = true
-        }
+
         camera.update()
         goodWizard.update(delta)
         evilWizard.update(delta)
@@ -353,7 +263,7 @@ class GameplayScreen(
                 )
             }
 
-            if (currentPhase != Phase.Preparation) {
+            if (gameInstance.currentPhase != Phase.Preparation) {
                 if (evilWizard.getWizard() != null) {
                     it.draw(
                         evilWizard.getWizard(),
@@ -365,6 +275,12 @@ class GameplayScreen(
                 }
             }
         }
+    }
+
+    @ExperimentalCoroutinesApi
+    override fun dispose() {
+        super.dispose()
+        gameInstance.dispose();
     }
 }
 

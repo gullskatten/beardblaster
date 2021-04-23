@@ -1,5 +1,7 @@
 package no.ntnu.beardblaster.spell
 
+import no.ntnu.beardblaster.commons.spell.SpellAction
+
 class DamageReduction(wizardId: String, activatedAtTurn: Int, duration: Int, amount: Int) :
     MitigationSpell(wizardId, activatedAtTurn, duration, amount) {
     override fun isActive(

@@ -1,5 +1,7 @@
 package no.ntnu.beardblaster.spell
 
+import no.ntnu.beardblaster.commons.spell.SpellAction
+
 abstract class MitigationSpell(
     val wizardId: String,
     val activatedAtTurn: Int,

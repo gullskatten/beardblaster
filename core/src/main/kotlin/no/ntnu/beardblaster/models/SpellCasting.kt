@@ -3,12 +3,13 @@ package no.ntnu.beardblaster.models
 import ktx.log.debug
 import ktx.log.error
 import ktx.log.logger
+import no.ntnu.beardblaster.commons.spell.Element
 import no.ntnu.beardblaster.commons.spell.Spell
 import no.ntnu.beardblaster.hud.ElementChangedObserver
 import no.ntnu.beardblaster.hud.ElementClickedObserver
 import no.ntnu.beardblaster.spell.SpellRepository
 import java.util.*
-import no.ntnu.beardblaster.commons.spell.Element
+
 private val LOG = logger<SpellCasting>()
 
 class SpellCasting : Observer, Observable() {
@@ -58,15 +59,10 @@ class SpellCasting : Observer, Observable() {
         return SpellRepository().getSpellById(selectedElements.map { elem -> elem?.elementID!! }.reduce { sum, element -> sum * element })
     }
 
-    /*    fun getSpellID(): Int {
-        //Unique spell IDs can be created by using the fundamental theorem of arithmetic, as long as all the distinct elementIDs are uniquely prime. The number of elements needed to be added for this to be a
-        //terrible way of uniquely identifying spells is quite high.
-        return elementIDs[0] * elementIDs[1] * elementIDs[2]
-    }*/
-
     fun reset() {
         LOG.debug { "Reset selected elements" }
         selectedElements = mutableListOf(null, null, null)
+        ElementChangedObserver.instance.notifyChanged()
     }
 
     override fun update(o: Observable, arg: Any) {

@@ -52,7 +52,6 @@ class SpellInfo (
     }
 
     private fun update() {
-        log.debug { "Update spell info" }
         val spell: Spell? = spellCasting.getSelectedSpell()
         if (spell != null) {
             log.debug { "Spell (${spell.spellName}, ${spell.spellDescription})" }

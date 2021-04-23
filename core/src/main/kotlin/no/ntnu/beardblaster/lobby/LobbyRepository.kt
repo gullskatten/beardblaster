@@ -39,10 +39,6 @@ class LobbyRepository : PlatformDistributor<AbstractLobbyRepository<Game>>(),
         return platformObject.startGame(id)
     }
 
-    override fun endGame(id: String): Flow<State<Boolean>> {
-        return platformObject.endGame(id)
-    }
-
     @ExperimentalCoroutinesApi
     override fun subscribeToLobbyUpdates(id: String): Flow<State<Game>> {
         return platformObject.subscribeToLobbyUpdates(id)

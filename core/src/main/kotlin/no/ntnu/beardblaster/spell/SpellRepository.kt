@@ -30,7 +30,4 @@ class SpellRepository : PlatformDistributor<AbstractSpellRepository>(), Abstract
     override fun getAllElements(): List<Element> {
         return platformObject.getAllElements()
     }
-    /*override fun readAllSpellData(): List<Spell?> {
-        return platformObject.readAllSpellData()
-    }*/
 }

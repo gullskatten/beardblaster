@@ -1,32 +1,47 @@
 package no.ntnu.beardblaster.spell
 
+import no.ntnu.beardblaster.commons.spell.SpellAction
+import no.ntnu.beardblaster.commons.wizard.Wizard
+import no.ntnu.beardblaster.user.UserData
 import java.util.*
 
-class WizardState(vararg opponents: WizardTemp) {
-    val opponents: MutableMap<String, WizardTemp> = HashMap()
+class WizardState(vararg opponents: Wizard) {
+    val opponents: MutableMap<String, Wizard> = HashMap()
+
     fun update(spellAction: SpellAction) {
         if (spellAction.healing > 0) {
-            opponents[spellAction.caster]!!.remainingHp =
-                (opponents[spellAction.caster]!!.remainingHp + spellAction.healing).coerceAtMost(30)
+            opponents[spellAction.caster]!!.currentHealthPoints =
+                (opponents[spellAction.caster]!!.currentHealthPoints + spellAction.healing).coerceAtMost(opponents[spellAction.caster]!!.maxHealthPoints)
         }
         if (spellAction.damageDealt > 0) {
             opponents[spellAction.receiver]!!
-                .remainingHp =
-                (opponents[spellAction.receiver]!!.remainingHp - spellAction.damageDealt).coerceAtLeast(
+                .currentHealthPoints =
+                (opponents[spellAction.receiver]!!.currentHealthPoints - spellAction.damageDealt).coerceAtLeast(
                     0
                 )
         }
+
         spellAction.receiverWizard = opponents[spellAction.receiver]
         spellAction.casterWizard = opponents[spellAction.caster]
     }
 
-    fun getOpponents(): List<WizardTemp> {
-        return opponents.values as List<WizardTemp>
+
+
+    fun isAnyWizardDead(): Boolean {
+        return opponents.values.any { w : Wizard -> w.currentHealthPoints <= 0 }
+    }
+
+    fun getCurrentUserAsWizard(): Wizard? {
+        return opponents.values.find { wiz -> wiz.id == UserData.instance.user!!.id }
+    }
+
+    fun getEnemyAsWizard(): Wizard? {
+        return opponents.values.find { wiz -> wiz.id != UserData.instance.user!!.id }
     }
 
     init {
         for (opponent in opponents) {
-            this.opponents[opponent.wizardId] = opponent
+            this.opponents[opponent.id] = opponent
         }
     }
 }
