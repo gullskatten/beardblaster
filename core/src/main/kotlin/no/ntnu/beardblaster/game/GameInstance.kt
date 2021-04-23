@@ -28,7 +28,6 @@ private val LOG = logger<GameInstance>();
 
 @ExperimentalCoroutinesApi
 class GameInstance(preparationTime: Int, game: Game) : Observer {
-
     private lateinit var spellsListener: Job
     var gamePrizes: MutableList<Prize> = mutableListOf()
     private var gameListener: Job
@@ -91,22 +90,25 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
 
             }
             Phase.GameOver -> {
-                if(gameListener.isActive) {
-                    gameListener.cancel()
-                }
+
             }
             Phase.Preparation -> {
-                // Increment turn after action phase
-                if (currentTurn < lastFetchedActionsInTurn) {
-                    incrementCurrentTurn()
-                    // Subscribe to events on this turn
-                    spellsListener = KtxAsync.launch {
-                        spellSubscription.subscribeToUpdatesOn("games/$gameId/turns/$currentTurn/spells")
+                if(gamePrizes.isNotEmpty()) {
+                    currentPhase = Phase.GameOver
+                    return
+                } else {
+                    // Increment turn after action phase
+                    if (currentTurn < lastFetchedActionsInTurn) {
+                        incrementCurrentTurn()
+                        // Subscribe to events on this turn
+                        spellsListener = KtxAsync.launch {
+                            spellSubscription.subscribeToUpdatesOn("games/$gameId/turns/$currentTurn/spells", currentTurn)
+                        }
                     }
-                }
-                timeRemaining -= delta * 0.5f
-                if (timeRemaining <= 0) {
-                    currentPhase = Phase.Action
+                    timeRemaining -= delta * 0.5f
+                    if (timeRemaining <= 0) {
+                        currentPhase = Phase.Action
+                    }
                 }
             }
         }
@@ -140,6 +142,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                     }
                     is State.Success -> {
                         LOG.debug { "Forfeited successfully." }
+                        currentPhase = Phase.GameOver
                     }
                     is State.Failed -> {
                         LOG.error { "Failed to forfeit: ${it.message}" }
@@ -151,10 +154,12 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
 
     // SpellSubscription and GameSubscription may send updates through this channel
     override fun update(p0: Observable?, p1: Any?) {
+        LOG.debug { "$p0 - $p1"}
+
         if (p0 is SpellSubscription) {
-            LOG.debug { "Got spell from SpellSubscription" }
-            if (p1 is SpellAction) {
-                LOG.debug { "Got SpellAction from SpellSubscription" }
+            LOG.debug { "p0 is SpellSubscription" }
+            if (p1 is SpellAction && currentPhase != Phase.GameOver) {
+                LOG.debug { "p1 is SpellAction" }
 
                 // In this game, users actually send a spell to forfeit!
                 // Since spells may only be sent by the users themselves (spell docId = userId),
@@ -163,6 +168,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                     LOG.debug { "SpellAction was a forfeit spell!" }
 
                     currentPhase = Phase.GameOver
+
                     when {
                         myWizard!!.id != p1.docId -> {
                             winnerWizard = myWizard
@@ -173,12 +179,14 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                             loosingWizard = myWizard
                         }
                     }
+                    LOG.info { "Winner: ${winnerWizard?.displayName}" }
+                    LOG.info { "Looser: ${loosingWizard?.displayName}" }
+
                     if (GameData.instance.isHost && gamePrizes.isEmpty()) {
                         distributePrizes()
                     }
                 } else {
-                    LOG.debug { "Calling spell executor" }
-
+                    LOG.debug { "!IMPORTANT - Pushing spell to executor: ${p1.spell.spellName}" }
                     spellExecutor.addSpell(p1, currentTurn)
                     if(spellExecutor.spellHistory[currentTurn]?.size == 2) {
                         // Both have sent their spells - let's fast forward to attack phase.
@@ -187,14 +195,16 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                 }
             }
         }
-
         if (p0 is GameSubscription) {
             if (p1 is Game) {
                 if (p1.prizes.isNotEmpty()) {
+                    LOG.info { "Prices found! Adding all prices to map." }
                     gamePrizes.addAll(p1.prizes)
+                    currentPhase = Phase.GameOver
                 }
                 if (p1.endedAt != 0L) {
                     if (currentPhase != Phase.GameOver) {
+                        LOG.info { "Game was ended since endedAt was > 0" }
                         currentPhase = Phase.GameOver
                     }
                 }
@@ -212,6 +222,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                 loosingWizard = opponentWizard
             }
         }
+
         val winnerLoot: List<Prize> = GamePrizeList().getWinnerPrizes(Random().nextInt(3))
         winnerLoot.forEach {
             it.receiver = winnerWizard!!.id
@@ -248,20 +259,19 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
     }
 
     fun resetPhase() {
-        currentPhase = if(wizardState.isAnyWizardDead()) {
-            LOG.info { "A wizard is dead! Game is over!" }
-            if(GameData.instance.isHost) {
-                distributePrizes()
-                Phase.Waiting
+        if(currentPhase != Phase.GameOver) {
+            currentPhase = if(wizardState.isAnyWizardDead()) {
+                LOG.info { "A wizard is dead! Game is over!" }
+                if(GameData.instance.isHost) {
+                    distributePrizes()
+                }
+                Phase.GameOver
             } else {
-                Phase.Waiting
+                LOG.info { "Resetting phase to PREPARATION" }
+                Phase.Preparation
             }
-        } else {
-            LOG.info { "Resetting phase to PREPARATION" }
-            Phase.Preparation
+            LOG.info { "Phase was set to $currentPhase" }
         }
-
-        LOG.info { "Phase was set to $currentPhase" }
     }
 
 
@@ -270,7 +280,6 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
     }
 
     init {
-
         timeRemaining = preparationTime.toFloat()
         this.preparationTime = preparationTime
         myWizard = wizardState.getCurrentUserAsWizard()
@@ -278,6 +287,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         gameId = game.id
         gameSubscription.addObserver(this)
         spellSubscription.addObserver(this)
+
         gameListener = KtxAsync.launch {
             gameSubscription.subscribeToUpdatesOn(game.id)
         }

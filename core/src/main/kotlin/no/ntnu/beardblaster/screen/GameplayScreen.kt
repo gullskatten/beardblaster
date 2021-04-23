@@ -90,7 +90,7 @@ class GameplayScreen(
             return
         }
 
-        gameInstance = GameInstance(30, GameData.instance.game!!)
+        gameInstance = GameInstance(160, GameData.instance.game!!)
 
         headingLabel = headingLabel(Nls.preparationPhase())
         hostLabel = bodyLabel("${gameInstance.wizardState.getCurrentUserAsWizard()}", 1.25f)
@@ -235,10 +235,8 @@ class GameplayScreen(
                         spellAction.updateNameLabelText(spell.casterWizard?.displayName ?: "Unknown?")
                         spellAction.updateDescLabelText(spell.toString())
 
-                        LOG.info { "Updating own animation -> ${spell.myWizardAnimation}" }
-                        LOG.info { "Updating opponent animation -> ${spell.opponentWizardAnimation}" }
-                        goodWizard.setAnimation(0f, 0f, assets, spell.myWizardAnimation)
-                        evilWizard.setAnimation(0f, 0f, assets, spell.opponentWizardAnimation)
+                        goodWizard.setAnimation(0f, 0f, assets, spell.determineMyAnimation())
+                        evilWizard.setAnimation(0f, 0f, assets, spell.determineEnemyAnimation())
                         goodWizard.update(deltaTime = 0f)
                         evilWizard.update(deltaTime = 0f)
                     }

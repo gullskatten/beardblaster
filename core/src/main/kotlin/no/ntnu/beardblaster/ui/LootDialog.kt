@@ -40,15 +40,15 @@ class LootDialog(
     var closeBtn: Button = scene2d.textButton("Quit Game", ButtonStyle.Primary.name)
 
     companion object {
-        const val PADDING = 20f
-        const val LABEL_WIDTH = 860f
+        const val PADDING = 15f
+        const val LABEL_WIDTH = 960f
     }
 
     init {
         if(loot.isNotEmpty()) {
         background = skin[Image.ModalDark]
         pad(PADDING)
-        add(nameLabel).center().top().padTop(PADDING).width(LABEL_WIDTH)
+        add(nameLabel).center().top().width(LABEL_WIDTH)
         row()
         yourLootLabel
         add(yourLootLabel).center().expand().width(LABEL_WIDTH)
@@ -95,7 +95,7 @@ class LootDialog(
     }
 
     override fun getPrefWidth(): Float = WORLD_WIDTH * 0.5f
-    override fun getPrefHeight(): Float = WORLD_HEIGHT * 0.6f
+    override fun getPrefHeight(): Float = WORLD_HEIGHT * 0.8f
 }
 
 @Scene2dDsl

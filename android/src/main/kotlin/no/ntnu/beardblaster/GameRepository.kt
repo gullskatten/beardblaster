@@ -107,7 +107,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
     }
 
     @ExperimentalCoroutinesApi
-    override fun subscribeToSpellsOnTurn(collection: String): Flow<State<SpellAction>> =
+    override fun subscribeToSpellsOnTurn(collection: String, currentTurn: Int): Flow<State<SpellAction>> =
         callbackFlow {
             if (collection.isEmpty()) {
                 val message = "Id of document cannot be empty"
@@ -123,8 +123,28 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
                         TAG,
                         "Spell snapshot was updated externally! Documents: ${snapshot?.documents?.size} ,  DocumentChanges: ${snapshot?.documentChanges?.size}"
                     )
-                    snapshot!!.documents.map { s: DocumentSnapshot -> s.toObject<SpellAction>() }
-                        .forEach { spell -> offer(State.Success(spell!!)) }
+                    if(currentTurn == 1) {
+                        Log.i(TAG, "Documents found, pushed!")
+                        snapshot!!.documents.map { s: DocumentSnapshot ->
+                            val c = s.toObject<SpellAction>()
+                            c?.docId = s.id
+                            c
+                        }.forEach { spell -> offer(State.Success(spell!!)) }
+                    } else if (snapshot?.documentChanges?.size ?: 0 > 0) {
+                        snapshot!!.documentChanges.map { s ->
+                            val c = s.document.toObject<SpellAction>()
+                            c.docId = s.document.id
+                            c
+                        }
+                            .forEach { spell -> offer(State.Success(spell)) }
+                    } else if (snapshot?.documents?.size ?: 0 == 1 || snapshot?.documents?.size ?: 0 == 2) {
+                        Log.i(TAG, "Documents found, pushed!")
+                        snapshot!!.documents.map { s: DocumentSnapshot ->
+                            val c = s.toObject<SpellAction>()
+                            c?.docId = s.id
+                            c
+                        }.forEach { spell -> offer(State.Success(spell!!)) }
+                    }
                 }
             // Required: Else stream closes immediately!
             //Finally if collect is not in use or collecting any data we cancel this channel to prevent any leak and remove the subscription listener to the database
@@ -138,7 +158,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
                 .document(id)
                 .update(
                     "endedAt", LocalDateTime.now(ZoneOffset.UTC)
-                        .toEpochSecond(ZoneOffset.UTC)
+                    .toEpochSecond(ZoneOffset.UTC)
                 )
                 .await()
             emit(State.success(true))
@@ -154,7 +174,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
                 .document(GameData.instance.game!!.id)
                 .update(
                     "endedAt", LocalDateTime.now(ZoneOffset.UTC)
-                        .toEpochSecond(ZoneOffset.UTC),
+                    .toEpochSecond(ZoneOffset.UTC),
                     "prizes",
                     prizes
                 )

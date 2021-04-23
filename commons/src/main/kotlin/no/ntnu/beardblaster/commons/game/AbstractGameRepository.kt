@@ -13,5 +13,5 @@ interface AbstractGameRepository<T> {
     @ExperimentalCoroutinesApi
     fun subscribeToGameUpdates(id: String): Flow<State<Game>>
     @ExperimentalCoroutinesApi
-    fun subscribeToSpellsOnTurn(collection: String): Flow<State<SpellAction>>
+    fun subscribeToSpellsOnTurn(collection: String, currentTurn: Int): Flow<State<SpellAction>>
 }

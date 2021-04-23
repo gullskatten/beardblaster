@@ -142,10 +142,12 @@ class LobbyScreen(
                                 if (it.data.opponent != null) {
                                     // Player may now start the game
                                     GameData.instance.game = it.data
+                                    infoLabel.setText("A worthy opponent joined!")
                                     opponentLabel.setText("${it.data.opponent?.displayName} - ${it.data.opponent?.beardLength}cm")
                                     startGameBtn.isVisible = true
                                 } else {
                                     opponentLabel.setText("Waiting for opponent to join");
+                                    infoLabel.setText(Nls.shareGameCodeMessage())
                                     startGameBtn.isVisible = false
                                 }
                             }

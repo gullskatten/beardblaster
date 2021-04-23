@@ -18,10 +18,11 @@ class GamePrizeList {
                 val nextPrize = winnerPrizes.random()
                 returnedPrizes.add(nextPrize)
             } else {
-                val nextPrize = winnerPrizes.filter { aPrice -> itemList.contains(aPrice.item) }.random()
+                val nextPrize = winnerPrizes.filter { aPrice -> !itemList.contains(aPrice.item) }.random()
                 returnedPrizes.add(nextPrize)
             }
          }
+
 
         return returnedPrizes;
     }
@@ -31,8 +32,8 @@ class GamePrizeList {
      * @param amount amount of random prizes to fetch
      */
     fun getLooserPrizes(amount: Int): List<Prize> {
-        if (amount <= 1) return listOf(winnerPrizes.random())
-        if (amount >= winnerPrizes.size) return winnerPrizes
+        if (amount <= 1) return listOf(loosingPrizes.random())
+        if (amount >= loosingPrizes.size) return loosingPrizes
 
         val itemList = ArrayList<String>()
         val returnedPrizes = ArrayList<Prize>()
@@ -42,7 +43,7 @@ class GamePrizeList {
                 val nextPrize = loosingPrizes.random()
                 returnedPrizes.add(nextPrize)
             } else {
-                val nextPrize = loosingPrizes.filter { aPrice -> itemList.contains(aPrice.item) }.random()
+                val nextPrize = loosingPrizes.filter { aPrice -> !itemList.contains(aPrice.item) }.random()
                 returnedPrizes.add(nextPrize)
             }
         }

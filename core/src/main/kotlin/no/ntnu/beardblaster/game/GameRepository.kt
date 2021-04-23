@@ -31,8 +31,8 @@ class GameRepository : PlatformDistributor<AbstractGameRepository<Game>>(),
     }
 
     @ExperimentalCoroutinesApi
-    override fun subscribeToSpellsOnTurn(collection: String): Flow<State<SpellAction>> {
-       return platformObject.subscribeToSpellsOnTurn(collection)
+    override fun subscribeToSpellsOnTurn(collection: String, currentTurn: Int): Flow<State<SpellAction>> {
+       return platformObject.subscribeToSpellsOnTurn(collection, currentTurn)
     }
 
     override fun castSpell(currentTurn: Int, spell: SpellAction): Flow<State<SpellAction>> {

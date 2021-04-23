@@ -1,8 +1,12 @@
 package no.ntnu.beardblaster.spell
 
+import ktx.log.info
+import ktx.log.logger
 import no.ntnu.beardblaster.commons.spell.SpellAction
 import no.ntnu.beardblaster.sprites.WizardTextures
 import no.ntnu.beardblaster.user.UserData
+
+private val LOG = logger<SpellActionWithAnimation>()
 
 class SpellActionWithAnimation(spellAction: SpellAction) : SpellAction(
     spell = spellAction.spell,
@@ -17,74 +21,121 @@ class SpellActionWithAnimation(spellAction: SpellAction) : SpellAction(
         super.receiverWizard = spellAction.receiverWizard
         super.casterWizard = spellAction.casterWizard
         super.isForfeit = spellAction.isForfeit
-        determineAnimationsForSpell(spellAction)
     }
 
     var myWizardAnimation: WizardTextures = WizardTextures.GoodWizardIdle
     var opponentWizardAnimation: WizardTextures = WizardTextures.EvilWizardIdle
 
-    private fun determineAnimationsForSpell(spellAction: SpellAction) {
-        if (spellAction.receiverWizard!!.isWizardDefeated() || spellAction.casterWizard!!.isWizardDefeated()) {
-            if (spellAction.receiverWizard!!.isWizardDefeated()) {
-                if (spellAction.receiver == UserData.instance.user!!.id) {
-                    myWizardAnimation = WizardTextures.GoodWizardDeath
-                    opponentWizardAnimation = WizardTextures.EvilWizardIdle
+    fun determineMyAnimation() : WizardTextures {
+        if (receiverWizard!!.isWizardDefeated() || casterWizard!!.isWizardDefeated()) {
+            if (receiverWizard!!.isWizardDefeated()) {
+                if (receiver == UserData.instance.user!!.id) {
+                    return WizardTextures.GoodWizardDeath
                 } else {
-                    myWizardAnimation = WizardTextures.GoodWizardJump
-                    opponentWizardAnimation = WizardTextures.EvilWizardDeath
+                    return WizardTextures.GoodWizardJump
                 }
             }
-            if (spellAction.casterWizard!!.isWizardDefeated()) {
-                if (spellAction.caster == UserData.instance.user!!.id) {
-                    myWizardAnimation = WizardTextures.GoodWizardDeath
-                    opponentWizardAnimation = WizardTextures.EvilWizardIdle
+            if (casterWizard!!.isWizardDefeated()) {
+                if (caster == UserData.instance.user!!.id) {
+                    return WizardTextures.GoodWizardDeath
                 } else {
-                    myWizardAnimation = WizardTextures.GoodWizardJump
-                    opponentWizardAnimation = WizardTextures.EvilWizardDeath
+                    return WizardTextures.GoodWizardJump
                 }
             }
-        } else if (spellAction.damageDealt > 0) {
-            if (spellAction.receiver == UserData.instance.user!!.id) {
-                myWizardAnimation = WizardTextures.GoodWizardHit
-                opponentWizardAnimation = WizardTextures.EvilWizardAttack
+        } else if (damageDealt > 0) {
+            LOG.info { "Animation includes damage!" }
+
+            if (receiver == UserData.instance.user!!.id) {
+                return WizardTextures.GoodWizardHit
             } else {
-                myWizardAnimation = WizardTextures.GoodWizardAttack1
-                opponentWizardAnimation = WizardTextures.EvilWizardTakeHit
+                return WizardTextures.GoodWizardAttack1
             }
-        } else if (spellAction.healing > 0 && spellAction.damageDealt == 0) {
-            if (spellAction.receiver == UserData.instance.user!!.id) {
-                myWizardAnimation = WizardTextures.GoodWizardIdle
-                opponentWizardAnimation = WizardTextures.EvilWizardIdle
+        } else if (healing > 0 && damageDealt == 0) {
+            LOG.info { "Animation includes healing!" }
+
+            if (receiver == UserData.instance.user!!.id) {
+                return WizardTextures.GoodWizardIdle
             } else {
-                myWizardAnimation = WizardTextures.GoodWizardJump
-                opponentWizardAnimation = WizardTextures.EvilWizardIdle
+                return WizardTextures.GoodWizardJump
             }
-        } else if (spellAction.damageAbsorbed > 0) {
-            if (spellAction.receiver == UserData.instance.user!!.id) {
-                myWizardAnimation = WizardTextures.GoodWizardIdle
-                opponentWizardAnimation = WizardTextures.EvilWizardIdle
+        } else if (damageAbsorbed > 0) {
+            LOG.info { "Animation includes absorbed!" }
+
+            if (receiver == UserData.instance.user!!.id) {
+                return WizardTextures.GoodWizardJump
             } else {
-                myWizardAnimation = WizardTextures.GoodWizardJump
-                opponentWizardAnimation = WizardTextures.EvilWizardIdle
+                return WizardTextures.GoodWizardIdle
             }
         }
+
+        return WizardTextures.GoodWizardIdle
+    }
+
+    fun determineEnemyAnimation() : WizardTextures {
+        if (receiverWizard!!.isWizardDefeated() || casterWizard!!.isWizardDefeated()) {
+
+            if (receiverWizard!!.isWizardDefeated()) {
+                if (receiver == UserData.instance.user!!.id) {
+                    return WizardTextures.EvilWizardIdle
+                } else {
+                    return WizardTextures.EvilWizardDeath
+                }
+            }
+            if (casterWizard!!.isWizardDefeated()) {
+                if (caster == UserData.instance.user!!.id) {
+                    return WizardTextures.EvilWizardIdle
+                } else {
+                    return WizardTextures.EvilWizardDeath
+                }
+            }
+        } else if (damageDealt > 0) {
+            LOG.info { "Animation includes damage!" }
+
+            if (receiver == UserData.instance.user!!.id) {
+                return WizardTextures.EvilWizardAttack
+            } else {
+                return WizardTextures.EvilWizardTakeHit
+            }
+        } else if (healing > 0 && damageDealt == 0) {
+            LOG.info { "Animation includes healing!" }
+
+            if (receiver == UserData.instance.user!!.id) {
+                return WizardTextures.EvilWizardIdle
+            } else {
+                return WizardTextures.EvilWizardIdle
+            }
+        } else if (damageAbsorbed > 0) {
+            LOG.info { "Animation includes absorbed!" }
+
+            if (receiver == UserData.instance.user!!.id) {
+                return WizardTextures.EvilWizardIdle
+            } else {
+                return WizardTextures.EvilWizardIdle
+            }
+        }
+
+        return WizardTextures.EvilWizardIdle
     }
 
     override fun toString(): String {
-        var text = "${casterWizard?.displayName} is casting ${spell.spellName} \n"
+        var text = "${casterWizard?.displayName} is casting ${spell.spellName}."
 
-        if (damageAbsorbed > 0 && damageAbsorbed >= damageDealt) {
-            text += "All damage was absorbed by $receiver!"
+        if (damageAbsorbed > 0 && damageAbsorbed >= damageDealt && damageDealt > 0) {
+            text += " All damage was absorbed by ${receiverWizard?.displayName}!"
         }
         if (healing > 0) {
-            text += "it healed for $healing!"
+            text += " It healed for $healing!"
         }
 
         if (damageDealt > 0) {
-            if (damageAbsorbed > 0) {
-                text += "${casterWizard?.displayName} dealt $damageDealt damage \n ($damageAbsorbed damage was absorbed)"
+            if (damageAbsorbed in 1 until damageDealt)  {
+                text += " ${casterWizard?.displayName} dealt $damageDealt damage ($damageAbsorbed damage was absorbed)"
             } else {
-                text += "this spell dealt $damageDealt damage!"
+                if(healing > 0) {
+                    text += " It also dealt $damageDealt damage!"
+                } else {
+                    text += " It dealt $damageDealt damage!"
+                }
             }
         }
 
