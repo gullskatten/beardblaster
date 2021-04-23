@@ -17,6 +17,6 @@ class Wizard(
     }
 
     fun getHealthPoints(): String {
-        return "${currentHealthPoints}/${maxHealthPoints}"
+        return "${currentHealthPoints}/${maxHealthPoints} ♥"
     }
 }
