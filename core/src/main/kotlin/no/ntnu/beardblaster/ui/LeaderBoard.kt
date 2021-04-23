@@ -39,7 +39,7 @@ class LeaderBoard : Table(Scene2DSkin.defaultSkin) {
     private fun getBeardColor(beardLength: Float): Color {
         val frac = beardLength / 100
         val color = when {
-            frac < 0.5 -> interpolate(Color.CYAN, Color.YELLOW, frac)
+            frac < 0.5 -> interpolate(Color.CYAN, Color.YELLOW, frac * 2)
             else -> interpolate(Color.YELLOW, Color.MAGENTA, frac - (1 - frac))
         }
         log.debug { "Beard of length $beardLength ($frac) got assigned color $color." }
