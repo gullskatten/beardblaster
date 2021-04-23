@@ -40,7 +40,7 @@ class LeaderBoard : Table(Scene2DSkin.defaultSkin) {
         val frac = beardLength / 100
         val color = when {
             frac < 0.5 -> interpolate(Color.CYAN, Color.YELLOW, frac)
-            else -> interpolate(Color.YELLOW, Color.MAGENTA, frac)
+            else -> interpolate(Color.YELLOW, Color.MAGENTA, frac - (1 - frac))
         }
         log.debug { "Beard of length $beardLength ($frac) got assigned color $color." }
         return color
