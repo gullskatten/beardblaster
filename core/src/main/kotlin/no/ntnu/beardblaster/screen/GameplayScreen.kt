@@ -55,6 +55,7 @@ class GameplayScreen(
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
+    private var hasInitializedGameOver: Boolean = false
     private lateinit var gameInstance: GameInstance
     private lateinit var quitBtn: TextButton
     private lateinit var fireElementBtn: Button
@@ -128,7 +129,6 @@ class GameplayScreen(
         fireElementBtn = scene2d.button(ElementType.Fire.name)
         iceElementBtn = scene2d.button(ElementType.Ice.name)
         natureElementBtn = scene2d.button(ElementType.Nature.name)
-        lootDialog = scene2d.lootDialog(emptyList())
         spellInfo = scene2d.spellInfo(gameInstance.spellCasting) {
             setPosition(
                 (WORLD_WIDTH / 2) - (width / 2),
@@ -191,17 +191,18 @@ class GameplayScreen(
 
     private fun initActionPhase() {
         spellInfo.updateButtonLabel(SpellLockState.UNLOCKED)
-
         headingLabel.setText(Nls.actionPhase())
-        val table = fullSizeTable().apply {
-            background = skin[Image.Background]
-            add(headingLabel("Action Phase"))
-        }
         stage.clear()
 
         addWizards()
-
-        stage.addActor(spellAction)
+        val table = fullSizeTable().apply {
+            background = skin[Image.Background]
+            add(headingLabel("Action Phase"))
+            add(spellAction).center()
+            row()
+            add(myHealthPointsTable).left()
+            add(opponentHealthPointsTable).right()
+        }
         stage.addActor(table)
         stage.addActor(quitBtn)
         cycleSpells()
@@ -228,7 +229,8 @@ class GameplayScreen(
                 try {
                     Timer("SpellDialog", false).schedule(4000) {
                         LOG.info { "Updating spell dialog" }
-                        spellAction.updateNameLabelText(it.casterWizard!!.displayName)
+
+                        spellAction.updateNameLabelText(it.casterWizard?.displayName ?: "Unknown?")
                         spellAction.updateDescLabelText(it.toString())
                         goodWizard.setAnimation(0f, 0f, assets, it.myWizardAnimation)
                         evilWizard.setAnimation(0f, 0f, assets, it.opponentWizardAnimation)
@@ -238,6 +240,7 @@ class GameplayScreen(
                 }
                 try {
                     val delay = 4000L * gameInstance.spellsForTurn!!.size
+                    LOG.info { "Swapping to prepare phase in $delay milliseconds" }
                     Timer("SwapToPreparePhase", true).schedule(delay) {
                         LOG.info { "Swapping to PREPARE phase" }
                         gameInstance.resetPhase()
@@ -259,21 +262,27 @@ class GameplayScreen(
 
     private fun initGameOver() {
         headingLabel.setText(Nls.gameOverPhase())
-
-        val table = fullSizeTable().apply {
-            add(headingLabel).pad(50f)
-            row()
-            add(quitBtn)
-        }
         stage.clear()
-        stage.addActor(table)
-        lootDialog = scene2d.lootDialog(gameInstance.gamePrizes) {
+
+       lootDialog = scene2d.lootDialog(gameInstance.gamePrizes) {
             setPosition(
                 (WORLD_WIDTH / 2) - (width / 2),
                 (WORLD_HEIGHT / 2) - (height / 2),
             )
         }
-        stage.addActor(lootDialog)
+
+        lootDialog.closeBtn.onClick {
+            disposeSafely()
+            game.setScreen<MenuScreen>()
+        }
+
+        val table = fullSizeTable().apply {
+            add(headingLabel).pad(50f)
+            row()
+            add(lootDialog)
+            row()
+        }
+        stage.addActor(table)
     }
 
     private fun addWizards() {
@@ -284,10 +293,6 @@ class GameplayScreen(
     override fun setBtnEventListeners() {
         quitBtn.onClick {
             gameInstance.forfeit()
-        }
-        lootDialog.closeBtn.onClick {
-            disposeSafely()
-            game.setScreen<MenuScreen>()
         }
         fireElementBtn.onClick {
             gameInstance.spellCasting.addFire()
@@ -341,7 +346,10 @@ class GameplayScreen(
                 }
             }
             Phase.GameOver -> {
-                initGameOver()
+                if(!hasInitializedGameOver && gameInstance.gamePrizes.isNotEmpty()) {
+                    hasInitializedGameOver = true
+                    initGameOver()
+                }
             }
         }
 

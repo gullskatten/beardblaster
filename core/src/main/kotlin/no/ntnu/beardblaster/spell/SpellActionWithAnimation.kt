@@ -4,10 +4,19 @@ import no.ntnu.beardblaster.commons.spell.SpellAction
 import no.ntnu.beardblaster.sprites.WizardTextures
 import no.ntnu.beardblaster.user.UserData
 
-class SpellActionWithAnimation(spellAction: SpellAction) :
-    SpellAction(spellAction.spell, spellAction.caster, spellAction.receiver) {
-
+class SpellActionWithAnimation(spellAction: SpellAction) : SpellAction(
+    spell = spellAction.spell,
+    receiver = spellAction.receiver,
+    caster = spellAction.caster,
+) {
     init {
+        super.docId = spellAction.docId
+        super.damageDealt = spellAction.damageDealt
+        super.damageAbsorbed = spellAction.damageAbsorbed
+        super.healing = spellAction.healing
+        super.receiverWizard = spellAction.receiverWizard
+        super.casterWizard = spellAction.casterWizard
+        super.isForfeit = spellAction.isForfeit
         determineAnimationsForSpell(spellAction)
     }
 
@@ -30,8 +39,8 @@ class SpellActionWithAnimation(spellAction: SpellAction) :
                     myWizardAnimation = WizardTextures.GoodWizardDeath
                     opponentWizardAnimation = WizardTextures.EvilWizardIdle
                 } else {
-                   myWizardAnimation = WizardTextures.GoodWizardJump
-                   opponentWizardAnimation = WizardTextures.EvilWizardDeath
+                    myWizardAnimation = WizardTextures.GoodWizardJump
+                    opponentWizardAnimation = WizardTextures.EvilWizardDeath
                 }
             }
         } else if (spellAction.damageDealt > 0) {
@@ -52,8 +61,8 @@ class SpellActionWithAnimation(spellAction: SpellAction) :
             }
         } else if (spellAction.damageAbsorbed > 0) {
             if (spellAction.receiver == UserData.instance.user!!.id) {
-               myWizardAnimation = WizardTextures.GoodWizardIdle
-               opponentWizardAnimation = WizardTextures.EvilWizardIdle
+                myWizardAnimation = WizardTextures.GoodWizardIdle
+                opponentWizardAnimation = WizardTextures.EvilWizardIdle
             } else {
                 myWizardAnimation = WizardTextures.GoodWizardJump
                 opponentWizardAnimation = WizardTextures.EvilWizardIdle
@@ -81,4 +90,4 @@ class SpellActionWithAnimation(spellAction: SpellAction) :
 
         return text
     }
-    }
+}

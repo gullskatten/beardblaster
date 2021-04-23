@@ -31,8 +31,8 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
 
     var lastActionTurn: Int = 0
     private lateinit var spellsListener: Job
+    var gamePrizes: MutableList<Prize> = mutableListOf()
     private var gameListener: Job
-    lateinit var gamePrizes: List<Prize>
     private var winnerWizard: Wizard? = null
     private var loosingWizard: Wizard? = null
     val spellCasting: SpellCasting = SpellCasting()
@@ -133,7 +133,21 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
     fun forfeit() {
         val forfeitSpell = SpellAction()
         forfeitSpell.isForfeit = true
-        GameRepository().castSpell(currentTurn, forfeitSpell)
+        KtxAsync.launch {
+            GameRepository().castSpell(currentTurn, forfeitSpell).collect {
+                when(it) {
+                    is State.Loading -> {
+                        LOG.debug { "Forfeiting..." }
+                    }
+                    is State.Success -> {
+                        LOG.debug { "Forfeited successfully." }
+                    }
+                    is State.Failed -> {
+                        LOG.error { "Failed to forfeit: ${it.message}" }
+                    }
+                }
+            }
+        }
     }
 
     // SpellSubscription and GameSubscription may send updates through this channel
@@ -178,7 +192,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         if (p0 is GameSubscription) {
             if (p1 is Game) {
                 if (p1.prizes.isNotEmpty()) {
-                    gamePrizes = p1.prizes
+                    gamePrizes.addAll(p1.prizes)
                 }
                 if (p1.endedAt != 0L) {
                     if (currentPhase != Phase.GameOver) {
@@ -233,6 +247,8 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             LOG.info { "Resetting phase to PREPARATION" }
             Phase.Preparation
         }
+
+        LOG.info { "Phase was set to $currentPhase" }
     }
 
     fun incrementActionTurn() {

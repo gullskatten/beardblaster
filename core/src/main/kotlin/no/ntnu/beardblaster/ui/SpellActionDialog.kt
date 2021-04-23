@@ -27,7 +27,7 @@ class SpellActionDialog(
         const val LABEL_WIDTH = 860f
     }
     fun updateNameLabelText(name: String) {
-        nameLabel.setText(name)
+            nameLabel.setText(name)
     }
 
     fun updateDescLabelText(description: String) {
