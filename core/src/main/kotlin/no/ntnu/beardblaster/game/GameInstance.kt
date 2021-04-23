@@ -29,7 +29,6 @@ private val LOG = logger<GameInstance>();
 @ExperimentalCoroutinesApi
 class GameInstance(preparationTime: Int, game: Game) : Observer {
 
-    var lastActionTurn: Int = 0
     private lateinit var spellsListener: Job
     var gamePrizes: MutableList<Prize> = mutableListOf()
     private var gameListener: Job
@@ -265,9 +264,6 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         LOG.info { "Phase was set to $currentPhase" }
     }
 
-    fun incrementActionTurn() {
-        lastActionTurn += 1;
-    }
 
     companion object {
         private const val MAX_HP_PLAYERS = 30
