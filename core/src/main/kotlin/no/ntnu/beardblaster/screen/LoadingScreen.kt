@@ -71,7 +71,7 @@ class LoadingScreen(
         game.addScreen(LoginMenuScreen(game, batch, assets, camera))
         game.addScreen(MenuScreen(game, batch, assets, camera))
         game.addScreen(TutorialScreen(game, batch, assets, camera))
-        game.addScreen(HighScoreScreen(game, batch, assets, camera))
+        game.addScreen(LeaderBoardScreen(game, batch, assets, camera))
         game.addScreen(LobbyScreen(game, batch, assets, camera))
         game.addScreen(JoinLobbyScreen(game, batch, assets, camera))
         game.addScreen(GameplayScreen(game, batch, assets, camera))

@@ -28,7 +28,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
     AbstractGameRepository<Game> {
 
     private val TAG = "GameRepository"
-    private val GAME_COLLECTION = "games"
+    private val GAMES_COLLECTION = "games"
     private val TURNS_COLLECTION = "turns"
     private val SPELLS_COLLECTION = "spells"
 
@@ -36,7 +36,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         emit(State.loading<SpellAction>())
         Log.i(TAG, "Pushing spell to Firebase")
 
-        val newSpellDocRef = db.collection(GAME_COLLECTION)
+        val newSpellDocRef = db.collection(GAMES_COLLECTION)
             .document(GameData.instance.game!!.id)
             .collection(TURNS_COLLECTION)
             .document(currentTurn.toString())
@@ -56,7 +56,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         emit(State.loading<Turn>())
         Log.i(TAG, "Creating turn $currentTurn")
         val doc = Turn()
-        val documentReference = db.collection(GAME_COLLECTION)
+        val documentReference = db.collection(GAMES_COLLECTION)
             .document(GameData.instance.game!!.id)
             .collection(TURNS_COLLECTION)
             .document("$currentTurn")
@@ -83,7 +83,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         }
 
         val subscription = db
-            .collection(GAME_COLLECTION)
+            .collection(GAMES_COLLECTION)
             .document(id)
             .addSnapshotListener { snapshot, _ ->
                 Log.i(TAG, "Game was updated externally! Checking if snapshot exists")
@@ -134,7 +134,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
     override fun endGame(id: String): Flow<State<Boolean>> = flow {
         emit(State.loading<Boolean>())
         try {
-            db.collection(GAME_COLLECTION)
+            db.collection(GAMES_COLLECTION)
                 .document(id)
                 .update(
                     "endedAt", LocalDateTime.now(ZoneOffset.UTC)
@@ -150,7 +150,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
     override fun distributePrizes(prizes: List<Prize>): Flow<State<Boolean>> = flow {
         emit(State.loading<Boolean>())
         try {
-            db.collection(GAME_COLLECTION)
+            db.collection(GAMES_COLLECTION)
                 .document(GameData.instance.game!!.id)
                 .update(
                     "endedAt", LocalDateTime.now(ZoneOffset.UTC)

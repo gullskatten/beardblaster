@@ -174,7 +174,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                             loosingWizard = myWizard
                         }
                     }
-                    if (GameData.instance.isHost) {
+                    if (GameData.instance.isHost && gamePrizes.isEmpty()) {
                         distributePrizes()
                     }
                 } else {
@@ -221,7 +221,21 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         looserLoot.forEach {
             it.receiver = loosingWizard!!.id
         }
-        GameRepository().distributePrizes(winnerLoot.plus(looserLoot))
+        KtxAsync.launch {
+            GameRepository().distributePrizes(winnerLoot.plus(looserLoot)).collect {
+                when(it) {
+                    is State.Success -> {
+                        LOG.debug { "Distributed loot successfully" }
+                    }
+                    is State.Failed -> {
+                        LOG.debug { "Failed to distribute loot: ${it.message}" }
+                    }
+                    is State.Loading -> {
+                        LOG.debug { "Distributing loot.." }
+                    }
+                }
+            }
+        }
     }
 
     fun dispose() {

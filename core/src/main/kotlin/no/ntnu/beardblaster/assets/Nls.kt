@@ -9,6 +9,7 @@ import ktx.i18n.BundleLine
 enum class Nls : BundleLine {
     appName,
     attack,
+    back,
     close,
     confirmPassword,
     createGame,

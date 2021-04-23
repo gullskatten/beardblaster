@@ -18,10 +18,7 @@ import ktx.log.debug
 import ktx.log.error
 import ktx.log.info
 import ktx.log.logger
-import ktx.scene2d.button
-import ktx.scene2d.scene2d
-import ktx.scene2d.table
-import ktx.scene2d.textButton
+import ktx.scene2d.*
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.ElementType
 import no.ntnu.beardblaster.WORLD_HEIGHT
@@ -82,6 +79,8 @@ class GameplayScreen(
     private lateinit var waitingLabel: Label
     private lateinit var myHealthPointsTable: Table
     private lateinit var opponentHealthPointsTable: Table
+    private var hostHealthbar = Healthbar()
+    private val opponentHealthbar = Healthbar()
 
     override fun initComponents() {
 
@@ -106,6 +105,7 @@ class GameplayScreen(
             row()
             row()
             add(myHealthPointsLabel)
+            add(hostHealthbar.healthbarContainer).width(300f).height(70f)
         }
 
         opponentHealthPointsTable = scene2d.table {
@@ -113,9 +113,10 @@ class GameplayScreen(
             row()
             row()
             add(opponentHealthPointsLabel)
+            add(opponentHealthbar.healthbarContainer).width(300f).height(70f)
         }
 
-        myHealthPointsTable.setPosition(hostLabel.width + 10f, WORLD_HEIGHT / 2 + 50f)
+        myHealthPointsTable.setPosition(hostLabel.width + 100f, WORLD_HEIGHT / 2 + 50f)
         opponentHealthPointsTable.setPosition(
             WORLD_WIDTH - 100f - opponentLabel.width,
             WORLD_HEIGHT / 2 + 50f
@@ -262,7 +263,6 @@ class GameplayScreen(
 
     private fun initGameOver() {
         headingLabel.setText(Nls.gameOverPhase())
-        stage.clear()
 
        lootDialog = scene2d.lootDialog(gameInstance.gamePrizes) {
             setPosition(
@@ -282,6 +282,8 @@ class GameplayScreen(
             add(lootDialog)
             row()
         }
+        stage.clear()
+        addWizards()
         stage.addActor(table)
     }
 
@@ -334,6 +336,9 @@ class GameplayScreen(
                 opponentHealthPointsLabel.setText(
                     gameInstance.wizardState.getEnemyAsWizard()?.getHealthPoints()
                 )
+                hostHealthbar.updateWidth(gameInstance.wizardState.getCurrentUserAsWizard()!!.currentHealthPoints, gameInstance.wizardState.getCurrentUserAsWizard()!!.maxHealthPoints)
+                opponentHealthbar.updateWidth(gameInstance.wizardState.getEnemyAsWizard()!!.currentHealthPoints, gameInstance.wizardState.getEnemyAsWizard()!!.maxHealthPoints)
+
                 countDownLabel.setText(gameInstance.timeRemaining.toInt().toString())
             }
             Phase.Waiting -> {

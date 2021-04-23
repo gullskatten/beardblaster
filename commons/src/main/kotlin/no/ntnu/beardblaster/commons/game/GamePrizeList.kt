@@ -14,10 +14,14 @@ class GamePrizeList {
         val returnedPrizes = ArrayList<Prize>()
 
         for (iterations in 0..amount) {
-            val nextPrize =
-                winnerPrizes.filter { aPrice -> itemList.contains(aPrice.item) }.random()
-            returnedPrizes.add(nextPrize)
-        }
+            if(itemList.isEmpty()) {
+                val nextPrize = winnerPrizes.random()
+                returnedPrizes.add(nextPrize)
+            } else {
+                val nextPrize = winnerPrizes.filter { aPrice -> itemList.contains(aPrice.item) }.random()
+                returnedPrizes.add(nextPrize)
+            }
+         }
 
         return returnedPrizes;
     }
@@ -34,9 +38,13 @@ class GamePrizeList {
         val returnedPrizes = ArrayList<Prize>()
 
         for (iterations in 0..amount) {
-            val nextPrize =
-                loosingPrizes.filter { aPrice -> itemList.contains(aPrice.item) }.random()
-            returnedPrizes.add(nextPrize)
+            if(itemList.isEmpty()) {
+                val nextPrize = loosingPrizes.random()
+                returnedPrizes.add(nextPrize)
+            } else {
+                val nextPrize = loosingPrizes.filter { aPrice -> itemList.contains(aPrice.item) }.random()
+                returnedPrizes.add(nextPrize)
+            }
         }
 
         return returnedPrizes;

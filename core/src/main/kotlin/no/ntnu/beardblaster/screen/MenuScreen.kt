@@ -30,7 +30,7 @@ class MenuScreen(
 ) : BaseScreen(game, batch, assets, camera), Observer {
     private lateinit var createGameBtn: TextButton
     private lateinit var joinGameBtn: TextButton
-    private lateinit var highScoreBtn: TextButton
+    private lateinit var leaderBoardBtn: TextButton
     private lateinit var tutorialBtn: TextButton
     private lateinit var logoutBtn: TextButton
     private lateinit var exitBtn: TextButton
@@ -46,7 +46,7 @@ class MenuScreen(
 
         createGameBtn = scene2d.textButton(Nls.createGame())
         joinGameBtn = scene2d.textButton(Nls.joinGame())
-        highScoreBtn = scene2d.textButton(Nls.leaderBeard())
+        leaderBoardBtn = scene2d.textButton(Nls.leaderBeard())
         tutorialBtn = scene2d.textButton(Nls.tutorial())
         logoutBtn = scene2d.textButton(Nls.logOut())
         exitBtn = scene2d.textButton(Nls.exitGame())
@@ -62,7 +62,7 @@ class MenuScreen(
             row()
             add(joinGameBtn).colspan(4).center()
             row()
-            add(highScoreBtn).colspan(2).center()
+            add(leaderBoardBtn).colspan(2).center()
             add(tutorialBtn).colspan(2).center()
             row()
             add(logoutBtn).colspan(2).center()
@@ -90,9 +90,9 @@ class MenuScreen(
                 game.setScreen<JoinLobbyScreen>()
             }
         }
-        highScoreBtn.onClick {
+        leaderBoardBtn.onClick {
             if (UserData.instance.user != null) {
-                game.setScreen<HighScoreScreen>()
+                game.setScreen<LeaderBoardScreen>()
             }
         }
         tutorialBtn.onClick {

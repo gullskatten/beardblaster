@@ -61,6 +61,8 @@ enum class Image(val atlasKey: String) {
     //Wizard
     HPBar("health_bar_indicator"),
     BarContainer("bar_container"),
+
+    BeardScale("beard_scale"),
 }
 
 operator fun Skin.get(image: Image): Drawable = this.getDrawable(image.atlasKey)
@@ -197,6 +199,8 @@ fun createSkin(assets: AssetStorage): Skin {
             titleFontColor = Color.BROWN
             stageBackground = dimmedBackground()
         }
+
+        scrollPane {}
     }
     return Scene2DSkin.defaultSkin
 }
