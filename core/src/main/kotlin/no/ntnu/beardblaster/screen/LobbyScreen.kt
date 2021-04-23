@@ -7,11 +7,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
+import ktx.log.error
 import ktx.log.logger
 import ktx.scene2d.*
 import no.ntnu.beardblaster.BeardBlasterGame
@@ -38,6 +40,7 @@ class LobbyScreen(
     private lateinit var infoLabel: Label
     private lateinit var startGameBtn: TextButton
     private lateinit var backBtn: Button
+    private lateinit var subscription: Job
     private var lobbyHandler: LobbyHandler = LobbyHandler()
 
     override fun initScreen() {
@@ -89,6 +92,7 @@ class LobbyScreen(
                         }
                         is State.Failed -> {
                             opponentLabel.setText(it.message)
+                            LOG.error { it.message }
                         }
                         is State.Success -> {
                             game.setScreen<GameplayScreen>()
@@ -113,7 +117,7 @@ class LobbyScreen(
 
                             }
                             is State.Failed -> {
-
+                                LOG.error { it.message }
                             }
                         }
                     }
@@ -128,30 +132,39 @@ class LobbyScreen(
     override fun update(p0: Observable?, p1: Any?) {
         if (p1 is Game) {
             codeLabel.setText(p1.code)
-
-            // Yeah, this is ugly! Listen for live updates on lobby with id
-            KtxAsync.launch {
-                LobbyRepository().subscribeToLobbyUpdates(p1.id).collect {
-                    when (it) {
-                        is State.Success -> {
-                            // On received update: Check if opponent of updated Game is not null
-                            if (it.data.opponent != null) {
-                                // Player may now start the game
-                                GameData.instance.game = it.data
-                                opponentLabel.setText("${it.data.opponent?.displayName} - ${it.data.opponent?.beardLength}cm")
-                                startGameBtn.isVisible = true
-                            } else {
-                                opponentLabel.setText("Waiting for opponent to join");
-                                startGameBtn.isVisible = false
+            if(!::subscription.isInitialized) {
+                // Yeah, this is ugly! Listen for live updates on lobby with id
+                subscription = KtxAsync.launch {
+                    LobbyRepository().subscribeToLobbyUpdates(p1.id).collect {
+                        when (it) {
+                            is State.Success -> {
+                                // On received update: Check if opponent of updated Game is not null
+                                if (it.data.opponent != null) {
+                                    // Player may now start the game
+                                    GameData.instance.game = it.data
+                                    opponentLabel.setText("${it.data.opponent?.displayName} - ${it.data.opponent?.beardLength}cm")
+                                    startGameBtn.isVisible = true
+                                } else {
+                                    opponentLabel.setText("Waiting for opponent to join");
+                                    startGameBtn.isVisible = false
+                                }
                             }
-                        }
-                        is State.Loading -> {
-                        }
-                        is State.Failed -> {
+                            is State.Loading -> {
+                            }
+                            is State.Failed -> {
+                                LOG.error { it.message }
+                            }
                         }
                     }
                 }
             }
+        }
+    }
+
+    override fun dispose() {
+        super.dispose()
+        if(subscription != null && subscription.isActive) {
+            subscription.cancel()
         }
     }
 }

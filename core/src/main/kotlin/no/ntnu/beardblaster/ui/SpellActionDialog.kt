@@ -3,12 +3,9 @@ package no.ntnu.beardblaster.ui
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
-import ktx.log.logger
 import ktx.scene2d.*
 import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
-
-private val log = logger<SpellActionDialog>()
 
 @Scene2dDsl
 class SpellActionDialog(

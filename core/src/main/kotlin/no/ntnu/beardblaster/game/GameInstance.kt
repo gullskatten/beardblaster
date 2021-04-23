@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ktx.async.KtxAsync
 import ktx.log.debug
+import ktx.log.error
 import ktx.log.info
 import ktx.log.logger
 import no.ntnu.beardblaster.commons.State
@@ -71,7 +72,19 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                     // Set up next turn
                     if(GameData.instance.isHost) {
                         KtxAsync.launch {
-                            GameRepository().createTurn(currentTurn + 1)
+                            GameRepository().createTurn(currentTurn + 1).collect {
+                                when(it) {
+                                    is State.Success -> {
+                                        LOG.info { "Next turn was created" }
+                                    }
+                                    is State.Failed -> {
+                                        LOG.error { it.message }
+                                    }
+                                    is State.Loading -> {
+                                        LOG.info { "Loading next turn" }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -249,13 +262,13 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                 GameRepository().createTurn(1).collect {
                     when(it) {
                         is State.Success -> {
-                            LOG.info { "Turn created successfully" }
+                            LOG.info { "Initial turn created successfully" }
                         }
                         is State.Loading -> {
                             LOG.info { "Loading turn" }
                         }
                         is State.Failed -> {
-                            LOG.info { "Failed to create turn ${it.message}" }
+                            LOG.error { "Failed to create turn: ${it.message}" }
                         }
                     }
                 }

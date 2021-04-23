@@ -50,6 +50,10 @@ class SpellExecutor {
     fun getSpellResultForTurn(turn: Int, wizardState: WizardState): List<SpellActionWithAnimation> {
         // Since we need to handle mitigation spells that were included X turns ago,
         // we need to peek into our spells and update them with active mitigation spells.
+        if (!spellHistory.containsKey(turn)) {
+            return listOf()
+        }
+
         val actions = spellHistory[turn]!!.stream().peek { spellAction: SpellAction ->
             mitigationSpells
                 .stream()
@@ -86,6 +90,4 @@ class SpellExecutor {
 
         return actions.map { spellAction ->  SpellActionWithAnimation(spellAction)}
     }
-
-
 }
