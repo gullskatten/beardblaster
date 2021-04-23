@@ -25,8 +25,6 @@ class WizardState(vararg opponents: Wizard) {
         spellAction.casterWizard = opponents[spellAction.caster]
     }
 
-
-
     fun isAnyWizardDead(): Boolean {
         return opponents.values.any { w : Wizard -> w.currentHealthPoints <= 0 }
     }

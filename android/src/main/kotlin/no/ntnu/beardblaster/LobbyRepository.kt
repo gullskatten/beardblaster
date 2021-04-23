@@ -117,6 +117,7 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
             createdAt = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC),
             startedAt = 0,
             endedAt = 0,
+            prizes = emptyList()
         )
 
         val newDocRef = db.collection(GAME_COLLECTION).add(doc).await()
@@ -143,6 +144,7 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
             ).await()
             emit(State.success(true))
         } catch (e: Exception) {
+            Log.w(TAG, e)
             emit(State.failed<Boolean>("Failed to start game!"))
         }
     }
@@ -158,6 +160,7 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
                 .await()
             emit(State.success(true))
         } catch (e: Exception) {
+            Log.w(TAG, e)
             emit(State.failed<Boolean>("Failed to leave lobby!"))
         }
     }

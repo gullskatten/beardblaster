@@ -11,8 +11,8 @@ class SpellActionWithAnimation(spellAction: SpellAction) :
         determineAnimationsForSpell(spellAction)
     }
 
-    private var myWizardAnimation: WizardTextures = WizardTextures.GoodWizardIdle
-    private var opponentWizardAnimation: WizardTextures = WizardTextures.EvilWizardIdle
+    var myWizardAnimation: WizardTextures = WizardTextures.GoodWizardIdle
+    var opponentWizardAnimation: WizardTextures = WizardTextures.EvilWizardIdle
 
     private fun determineAnimationsForSpell(spellAction: SpellAction) {
         if (spellAction.receiverWizard!!.isWizardDefeated() || spellAction.casterWizard!!.isWizardDefeated()) {
@@ -59,5 +59,26 @@ class SpellActionWithAnimation(spellAction: SpellAction) :
                 opponentWizardAnimation = WizardTextures.EvilWizardIdle
             }
         }
+    }
+
+    override fun toString(): String {
+        var text = "${casterWizard?.displayName} is casting ${spell.spellName} \n"
+
+        if (damageAbsorbed > 0 && damageAbsorbed >= damageDealt) {
+            text += "All damage was absorbed by $receiver!"
+        }
+        if (healing > 0) {
+            text += "it healed for $healing!"
+        }
+
+        if (damageDealt > 0) {
+            if (damageAbsorbed > 0) {
+                text += "${casterWizard?.displayName} dealt $damageDealt damage \n ($damageAbsorbed damage was absorbed)"
+            } else {
+                text += "this spell dealt $damageDealt damage!"
+            }
+        }
+
+        return text
     }
     }

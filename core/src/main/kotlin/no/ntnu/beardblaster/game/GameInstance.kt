@@ -4,6 +4,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ktx.async.KtxAsync
+import ktx.log.info
+import ktx.log.logger
 import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.commons.game.GamePrizeList
 import no.ntnu.beardblaster.commons.game.Prize
@@ -17,12 +19,14 @@ import no.ntnu.beardblaster.spell.SpellSubscription
 import no.ntnu.beardblaster.spell.WizardState
 import java.util.*
 
+private val LOG = logger<GameInstance>();
+
 @ExperimentalCoroutinesApi
 class GameInstance(preparationTime: Int, game: Game) : Observer {
 
     private lateinit var spellsInTurnSubscription: Job
     private var gameSubscription: Job
-    private lateinit var gamePrizes: List<Prize>
+    lateinit var gamePrizes: List<Prize>
     private var winnerWizard: Wizard? = null
     private var loosingWizard: Wizard? = null
     val spellCasting: SpellCasting = SpellCasting()
@@ -129,7 +133,6 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                     }
                 } else {
                     spellExecutor.addSpell(p1, currentTurn)
-
                     if(spellExecutor.spellHistory[currentTurn]?.size == 2) {
                         // Both have sent their spells - let's fast forward to attack phase.
                         currentPhase = Phase.Action
@@ -173,6 +176,31 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         GameRepository().distributePrizes(winnerLoot.plus(looserLoot))
     }
 
+    fun dispose() {
+        if(gameSubscription.isActive) {
+            gameSubscription.cancel()
+        }
+
+        if(spellsInTurnSubscription.isActive) {
+            spellsInTurnSubscription.cancel()
+        }
+    }
+
+    fun resetPhase() {
+        currentPhase = if(wizardState.isAnyWizardDead()) {
+            LOG.info { "A wizard is dead! Game is over!" }
+            if(GameData.instance.isHost) {
+                distributePrizes()
+                Phase.Waiting
+            } else {
+                Phase.Waiting
+            }
+        } else {
+            LOG.info { "Resetting phase to PREPARATION" }
+            Phase.Preparation
+        }
+    }
+
     companion object {
         private const val MAX_HP_PLAYERS = 30
     }
@@ -191,16 +219,6 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
 
         gameSubscription = KtxAsync.launch {
             GameSubscription().subscribeToUpdatesOn(game.id)
-        }
-    }
-
-    fun dispose() {
-        if(gameSubscription.isActive) {
-            gameSubscription.cancel()
-        }
-
-        if(spellsInTurnSubscription.isActive) {
-            spellsInTurnSubscription.cancel()
         }
     }
 }

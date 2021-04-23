@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
+import ktx.assets.disposeSafely
 import ktx.graphics.use
 import ktx.log.debug
 import ktx.log.logger
@@ -28,6 +29,9 @@ import no.ntnu.beardblaster.hud.spellbar
 import no.ntnu.beardblaster.sprites.WizardTexture
 import no.ntnu.beardblaster.sprites.WizardTextures
 import no.ntnu.beardblaster.ui.*
+import no.ntnu.beardblaster.user.UserData
+import java.util.*
+import kotlin.concurrent.schedule
 
 private val LOG = logger<GameplayScreen>()
 
@@ -52,6 +56,8 @@ class GameplayScreen(
     private lateinit var elementButtonsTable: Table
     private lateinit var spellBar: SpellBar
     private lateinit var spellInfo: SpellInfo
+    private lateinit var spellAction: SpellActionDialog
+    private lateinit var lootDialog: LootDialog
     private var goodWizard: WizardTexture = WizardTexture()
     private var evilWizard: WizardTexture = WizardTexture()
     private lateinit var hostLabel: Label
@@ -61,8 +67,8 @@ class GameplayScreen(
     private lateinit var countDownLabel: Label
     private lateinit var headingLabel: Label
     private lateinit var waitingLabel: Label
-    private lateinit var hostInfo: Table
-    private lateinit var opponentInfo: Table
+    private lateinit var myHealthPointsTable: Table
+    private lateinit var opponentHealthPointsTable: Table
 
     override fun initComponents() {
 
@@ -72,28 +78,29 @@ class GameplayScreen(
         }
 
         gameInstance = GameInstance(30, GameData.instance.game!!)
+
         headingLabel = headingLabel(Nls.preparationPhase())
         hostLabel = bodyLabel("${gameInstance.wizardState.getCurrentUserAsWizard()}", 1.25f)
         myHealthPointsLabel = gameInstance.wizardState.getCurrentUserAsWizard()?.let { bodyLabel(it.getHealthPoints()) } ?: bodyLabel("Unknown")
-        opponentLabel = bodyLabel("${GameData.instance.game?.opponent}", 1.25f)
-        myHealthPointsLabel = gameInstance.wizardState.getEnemyAsWizard()?.let { bodyLabel(it.getHealthPoints()) } ?: bodyLabel("Unknown")
+        opponentLabel = bodyLabel("${gameInstance.wizardState.getEnemyAsWizard()}", 1.25f)
+        opponentHealthPointsLabel = gameInstance.wizardState.getEnemyAsWizard()?.let { bodyLabel(it.getHealthPoints()) } ?: bodyLabel("Unknown")
 
-        hostInfo = scene2d.table {
+        myHealthPointsTable = scene2d.table {
             add(hostLabel)
             row()
             row()
             add(myHealthPointsLabel)
         }
 
-        opponentInfo = scene2d.table {
+        opponentHealthPointsTable = scene2d.table {
             add(opponentLabel)
             row()
             row()
             add(opponentHealthPointsLabel)
         }
 
-        hostInfo.setPosition(hostLabel.width + 10f, WORLD_HEIGHT / 2 + 50f)
-        opponentInfo.setPosition(WORLD_WIDTH - 100f - opponentLabel.width, WORLD_HEIGHT / 2 + 50f)
+        myHealthPointsTable.setPosition(hostLabel.width + 10f, WORLD_HEIGHT / 2 + 50f)
+        opponentHealthPointsTable.setPosition(WORLD_WIDTH - 100f - opponentLabel.width, WORLD_HEIGHT / 2 + 50f)
         waitingLabel = headingLabel(Nls.waitingPhase())
         countDownLabel = headingLabel(gameInstance.timeRemaining.toInt().toString())
         countDownLabel.setPosition(10f, WORLD_HEIGHT - countDownLabel.height - 100f)
@@ -103,7 +110,7 @@ class GameplayScreen(
         fireElementBtn = scene2d.button(ElementType.Fire.name)
         iceElementBtn = scene2d.button(ElementType.Ice.name)
         natureElementBtn = scene2d.button(ElementType.Nature.name)
-
+        lootDialog = scene2d.lootDialog(emptyList())
         spellInfo = scene2d.spellInfo(gameInstance.spellCasting) {
             setPosition(
                 (WORLD_WIDTH / 2) - (width / 2),
@@ -147,6 +154,7 @@ class GameplayScreen(
             row()
         }
         stage.clear()
+
         addWizards()
         stage.addActor(table)
         stage.addActor(countDownLabel)
@@ -172,14 +180,44 @@ class GameplayScreen(
             add(headingLabel("Action Phase"))
         }
         stage.clear()
+
         addWizards()
+        spellAction = scene2d.spellActionsDialog {
+            setPosition(
+                (WORLD_WIDTH / 2) - (width / 2),
+                (WORLD_HEIGHT / 2) - (height / 2),
+            )
+        }
+        stage.addActor(spellAction)
         stage.addActor(table)
         stage.addActor(quitBtn)
+        cycleSpells()
+    }
 
-        //If wizardA attacks first -> wizardA.setAnimation(Attack) + wizardB.setAnimation(takeHit)
-        //If wizardA | B is dead -> setAnimation(dead)
-        goodWizard.setAnimation(0f, 0f, assets, WizardTextures.GoodWizardAttack1)
-        evilWizard.setAnimation(0f, 0f, assets, WizardTextures.EvilWizardTakeHit)
+    private fun cycleSpells() {
+        if(gameInstance.spellsForTurn != null && gameInstance.spellsForTurn!!.isNotEmpty())
+        gameInstance.spellsForTurn?.forEach {
+            Timer("HealthPointUpdate", true).schedule(3000) {
+                if(it.caster == UserData.instance.user!!.id) {
+                    myHealthPointsLabel.setText(it.casterWizard!!.getHealthPoints())
+                    opponentHealthPointsLabel.setText(it.receiverWizard!!.getHealthPoints())
+                } else {
+                    myHealthPointsLabel.setText(it.receiverWizard!!.getHealthPoints())
+                    opponentHealthPointsLabel.setText(it.casterWizard!!.getHealthPoints())
+                }
+            }
+            Timer("SpellDialog", false).schedule(4000) {
+                spellAction.updateNameLabelText(it.casterWizard!!.displayName)
+                spellAction.updateDescLabelText(it.toString())
+                goodWizard.setAnimation(0f, 0f, assets, it.myWizardAnimation)
+                evilWizard.setAnimation(0f, 0f, assets, it.opponentWizardAnimation)
+            }
+
+            val delay: Long = 4000L * gameInstance.spellsForTurn!!.size
+            Timer("SwapToPreparePhase", false).schedule(delay)  {
+                gameInstance.resetPhase()
+            }
+        }
     }
 
     private fun initGameOver() {
@@ -192,18 +230,28 @@ class GameplayScreen(
         }
         stage.clear()
         stage.addActor(table)
+        lootDialog = scene2d.lootDialog(gameInstance.gamePrizes){
+            setPosition(
+                (WORLD_WIDTH / 2) - (width / 2),
+                (WORLD_HEIGHT / 2) - (height / 2),
+            )
+        }
+        stage.addActor(lootDialog)
     }
 
     private fun addWizards() {
-        stage.addActor(hostInfo)
-        stage.addActor(opponentInfo)
+        stage.addActor(myHealthPointsTable)
+        stage.addActor(opponentHealthPointsTable)
     }
 
     override fun setBtnEventListeners() {
         quitBtn.onClick {
             gameInstance.forfeit()
         }
-
+        lootDialog.closeBtn.onClick {
+            disposeSafely()
+            game.setScreen<MenuScreen>()
+        }
         fireElementBtn.onClick {
             gameInstance.spellCasting.addFire()
         }
@@ -223,21 +271,20 @@ class GameplayScreen(
         gameInstance.updateCounter(delta)
 
         when (gameInstance.currentPhase) {
-
             Phase.Preparation -> {
                 myHealthPointsLabel.setText(gameInstance.wizardState.getCurrentUserAsWizard()?.getHealthPoints())
                 opponentHealthPointsLabel.setText(gameInstance.wizardState.getEnemyAsWizard()?.getHealthPoints())
                 countDownLabel.setText(gameInstance.timeRemaining.toInt().toString())
             }
             Phase.Waiting -> {
-
+                initWaitingForPlayerPhase()
             }
             Phase.Action -> {
-                gameInstance.spellsForTurn
+                initActionPhase()
             }
 
             Phase.GameOver -> {
-
+                initGameOver()
             }
         }
 

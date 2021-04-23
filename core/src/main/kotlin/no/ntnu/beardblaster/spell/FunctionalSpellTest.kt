@@ -47,16 +47,14 @@ class FunctionalSpellTest {
         LOG.info { "BEGINNING! " }
         while (!hasReachedZeroHp[0]) {
             spellExecutor.addSpell(
-                spellList[Random().nextInt(spellList.size - 1)],
+                SpellAction(spellList[Random().nextInt(spellList.size - 1)], me.id,
+                    opponent.id),
                 turn,
-                me.id,
-                opponent.id
             )
             spellExecutor.addSpell(
-                spellList[Random().nextInt(spellList.size - 1)],
+                SpellAction(spellList[Random().nextInt(spellList.size - 1)], opponent.id,
+                    me.id),
                 turn,
-                opponent.id,
-                me.id
             )
 
             LOG.info { "<--- TURN $turn --->" }

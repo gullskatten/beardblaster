@@ -15,7 +15,6 @@ import ktx.scene2d.scene2d
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
-import no.ntnu.beardblaster.spell.FunctionalSpellTest
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData
@@ -70,7 +69,6 @@ class MenuScreen(
             add(exitBtn).colspan(2).center()
         }
         stage.addActor(table)
-        FunctionalSpellTest().test()
 
         if (UserData.instance.user == null && !UserData.instance.isLoading) {
             KtxAsync.launch {
@@ -83,7 +81,6 @@ class MenuScreen(
     override fun setBtnEventListeners() {
         createGameBtn.onClick {
             // Handle creation of game, and then go to Lobby screen to display code and wait for player 2
-            game.setScreen<GameplayScreen>()
             if (UserData.instance.user != null) {
                 game.setScreen<LobbyScreen>()
             }

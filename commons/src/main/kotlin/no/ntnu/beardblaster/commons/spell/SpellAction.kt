@@ -13,7 +13,6 @@ open class SpellAction(val spell: Spell, val caster: String, val receiver: Strin
     var damageDealt = spell.spellDamage
     var damageAbsorbed = 0
     var healing = spell.spellHealing
-    val spellData = spell
     var receiverWizard: Wizard? = null
     var casterWizard: Wizard? = null
     var isForfeit: Boolean = false
