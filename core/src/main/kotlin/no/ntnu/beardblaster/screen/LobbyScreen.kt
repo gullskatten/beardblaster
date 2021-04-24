@@ -37,6 +37,7 @@ class LobbyScreen(
 ) : BaseScreen(game, batch, assets, camera), Observer {
     private lateinit var codeLabel: Label
     private lateinit var opponentLabel: Label
+    private lateinit var opponentBeardLabel: Label
     private lateinit var infoLabel: Label
     private lateinit var startGameBtn: TextButton
     private lateinit var backBtn: Button
@@ -47,7 +48,8 @@ class LobbyScreen(
         lobbyHandler.addObserver(this)
 
         codeLabel = bodyLabel("Creating game..", 1.5f, LabelStyle.BodyOutlined.name)
-        opponentLabel = bodyLabel("Waiting for opponent to join..", 1.5f, LabelStyle.BodyOutlined.name)
+        opponentLabel = bodyLabel("Waiting for opponent to join..", 1.5f, LabelStyle.Body.name)
+        opponentBeardLabel = bodyLabel("", 1.5f, LabelStyle.Body.name)
 
         KtxAsync.launch {
             lobbyHandler.createLobby()
@@ -60,6 +62,12 @@ class LobbyScreen(
         // This will only be visible when wizard B joins the game
         startGameBtn.isVisible = false
 
+        val wizNameTable = scene2d.table {
+            defaults().space(25f)
+            add(opponentLabel).left()
+            add(opponentBeardLabel).right()
+            background = dimmedLabelBackground()
+        }
         val content = scene2d.table {
             defaults().pad(30f)
             background = skin[Image.Modal]
@@ -69,7 +77,7 @@ class LobbyScreen(
             row()
             add(infoLabel)
             row()
-            add(opponentLabel)
+            add(wizNameTable)
             row()
             add(startGameBtn)
         }
@@ -143,7 +151,9 @@ class LobbyScreen(
                                     // Player may now start the game
                                     GameData.instance.game = it.data
                                     infoLabel.setText("A worthy opponent joined!")
-                                    opponentLabel.setText("${it.data.opponent?.displayName} - ${it.data.opponent?.beardLength}cm")
+                                    opponentLabel.setText("${it.data.opponent?.displayName}")
+                                    opponentBeardLabel.setText("${it.data.opponent?.beardLength}cm")
+                                    opponentBeardLabel.color = BeardScale.getBeardColor(it.data.opponent?.beardLength?:0f)
                                     startGameBtn.isVisible = true
                                 } else {
                                     opponentLabel.setText("Waiting for opponent to join");

@@ -221,7 +221,7 @@ private fun dimmedBackground(): Drawable {
     )
 }
 
-private fun dimmedLabelBackground(): Drawable {
+ fun dimmedLabelBackground(): Drawable {
     return SpriteDrawable(
         Sprite(
             Texture(
@@ -232,7 +232,7 @@ private fun dimmedLabelBackground(): Drawable {
                 )
             )
         ).apply {
-            color = Color(1f, 1f, 1f, 0.25f)
+            color = Color(1f, 1f, 1f, 0.35f)
         }
     )
 }

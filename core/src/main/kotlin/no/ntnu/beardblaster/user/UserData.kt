@@ -43,8 +43,7 @@ class UserData private constructor() : Observable() {
                                             LOG.info { "Beard of ${state.data}cm locked and loaded..." }
                                             it.data.beardLength = state.data
                                             setUserData(it.data)
-                                            notifyObservers(getCurrentUserString())
-
+                                            notifyObservers(it.data)
                                         }
                                         is State.Failed -> {
                                         }
@@ -75,8 +74,13 @@ class UserData private constructor() : Observable() {
     }
 
     fun getCurrentUserString(): String {
-        user?.let { return "${user!!.displayName} - ${user!!.beardLength}cm" }
+        user?.let { return user!!.displayName }
         return ""
+    }
+
+    fun getBeardLength(): Float {
+        user?.let { return user!!.beardLength }
+        return 0f
     }
 
     companion object {

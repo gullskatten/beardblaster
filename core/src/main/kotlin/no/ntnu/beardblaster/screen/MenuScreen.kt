@@ -12,9 +12,11 @@ import ktx.async.KtxAsync
 import ktx.log.info
 import ktx.log.logger
 import ktx.scene2d.scene2d
+import ktx.scene2d.table
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.commons.user.User
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData
@@ -35,12 +37,18 @@ class MenuScreen(
     private lateinit var logoutBtn: TextButton
     private lateinit var exitBtn: TextButton
     private lateinit var wizardHeading: Label
+
     private val currentWizardLabel: Label =
         bodyLabel(
             UserData.instance.getCurrentUserString(),
             1.5f,
-            LabelStyle.BodyOutlined.name
-        ) // Kept it here as it can crash for lateinit since loading user can finish before screen has been initialized
+            LabelStyle.Body.name
+        )
+    private val currentWizardBeardLabel: Label = bodyLabel(
+        UserData.instance.getBeardLength().toString() + "cm",
+        1.5f,
+        LabelStyle.Body.name
+    )
 
     override fun initScreen() {
         createGameBtn = scene2d.textButton(Nls.createGame())
@@ -51,11 +59,18 @@ class MenuScreen(
         exitBtn = scene2d.textButton(Nls.exitGame())
         wizardHeading = headingLabel("BeardBlaster")
 
+        val wizNameTable = scene2d.table {
+            defaults().space(15f)
+            add(currentWizardLabel).left()
+            add(currentWizardBeardLabel).right()
+            background = dimmedLabelBackground()
+        }
+
         val table = fullSizeTable(20f).apply {
             background = skin[Image.Background]
             add(wizardHeading).colspan(4).center()
             row()
-            add(currentWizardLabel).colspan(4).center()
+            add(wizNameTable).colspan(4).center()
             row()
             add(createGameBtn).colspan(4).center()
             row()
@@ -113,8 +128,16 @@ class MenuScreen(
     }
 
     override fun update(p0: Observable?, p1: Any?) {
-        LOG.info { p1.toString() }
-        currentWizardLabel.setText(p1.toString())
+        if (p0 is UserData) {
+            if (p1 is String) {
+                currentWizardLabel.setText(p1.toString())
+            } else if (p1 is User) {
+                currentWizardLabel.setText(p1.displayName)
+                LOG.info { "Got beard length of -> ${p1.beardLength}" }
+                currentWizardBeardLabel.setText("${p1.beardLength}cm")
+                currentWizardBeardLabel.color = BeardScale.getBeardColor(p1.beardLength)
+            }
+        }
     }
 
     override fun dispose() {

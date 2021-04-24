@@ -74,7 +74,9 @@ class GameplayScreen(
     private var goodWizard: WizardTexture = WizardTexture()
     private var evilWizard: WizardTexture = WizardTexture()
     private lateinit var hostLabel: Label
+    private lateinit var hostBeardLabel: Label
     private lateinit var opponentLabel: Label
+    private lateinit var opponentBeardLabel: Label
     private lateinit var myHealthPointsLabel: Label
     private lateinit var opponentHealthPointsLabel: Label
     private lateinit var countDownLabel: Label
@@ -92,27 +94,45 @@ class GameplayScreen(
             return
         }
 
-        gameInstance = GameInstance(160, GameData.instance.game!!)
+        gameInstance = GameInstance(35, GameData.instance.game!!)
         gameInstance.currentPhase.addObserver(this)
         headingLabel = headingLabel(Nls.preparationPhase())
-        hostLabel = bodyLabel("${gameInstance.wizardState.getCurrentUserAsWizard()}", 1.25f)
+        hostLabel = bodyLabel("${gameInstance.wizardState.getCurrentUserAsWizard()!!.displayName}", 1.25f)
+        hostBeardLabel = bodyLabel("${gameInstance.wizardState.getCurrentUserAsWizard()!!.beardLength}cm", 1.25f)
+
         myHealthPointsLabel = gameInstance.wizardState.getCurrentUserAsWizard()
             ?.let { bodyLabel(it.getHealthPoints()) } ?: bodyLabel("Unknown")
-        opponentLabel = bodyLabel("${gameInstance.wizardState.getEnemyAsWizard()}", 1.25f)
+        hostBeardLabel.color = BeardScale.getBeardColor(gameInstance.wizardState.getCurrentUserAsWizard()!!.beardLength)
+        opponentLabel = bodyLabel("${gameInstance.wizardState.getEnemyAsWizard()!!.displayName}", 1.25f)
+        opponentBeardLabel = bodyLabel("${gameInstance.wizardState.getEnemyAsWizard()!!.beardLength}cm", 1.25f)
+        opponentBeardLabel.setText("${gameInstance.wizardState.getEnemyAsWizard()!!.beardLength}cm")
+        opponentBeardLabel.color = BeardScale.getBeardColor(gameInstance.wizardState.getEnemyAsWizard()!!.beardLength)
         opponentHealthPointsLabel =
             gameInstance.wizardState.getEnemyAsWizard()?.let { bodyLabel(it.getHealthPoints()) }
                 ?: bodyLabel("Unknown")
 
+        val myWizNameTable = scene2d.table {
+            defaults().space(25f)
+            add(hostLabel).left()
+            add(hostBeardLabel).right()
+        }
+
         myHealthPointsTable = scene2d.table {
-            add(hostLabel)
+            add(myWizNameTable)
             row()
             add(myHealthPointsLabel).center()
             row()
             add(hostHealthbar.healthbarContainer).width(300f).height(70f)
         }
 
+        val opponentWizNameTable = scene2d.table {
+            defaults().space(25f)
+            add(opponentLabel).left()
+            add(opponentBeardLabel).right()
+        }
+
         opponentHealthPointsTable = scene2d.table {
-            add(opponentLabel)
+            add(opponentWizNameTable)
             row()
             add(opponentHealthPointsLabel).center()
             row()
@@ -229,7 +249,6 @@ class GameplayScreen(
     }
 
     private fun cycleSpells() {
-        LOG.debug { "CYCLING SPELLS (ANIMATION) " }
         val spellsThisTurn = gameInstance.getSpellsCastCurrentTurn()
         LOG.debug { "Got spells this turn - ${spellsThisTurn.size} spells" }
         if (spellsThisTurn.isNotEmpty()) {
