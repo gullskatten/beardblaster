@@ -59,7 +59,6 @@ class LootDialog(
         pad(PADDING)
         add(nameLabel).center().top().width(LABEL_WIDTH)
         row()
-        yourLootLabel
         add(yourLootLabel).center().expand().width(LABEL_WIDTH)
         row()
         loot.filter { l -> l.receiver == UserData.instance.user!!.id }.forEach {
