@@ -13,8 +13,13 @@ class SpellActionDialog(
 
     private val nameLabel: Label =
         scene2d.label("Calculating Spells", LabelStyle.LightText.name) {
-            setAlignment(Align.center)
-            setFontScale(2f)
+            setAlignment(Align.left)
+            setFontScale(1.8f)
+        }
+    private val beardLength: Label =
+        scene2d.label("", LabelStyle.LightText.name) {
+            setAlignment(Align.right)
+            setFontScale(1.8f)
         }
     private val descLabel: Label = scene2d.label("Hold on...", LabelStyle.LightText.name) {
         setAlignment(Align.center)
@@ -29,15 +34,25 @@ class SpellActionDialog(
     fun updateNameLabelText(name: String) {
             nameLabel.setText(name)
     }
+    fun updateBeardLengthLabelText(length: Float) {
+        beardLength.setText("${length}cm")
+        beardLength.color = BeardScale.getBeardColor(length)
+    }
 
     fun updateDescLabelText(description: String) {
         descLabel.setText(description)
     }
 
     init {
+        val wizNameTable = scene2d.table {
+            defaults().space(30f)
+        }
+        wizNameTable.add(nameLabel)
+        wizNameTable.add(beardLength)
+
         background = skin[Image.ModalDark]
         pad(PADDING)
-        add(nameLabel).center().top().padTop(PADDING).width(LABEL_WIDTH)
+        add(wizNameTable).center().top().padTop(PADDING)
         row()
         add(descLabel).center().expand().width(LABEL_WIDTH)
         row()

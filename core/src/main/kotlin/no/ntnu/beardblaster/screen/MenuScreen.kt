@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
-import ktx.log.info
 import ktx.log.logger
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
@@ -45,7 +44,7 @@ class MenuScreen(
             LabelStyle.Body.name
         )
     private val currentWizardBeardLabel: Label = bodyLabel(
-        UserData.instance.getBeardLength().toString() + "cm",
+        "",
         1.5f,
         LabelStyle.Body.name
     )
@@ -60,7 +59,7 @@ class MenuScreen(
         wizardHeading = headingLabel("BeardBlaster")
 
         val wizNameTable = scene2d.table {
-            defaults().space(15f)
+            defaults().space(25f)
             add(currentWizardLabel).left()
             add(currentWizardBeardLabel).right()
             background = dimmedLabelBackground()
@@ -133,7 +132,6 @@ class MenuScreen(
                 currentWizardLabel.setText(p1.toString())
             } else if (p1 is User) {
                 currentWizardLabel.setText(p1.displayName)
-                LOG.info { "Got beard length of -> ${p1.beardLength}" }
                 currentWizardBeardLabel.setText("${p1.beardLength}cm")
                 currentWizardBeardLabel.color = BeardScale.getBeardColor(p1.beardLength)
             }

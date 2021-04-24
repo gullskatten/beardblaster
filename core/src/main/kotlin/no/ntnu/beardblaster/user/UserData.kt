@@ -75,7 +75,7 @@ class UserData private constructor() : Observable() {
 
     fun getCurrentUserString(): String {
         user?.let { return user!!.displayName }
-        return ""
+        return "Loading User.."
     }
 
     fun getBeardLength(): Float {

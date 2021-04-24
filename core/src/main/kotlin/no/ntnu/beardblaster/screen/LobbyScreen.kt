@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
+import ktx.log.debug
 import ktx.log.error
 import ktx.log.logger
 import ktx.scene2d.*
@@ -46,7 +47,6 @@ class LobbyScreen(
 
     override fun initScreen() {
         lobbyHandler.addObserver(this)
-
         codeLabel = bodyLabel("Creating game..", 1.5f, LabelStyle.BodyOutlined.name)
         opponentLabel = bodyLabel("Waiting for opponent to join..", 1.5f, LabelStyle.Body.name)
         opponentBeardLabel = bodyLabel("", 1.5f, LabelStyle.Body.name)
@@ -119,6 +119,7 @@ class LobbyScreen(
                             is State.Success -> {
                                 lobbyHandler.setGame(null)
                                 GameData.instance.game = null
+                                dispose()
                                 game.setScreen<MenuScreen>()
                             }
                             is State.Loading -> {
@@ -140,9 +141,22 @@ class LobbyScreen(
     override fun update(p0: Observable?, p1: Any?) {
         if (p1 is Game) {
             codeLabel.setText(p1.code)
-            if(!::subscription.isInitialized) {
+
+            LOG.debug { "Game created - Subscribing to new game." }
+            LOG.debug { "Should I subscribe? ${!::subscription.isInitialized || !subscription.isActive}." }
+            LOG.debug { "Is initialized? ${::subscription.isInitialized}." }
+            LOG.debug { "Is active? ${::subscription.isInitialized && subscription.isActive}." }
+
+            if(::subscription.isInitialized && subscription.isActive) {
+                subscription.cancel()
+            }
+
+
+            if(!::subscription.isInitialized || !subscription.isActive) {
                 // Yeah, this is ugly! Listen for live updates on lobby with id
                 subscription = KtxAsync.launch {
+                    LOG.debug { "Running subscribe to game with id ${p1.id}" }
+
                     LobbyRepository().subscribeToLobbyUpdates(p1.id).collect {
                         when (it) {
                             is State.Success -> {
@@ -178,5 +192,6 @@ class LobbyScreen(
         if(subscription != null && subscription.isActive) {
             subscription.cancel()
         }
+        lobbyHandler.deleteObserver(this)
     }
 }

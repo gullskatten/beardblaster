@@ -290,6 +290,9 @@ class GameplayScreen(
                         spellAction.updateNameLabelText(
                             spell.casterWizard?.displayName ?: "Unknown?"
                         )
+                        spellAction.updateBeardLengthLabelText(
+                            spell.casterWizard?.beardLength ?: 0f
+                        )
                         spellAction.updateDescLabelText(spell.toString())
 
                         goodWizard.setAnimation(0f, 0f, assets, spell.determineMyAnimation())

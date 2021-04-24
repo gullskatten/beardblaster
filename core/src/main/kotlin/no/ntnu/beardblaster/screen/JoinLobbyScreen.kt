@@ -101,7 +101,7 @@ class JoinLobbyScreen(
                             is State.Failed -> {
                                 errorLabel.setText("Failed to leave lobby.. Please retry.")
                                 errorLabel.isVisible = true
-                                if (errorLabel.text.equals("Failed to leave lobby.. Please retry.")) {
+                                if (errorLabel.isVisible) {
                                     // Just force quit if it fails once more.
                                     game.setScreen<MenuScreen>()
                                 }
@@ -124,7 +124,6 @@ class JoinLobbyScreen(
                 errorLabel.setText(arg)
                 errorLabel.isVisible = true
                 waitingLabel.isVisible = false
-
             }
             if (arg is Game) {
                 if (arg.startedAt > 0L) {
