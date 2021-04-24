@@ -30,4 +30,8 @@ class LeaderBoardRepository : PlatformDistributor<AbstractLeaderBoardRepository<
     override fun updateBeardLength(wizard: Wizard, beardLengthIncrease: Float): Flow<State<BeardScore>> {
         return platformObject.updateBeardLength(wizard, beardLengthIncrease)
     }
+
+    override fun getBeardLengthForUser(userId: String): Flow<State<Float>> {
+        return platformObject.getBeardLengthForUser(userId)
+    }
 }

@@ -22,6 +22,32 @@ class LeaderBoardRepository(private val db: FirebaseFirestore = Firebase.firesto
     private val TAG = "LeaderBoardRepository"
     private val BEARDS_COLLECTION = "beards"
 
+    override fun getBeardLengthForUser(userId: String): Flow<State<Float>> = flow {
+        emit(State.loading<Float>())
+
+        val snapshot = db
+            .collection(BEARDS_COLLECTION)
+            .document(userId)
+            .get()
+            .await()
+
+        if (!snapshot.exists()) {
+            Log.d(
+                TAG,
+                "No beard found for user: $userId"
+            )
+            emit(State.Success(0f))
+        } else {
+            val data = snapshot.toObject<BeardScore>()!!.beardLength
+            Log.d(
+                TAG,
+                "Beard found for user (!): $userId"
+            )
+            emit(State.Success(data))
+        }
+
+    }
+
     override fun getTopTenBeards(): Flow<State<List<BeardScore>>> = flow {
         emit(State.loading<List<BeardScore>>())
 
@@ -66,7 +92,7 @@ class LeaderBoardRepository(private val db: FirebaseFirestore = Firebase.firesto
                     id = wizard.id
                 )
                 db.collection(BEARDS_COLLECTION)
-                    .document()
+                    .document(wizard.id)
                     .set(
                         beardScore
                     ).await()
