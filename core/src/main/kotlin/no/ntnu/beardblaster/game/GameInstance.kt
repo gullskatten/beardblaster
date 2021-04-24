@@ -180,7 +180,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                         if (::spellsListener.isInitialized && spellsListener.isActive) {
                             spellsListener.cancel()
                         }
-                        if (GameData.instance.isHost && gameLoot.getLoot().isEmpty()) {
+                        if (!GameData.instance.isHost && gameLoot.getLoot().isEmpty()) {
                             generateLoot()
                         }
                     }
@@ -204,7 +204,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                             // Cancel subscription to events on from preparation turn
                             spellsListener.cancel()
                             // Set up next turn if host
-                            if (GameData.instance.isHost) {
+                            if (!GameData.instance.isHost) {
                                 createTurn(currentTurn + 1)
                             }
                         }
@@ -303,8 +303,8 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         gameListener = KtxAsync.launch {
             gameSubscription.subscribeToUpdatesOn(game.id)
         }
-        if (GameData.instance.isHost) {
-            LOG.info { "User is host -> pushing create turn" }
+        if (!GameData.instance.isHost) {
+            LOG.info { "User is not host -> pushing create turn" }
             createTurn(1)
         }
     }

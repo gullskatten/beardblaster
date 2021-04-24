@@ -120,7 +120,6 @@ class JoinLobbyScreen(
     // Listens for changes on lobby -> when entering lobby and when lobby starts.
     override fun update(o: Observable?, arg: Any?) {
         if (o is LobbyHandler) {
-
             if (arg is String) {
                 errorLabel.setText(arg)
                 errorLabel.isVisible = true
@@ -130,6 +129,7 @@ class JoinLobbyScreen(
             if (arg is Game) {
                 if (arg.startedAt > 0L) {
                     GameData.instance.game = arg
+                    lobbyHandler.deleteObserver(this)
                     game.setScreen<GameplayScreen>()
                 } else {
                     errorLabel.isVisible = false
