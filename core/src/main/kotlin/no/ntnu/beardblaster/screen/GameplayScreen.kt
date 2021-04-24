@@ -328,7 +328,7 @@ class GameplayScreen(
         stage.clear()
         headingLabel.setText(Nls.gameOverPhase())
 
-        lootDialog = scene2d.lootDialog(gameInstance.gameLoot) {
+        lootDialog = scene2d.lootDialog(gameInstance) {
             setPosition(
                 (WORLD_WIDTH / 2) - (width / 2),
                 (WORLD_HEIGHT / 2) - (height / 2),

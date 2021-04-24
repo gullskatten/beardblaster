@@ -23,12 +23,14 @@ enum class Nls : BundleLine {
     logIn,
     login,
     logOut,
+    opponentReceived,
     password,
     preparationPhase,
     waitingPhase,
     actionPhase,
     gameOverPhase,
     quit,
+    quitGame,
     register,
     selectMaxElement,
     selectMoreElements,
@@ -39,7 +41,10 @@ enum class Nls : BundleLine {
     tutorial,
     welcomeWizard,
     wizardName,
-    wizardNAttacks;
+    wizardNAttacks,
+    youLose,
+    youReceive,
+    youWin;
 
     override val bundle: I18NBundle
         get() = i18nBundle

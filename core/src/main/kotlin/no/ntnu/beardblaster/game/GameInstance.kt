@@ -41,8 +41,10 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
     private val opponentWizard: Wizard?
 
     var gameLoot: GameLoot = GameLoot()
-    private var winnerWizard: Wizard? = null
-    private var loosingWizard: Wizard? = null
+    var winnerWizard: Wizard? = null
+        private set
+    var loosingWizard: Wizard? = null
+        private set
 
     val wizardState: WizardState = WizardState(
         Wizard(MAX_HP_PLAYERS, game.host!!),
