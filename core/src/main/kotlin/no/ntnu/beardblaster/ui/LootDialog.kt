@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
+import ktx.log.debug
 import ktx.log.logger
 import ktx.scene2d.*
 import no.ntnu.beardblaster.WORLD_HEIGHT
@@ -14,7 +15,7 @@ import no.ntnu.beardblaster.game.GameLoot
 import no.ntnu.beardblaster.user.UserData
 import java.util.*
 
-private val log = logger<LootDialog>()
+private val LOG = logger<LootDialog>()
 
 @Scene2dDsl
 class LootDialog(
@@ -105,8 +106,10 @@ class LootDialog(
     override fun getPrefHeight(): Float = WORLD_HEIGHT * 0.8f
 
     override fun update(p0: Observable?, p1: Any?) {
+        LOG.debug { "Loot received -> $p0 $p1" }
        if(p0 is GameLoot) {
            if(p1 is List<*>) {
+               LOG.debug { "Adding loot (render)" }
                renderLoot(p1 as List<Loot>)
            }
        }
