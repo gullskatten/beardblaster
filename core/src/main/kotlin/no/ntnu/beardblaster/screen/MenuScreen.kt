@@ -15,6 +15,7 @@ import ktx.scene2d.scene2d
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.spell.SpellRepository
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData
@@ -43,6 +44,13 @@ class MenuScreen(
         ) // Kept it here as it can crash for lateinit since loading user can finish before screen has been initialized
 
     override fun initScreen() {
+
+        val foundSpell = SpellRepository().getSpellById(1)
+        if(foundSpell != null) {
+            LOG.info {foundSpell.spellName }
+        } else {
+            LOG.info { "Spell not found!" }
+        }
 
         createGameBtn = scene2d.textButton(Nls.createGame())
         joinGameBtn = scene2d.textButton(Nls.joinGame())

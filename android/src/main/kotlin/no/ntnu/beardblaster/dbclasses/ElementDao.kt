@@ -12,12 +12,11 @@ interface ElementDao {
     fun getAllElements(): List<Element>
 
     @Transaction
-    @Query("SELECT * FROM element_table JOIN spell_table")
-    fun getElementsOfSpell(): LiveData<List<ElementsOfSpell>>
-
+    @Query("SELECT element_table.* FROM composition_table INNER JOIN element_table ON composition_table.element_id = element_table.element_id WHERE spell_id = :spellID")
+    fun getElementsOfSpell(spellID : Int): List<Element>
 
     @Transaction
-    @Query("SELECT * FROM element_table JOIN wizard_table WHERE wizardID = :wizardID")
-    fun getElementsOfWizard(wizardID : Int): List<ElementsOfWizard>
+    @Query("SELECT element_table.* FROM proficiency_table INNER JOIN element_table ON proficiency_table.element_id = element_table.element_id WHERE wizard_id = :wizardID")
+    fun getElementsOfWizard(wizardID : Int): List<Element>
 
 }

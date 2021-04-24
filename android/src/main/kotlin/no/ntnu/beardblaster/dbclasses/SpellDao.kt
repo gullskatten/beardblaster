@@ -8,17 +8,13 @@ interface SpellDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addSpell(spell : Spell)
 
-    @Query("SELECT * FROM spell_table ORDER BY spellID ASC")
+    @Query("SELECT * FROM spell_table ORDER BY spell_id ASC")
     fun readAllSpellData(): List<Spell>
 
     @Transaction
-    @Query("SELECT * FROM element_table WHERE elementID = :elementID")
-    fun getSpellsOfElement(elementID: Int): LiveData<List<SpellsOfElement>>
+    @Query("SELECT spell_table.* FROM composition_table INNER JOIN spell_table ON composition_table.spell_id = spell_table.spell_id WHERE element_id = :elementID")
+    fun getSpellsOfElement(elementID: Int): List<Spell>
 
-    @Transaction
-    @Query("SELECT * FROM spell_table WHERE spellID = :spellID")
-    fun getElementsOfSpell(spellID : Int): LiveData<List<ElementsOfSpell>>
-
-    @Query("SELECT * FROM spell_table WHERE spellID = :spellID LIMIT 1")
+    @Query("SELECT * FROM spell_table WHERE spell_id = :spellID LIMIT 1")
     fun getSpellById(spellID : Int) : Spell?
 }

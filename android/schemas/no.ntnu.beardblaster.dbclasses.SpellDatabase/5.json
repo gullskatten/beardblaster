@@ -1,28 +1,22 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 4,
+    "version": 5,
     "identityHash": "a8db6ec82dc7c2a9ded3810e5f8a8558",
     "entities": [
       {
         "tableName": "spell_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`duration` INTEGER NOT NULL, `damage_value` INTEGER NOT NULL, `description` TEXT NOT NULL, `healing_value` INTEGER NOT NULL, `spell_id` INTEGER NOT NULL, `mitigation_value` INTEGER NOT NULL, `spell_name` TEXT NOT NULL, PRIMARY KEY(`spell_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`spell_id` INTEGER NOT NULL, `spell_name` TEXT NOT NULL, `healing_value` INTEGER NOT NULL, `damage_value` INTEGER NOT NULL, `mitigation_value` INTEGER NOT NULL, `description` TEXT NOT NULL, `duration` INTEGER NOT NULL, PRIMARY KEY(`spell_id`))",
         "fields": [
           {
-            "fieldPath": "duration",
-            "columnName": "duration",
+            "fieldPath": "spellID",
+            "columnName": "spell_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "spellDamage",
-            "columnName": "damage_value",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "spellDescription",
-            "columnName": "description",
+            "fieldPath": "spellName",
+            "columnName": "spell_name",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -33,8 +27,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "spellID",
-            "columnName": "spell_id",
+            "fieldPath": "spellDamage",
+            "columnName": "damage_value",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -45,9 +39,15 @@
             "notNull": true
           },
           {
-            "fieldPath": "spellName",
-            "columnName": "spell_name",
+            "fieldPath": "spellDescription",
+            "columnName": "description",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "duration",
+            "columnName": "duration",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -88,14 +88,8 @@
       },
       {
         "tableName": "wizard_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`hit_points` INTEGER NOT NULL, `wizard_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `wizard_name` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`wizard_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `wizard_name` TEXT NOT NULL, `hit_points` INTEGER NOT NULL)",
         "fields": [
-          {
-            "fieldPath": "hitPoints",
-            "columnName": "hit_points",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
           {
             "fieldPath": "wizardID",
             "columnName": "wizard_id",
@@ -106,6 +100,12 @@
             "fieldPath": "wizardName",
             "columnName": "wizard_name",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hitPoints",
+            "columnName": "hit_points",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -164,17 +164,17 @@
       },
       {
         "tableName": "spell_book_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`spell_id` INTEGER NOT NULL, `wizard_id` INTEGER NOT NULL, PRIMARY KEY(`wizard_id`, `spell_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`wizard_id` INTEGER NOT NULL, `spell_id` INTEGER NOT NULL, PRIMARY KEY(`wizard_id`, `spell_id`))",
         "fields": [
           {
-            "fieldPath": "spellID",
-            "columnName": "spell_id",
+            "fieldPath": "wizardID",
+            "columnName": "wizard_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "wizardID",
-            "columnName": "wizard_id",
+            "fieldPath": "spellID",
+            "columnName": "spell_id",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -208,17 +208,17 @@
       },
       {
         "tableName": "proficiency_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`element_id` INTEGER NOT NULL, `wizard_id` INTEGER NOT NULL, PRIMARY KEY(`wizard_id`, `element_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`wizard_id` INTEGER NOT NULL, `element_id` INTEGER NOT NULL, PRIMARY KEY(`wizard_id`, `element_id`))",
         "fields": [
           {
-            "fieldPath": "elementID",
-            "columnName": "element_id",
+            "fieldPath": "wizardID",
+            "columnName": "wizard_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "wizardID",
-            "columnName": "wizard_id",
+            "fieldPath": "elementID",
+            "columnName": "element_id",
             "affinity": "INTEGER",
             "notNull": true
           }
