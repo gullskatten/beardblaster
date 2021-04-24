@@ -4,20 +4,29 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import ktx.log.debug
 import ktx.log.logger
-import ktx.scene2d.Scene2DSkin
-import ktx.scene2d.image
-import ktx.scene2d.scene2d
+import ktx.scene2d.*
 
 private val log = logger<BeardScale>()
 
 class BeardScale : Table(Scene2DSkin.defaultSkin) {
-    private val scale = scene2d.image(skin[Image.BeardScale])
+    private val scale = scene2d.image(skin[Image.BeardScale]) {
+
+    }
 
     init {
-        background = skin[Image.BarContainer]
-        pad(25f)
-        add(scale).growX()
-    }
+        add(scene2d.label("0cm", LabelStyle.Body.name) {
+            background = dimmedLabelBackground()
+        }).pad(5f).left()
+        add(scene2d.label("100+cm", LabelStyle.Body.name) {
+            background = dimmedLabelBackground()
+        }).pad(5f).right()
+        row()
+        add(scene2d.table {
+            background = skin[Image.BarContainer]
+            pad(25f)
+            add(scale).growX()
+        }).colspan(2).growX()
+        }
 
     companion object {
         private val START_COLOR: Color = Color.CYAN
