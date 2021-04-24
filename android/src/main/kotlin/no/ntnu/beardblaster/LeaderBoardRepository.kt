@@ -2,7 +2,6 @@ package no.ntnu.beardblaster
 
 import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -79,9 +78,11 @@ class LeaderBoardRepository(private val db: FirebaseFirestore = Firebase.firesto
             .document(wizard.id).get().await()
 
             if(documentReference.exists()) {
+                val lastBeardScore = documentReference.toObject<BeardScore>()
+                lastBeardScore!!.beardLength += beardLengthIncrease
                 db.collection(BEARDS_COLLECTION)
                     .document(wizard.id)
-                    .update("beardLength", FieldValue.increment(beardLengthIncrease.toDouble()))
+                    .update("beardLength", lastBeardScore!!.beardLength.coerceAtLeast(0f))
                     .await()
                 emit(State.success(documentReference.toObject<BeardScore>()!!))
 

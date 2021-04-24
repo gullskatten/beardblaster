@@ -44,6 +44,7 @@ enum class Image(val atlasKey: String) {
 
     // Backgrounds
     Background("background"),
+    BackgroundSecondary("epic_mage_battle_3000_x2"),
     Modal("modal_fancy"),
     ModalSkull("modal_fancy_skull"),
     ModalHeader("modal_fancy_header"),

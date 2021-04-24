@@ -66,7 +66,7 @@ class MenuScreen(
         }
 
         val table = fullSizeTable(20f).apply {
-            background = skin[Image.Background]
+            background = skin[Image.BackgroundSecondary]
             add(wizardHeading).colspan(4).center()
             row()
             add(wizNameTable).colspan(4).center()

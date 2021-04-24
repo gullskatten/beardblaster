@@ -193,6 +193,7 @@ class GameplayScreen(
         headingLabel.setText(Nls.preparationPhase())
 
         val table = fullSizeTable().apply {
+            background = skin[Image.Background]
             add(headingLabel).pad(50f)
             row()
         }
@@ -341,6 +342,7 @@ class GameplayScreen(
         addWizards()
 
         val table = fullSizeTable().apply {
+            background = skin[Image.Background]
             add(headingLabel).pad(50f)
             row()
             add(lootDialog)

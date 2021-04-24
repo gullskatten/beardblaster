@@ -69,7 +69,7 @@ class JoinLobbyScreen(
             this.add(submitCodeBtn)
         }
         val table = fullSizeTable().apply {
-            background = skin[Image.Background]
+            background = skin[Image.BackgroundSecondary]
             add(backBtn).expandY().top().padTop(50f).width(91f)
             add(content).width(WORLD_WIDTH * 0.9f).fillY()
         }
