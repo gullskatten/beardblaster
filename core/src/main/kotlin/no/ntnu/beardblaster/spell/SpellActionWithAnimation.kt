@@ -131,7 +131,7 @@ class SpellActionWithAnimation(spellAction: SpellAction) : SpellAction(
         }
 
         if (damageDealt > 0) {
-            if (damageAbsorbed in 1 until damageDealt)  {
+            if (damageAbsorbed > 0 && damageDealt > 0)  {
                 text += " ${casterWizard?.displayName} dealt $damageDealt damage ($damageAbsorbed damage was absorbed)"
             } else  {
                 if(spell.spellDamage > damageAbsorbed) {
