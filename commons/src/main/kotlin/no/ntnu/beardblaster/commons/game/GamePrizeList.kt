@@ -17,12 +17,13 @@ class GamePrizeList {
             if(itemList.isEmpty()) {
                 val nextPrize = winnerPrizes.random()
                 returnedPrizes.add(nextPrize)
+                itemList.add(nextPrize.item)
             } else {
                 val nextPrize = winnerPrizes.filter { aPrice -> !itemList.contains(aPrice.item) }.random()
                 returnedPrizes.add(nextPrize)
+                itemList.add(nextPrize.item)
             }
          }
-
 
         return returnedPrizes;
     }
@@ -42,9 +43,11 @@ class GamePrizeList {
             if(itemList.isEmpty()) {
                 val nextPrize = loosingPrizes.random()
                 returnedPrizes.add(nextPrize)
+                itemList.add(nextPrize.item)
             } else {
                 val nextPrize = loosingPrizes.filter { aPrice -> !itemList.contains(aPrice.item) }.random()
                 returnedPrizes.add(nextPrize)
+                itemList.add(nextPrize.item)
             }
         }
 
