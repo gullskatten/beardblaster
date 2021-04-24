@@ -62,8 +62,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             if (timeRemaining <= 0) {
                 currentPhase.setCurrentPhase(Phase.Action)
             }
-
-            if(currentTurn == 0 && !::spellsListener.isInitialized) {
+            if (currentTurn == 0 && !::spellsListener.isInitialized && !isGameOver()) {
                 incrementCurrentTurn()
                 // Subscribe to events on the first preparation turn
                 spellsListener = KtxAsync.launch {
@@ -128,7 +127,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                 // Since spells may only be sent by the users themselves (spell docId = userId),
                 // Only the user themselves may send a "forfeit" spell
                 if (p1.isForfeit) {
-                    if(::spellsListener.isInitialized && spellsListener.isActive) {
+                    if (::spellsListener.isInitialized && spellsListener.isActive) {
                         spellsListener.cancel()
                     }
                     LOG.debug { "SpellAction was a forfeit spell!" }
@@ -159,26 +158,26 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             if (p1 is Game) {
                 if (p1.loot.isNotEmpty()) {
                     LOG.info { "Prices found! Adding all prices to map." }
-                    if(gameLoot.getLoot().isEmpty()) {
+                    if (gameLoot.getLoot().isEmpty()) {
                         gameLoot.setLoot(p1.loot)
                     }
-                    if(currentPhase.getCurrentPhase() != Phase.GameOver) {
+                    if (currentPhase.getCurrentPhase() != Phase.GameOver) {
                         currentPhase.setCurrentPhase(Phase.GameOver)
                     }
                 } else if (p1.endedAt != 0L) {
                     LOG.info { "Game was ended since endedAt was > 0" }
-                    if(currentPhase.getCurrentPhase() != Phase.GameOver) {
+                    if (currentPhase.getCurrentPhase() != Phase.GameOver) {
                         currentPhase.setCurrentPhase(Phase.GameOver)
                     }
                 }
             }
         }
 
-        if(p0 is GamePhase) {
+        if (p0 is GamePhase) {
             if (p1 is Phase) {
-                when(p1) {
+                when (p1) {
                     Phase.GameOver -> {
-                        if(::spellsListener.isInitialized && spellsListener.isActive) {
+                        if (::spellsListener.isInitialized && spellsListener.isActive) {
                             spellsListener.cancel()
                         }
                         if (GameData.instance.isHost && gameLoot.getLoot().isEmpty()) {
@@ -186,7 +185,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                         }
                     }
                     Phase.Preparation -> {
-                        if(!isGameOver()) {
+                        if (!isGameOver()) {
                             incrementCurrentTurn()
                             // Subscribe to events on this preparation turn
                             spellsListener = KtxAsync.launch {
@@ -199,18 +198,16 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
 
                     }
                     Phase.Action -> {
-                        if(!isGameOver()) {
-
-                        resetCounter()
-                        spellCasting.reset()
-                        // Cancel subscription to events on from preparation turn
-                        spellsListener.cancel()
-                        // Set up next turn if host
-                        if (GameData.instance.isHost) {
-                            createTurn(currentTurn + 1)
+                        if (!isGameOver()) {
+                            resetCounter()
+                            spellCasting.reset()
+                            // Cancel subscription to events on from preparation turn
+                            spellsListener.cancel()
+                            // Set up next turn if host
+                            if (GameData.instance.isHost) {
+                                createTurn(currentTurn + 1)
+                            }
                         }
-                        }
-
                     }
                     Phase.Waiting -> {
 
@@ -238,7 +235,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             }
         }
 
-        if(currentTurn < 3) {
+        if (currentTurn < 3) {
             winnerLoot = GamePrizeList().getWinnerPrizes(1, 0)
             looserLoot = GamePrizeList().getLooserPrizes(1, -5)
         } else {
@@ -278,7 +275,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         }
     }
 
-    fun isGameOver() : Boolean {
+    fun isGameOver(): Boolean {
         if (currentPhase.getCurrentPhase() != Phase.GameOver) {
             if (wizardState.isAnyWizardDead() || (winnerWizard != null || loosingWizard != null)) {
                 LOG.info { "A wizard is dead! Game is over!" }
