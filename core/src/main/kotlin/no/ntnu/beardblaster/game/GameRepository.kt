@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.AbstractGameRepository
 import no.ntnu.beardblaster.commons.game.Game
-import no.ntnu.beardblaster.commons.game.Prize
+import no.ntnu.beardblaster.commons.game.Loot
 import no.ntnu.beardblaster.commons.game.Turn
 import no.ntnu.beardblaster.commons.spell.SpellAction
 import pl.mk5.gdx.fireapp.PlatformDistributor
@@ -43,8 +43,8 @@ class GameRepository : PlatformDistributor<AbstractGameRepository<Game>>(),
         return platformObject.endGame(id)
     }
 
-    override fun distributePrizes(prizes: List<Prize>): Flow<State<Boolean>> {
-        return platformObject.distributePrizes(prizes)
+    override fun distributeLoot(loot: List<Loot>): Flow<State<Boolean>> {
+        return platformObject.distributeLoot(loot)
     }
 
     override fun createTurn(currentTurn: Int): Flow<State<Turn>> {

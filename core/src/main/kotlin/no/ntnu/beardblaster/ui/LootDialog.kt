@@ -9,15 +9,17 @@ import ktx.log.logger
 import ktx.scene2d.*
 import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
-import no.ntnu.beardblaster.commons.game.Prize
+import no.ntnu.beardblaster.commons.game.Loot
+import no.ntnu.beardblaster.game.GameLoot
 import no.ntnu.beardblaster.user.UserData
+import java.util.*
 
 private val log = logger<LootDialog>()
 
 @Scene2dDsl
 class LootDialog(
-    loot: List<Prize>
-) : Table(Scene2DSkin.defaultSkin), KTable {
+    loot: GameLoot
+) : Table(Scene2DSkin.defaultSkin), KTable, Observer {
 
     private val nameLabel: Label =
         scene2d.label("Loot", LabelStyle.LightText.name) {
@@ -31,11 +33,12 @@ class LootDialog(
         wrap = true
     }
 
-    private val opponentLootLabel: Label = scene2d.label("Opponent received", LabelStyle.LightText.name) {
-        setAlignment(Align.center)
-        setFontScale(1.5f)
-        wrap = true
-    }
+    private val opponentLootLabel: Label =
+        scene2d.label("Opponent received", LabelStyle.LightText.name) {
+            setAlignment(Align.center)
+            setFontScale(1.5f)
+            wrap = true
+        }
 
     var closeBtn: Button = scene2d.textButton("Quit Game", ButtonStyle.Primary.name)
 
@@ -45,7 +48,13 @@ class LootDialog(
     }
 
     init {
-        if(loot.isNotEmpty()) {
+        loot.addObserver(this)
+        if (loot.getLoot().isNotEmpty()) {
+            renderLoot(loot.getLoot())
+        }
+    }
+
+    fun renderLoot(loot : List<Loot>) {
         background = skin[Image.ModalDark]
         pad(PADDING)
         add(nameLabel).center().top().width(LABEL_WIDTH)
@@ -91,15 +100,22 @@ class LootDialog(
         }
         add(closeBtn).center().bottom()
         pack()
-        }
     }
 
     override fun getPrefWidth(): Float = WORLD_WIDTH * 0.5f
     override fun getPrefHeight(): Float = WORLD_HEIGHT * 0.8f
+
+    override fun update(p0: Observable?, p1: Any?) {
+       if(p0 is GameLoot) {
+           if(p1 is List<*>) {
+               renderLoot(p1 as List<Loot>)
+           }
+       }
+    }
 }
 
 @Scene2dDsl
 inline fun <S> KWidget<S>.lootDialog(
-    loot: List<Prize>,
+    loot: GameLoot,
     init: LootDialog.(S) -> Unit = {},
 ): LootDialog = actor(LootDialog(loot), init)

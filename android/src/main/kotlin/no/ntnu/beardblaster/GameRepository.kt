@@ -15,7 +15,7 @@ import kotlinx.coroutines.tasks.await
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.AbstractGameRepository
 import no.ntnu.beardblaster.commons.game.Game
-import no.ntnu.beardblaster.commons.game.Prize
+import no.ntnu.beardblaster.commons.game.Loot
 import no.ntnu.beardblaster.commons.game.Turn
 import no.ntnu.beardblaster.commons.spell.SpellAction
 import no.ntnu.beardblaster.game.GameData
@@ -167,7 +167,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         }
     }
 
-    override fun distributePrizes(prizes: List<Prize>): Flow<State<Boolean>> = flow {
+    override fun distributeLoot(loot: List<Loot>): Flow<State<Boolean>> = flow {
         emit(State.loading<Boolean>())
         try {
             db.collection(GAMES_COLLECTION)
@@ -175,13 +175,13 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
                 .update(
                     "endedAt", LocalDateTime.now(ZoneOffset.UTC)
                     .toEpochSecond(ZoneOffset.UTC),
-                    "prizes",
-                    prizes
+                    "loot",
+                    loot
                 )
                 .await()
             emit(State.success(true))
         } catch (e: Exception) {
-            emit(State.failed<Boolean>("Failed to end game and distribute prizes!"))
+            emit(State.failed<Boolean>("Failed to end game and distribute loot!"))
         }
     }
 }

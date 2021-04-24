@@ -11,7 +11,7 @@ class Game(
     val opponent: GamePlayer? = null,
     val startedAt: Long,
     val endedAt: Long,
-    val prizes: List<Prize>,
+    val loot: List<Loot>,
     override var id: String = ""
 ) : DocumentType {
     constructor() : this(

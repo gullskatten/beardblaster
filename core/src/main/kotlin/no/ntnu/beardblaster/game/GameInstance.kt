@@ -13,7 +13,7 @@ import ktx.log.logger
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.commons.game.GamePrizeList
-import no.ntnu.beardblaster.commons.game.Prize
+import no.ntnu.beardblaster.commons.game.Loot
 import no.ntnu.beardblaster.commons.spell.SpellAction
 import no.ntnu.beardblaster.commons.wizard.Wizard
 import no.ntnu.beardblaster.models.SpellCasting
@@ -28,87 +28,49 @@ private val LOG = logger<GameInstance>();
 
 @ExperimentalCoroutinesApi
 class GameInstance(preparationTime: Int, game: Game) : Observer {
-    private lateinit var spellsListener: Job
-    var gamePrizes: MutableList<Prize> = mutableListOf()
-    private var gameListener: Job
-    private var winnerWizard: Wizard? = null
-    private var loosingWizard: Wizard? = null
+
     val spellCasting: SpellCasting = SpellCasting()
-    private val spellExecutor: SpellExecutor = SpellExecutor()
     private val spellSubscription: SpellSubscription = SpellSubscription()
     private val gameSubscription: GameSubscription = GameSubscription()
+
+    private val spellExecutor: SpellExecutor = SpellExecutor()
+    private lateinit var spellsListener: Job
+    private var gameListener: Job
+    private val myWizard: Wizard?
+    private val opponentWizard: Wizard?
+
+    var gameLoot: GameLoot = GameLoot()
+    private var winnerWizard: Wizard? = null
+    private var loosingWizard: Wizard? = null
+
     val wizardState: WizardState = WizardState(
         Wizard(MAX_HP_PLAYERS, game.host!!),
         Wizard(MAX_HP_PLAYERS, game.opponent!!)
     )
-    private val myWizard: Wizard?
-    private val opponentWizard: Wizard?
-    var currentPhase = Phase.Preparation
-        private set
+
+    var currentPhase: GamePhase = GamePhase()
     var timeRemaining: Float
         private set
     var currentTurn = 0
         private set
     private val preparationTime: Int
-    var spellsForTurn: List<SpellActionWithAnimation>? = null
-        private set
-    private var lastFetchedActionsInTurn = 1
     private val gameId: String
 
     fun updateCounter(delta: Float) {
-        when (currentPhase) {
-            Phase.Action ->                 // Fetch actions once.
-                if (currentTurn == lastFetchedActionsInTurn) {
-                    spellsForTurn = ArrayList()
-                    resetCounter()
-                    spellCasting.reset()
-                    // Cancel subscription to events on from preparation turn
-                    spellsListener.cancel()
-                    spellsForTurn = spellExecutor.getSpellResultForTurn(currentTurn, wizardState)
-                    lastFetchedActionsInTurn += 1
-
-                    // Set up next turn
-                    if(GameData.instance.isHost) {
-                        KtxAsync.launch {
-                            GameRepository().createTurn(currentTurn + 1).collect {
-                                when(it) {
-                                    is State.Success -> {
-                                        LOG.info { "Next turn was created" }
-                                    }
-                                    is State.Failed -> {
-                                        LOG.error { it.message }
-                                    }
-                                    is State.Loading -> {
-                                        LOG.info { "Loading next turn" }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            Phase.Waiting -> {
-
+        if (currentPhase.getCurrentPhase() == Phase.Preparation) {
+            timeRemaining -= delta * 0.5f
+            if (timeRemaining <= 0) {
+                currentPhase.setCurrentPhase(Phase.Action)
             }
-            Phase.GameOver -> {
 
-            }
-            Phase.Preparation -> {
-                if(gamePrizes.isNotEmpty()) {
-                    currentPhase = Phase.GameOver
-                    return
-                } else {
-                    // Increment turn after action phase
-                    if (currentTurn < lastFetchedActionsInTurn) {
-                        incrementCurrentTurn()
-                        // Subscribe to events on this turn
-                        spellsListener = KtxAsync.launch {
-                            spellSubscription.subscribeToUpdatesOn("games/$gameId/turns/$currentTurn/spells", currentTurn)
-                        }
-                    }
-                    timeRemaining -= delta * 0.5f
-                    if (timeRemaining <= 0) {
-                        currentPhase = Phase.Action
-                    }
+            if(currentTurn == 0 && !::spellsListener.isInitialized) {
+                incrementCurrentTurn()
+                // Subscribe to events on the first preparation turn
+                spellsListener = KtxAsync.launch {
+                    spellSubscription.subscribeToUpdatesOn(
+                        "games/$gameId/turns/$currentTurn/spells",
+                        currentTurn
+                    )
                 }
             }
         }
@@ -119,15 +81,19 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
     }
 
     private fun incrementCurrentTurn() {
+
         currentTurn += 1
+        LOG.debug { "TURN incremented to $currentTurn" }
     }
 
-    fun lockTurn() : Flow<State<SpellAction>> {
+    fun lockTurn(): Flow<State<SpellAction>> {
         LOG.info { "Locking spell -> ${spellCasting.getSelectedSpell()!!.spellName}" }
-        return GameRepository().castSpell(currentTurn, SpellAction(
-            spellCasting.getSelectedSpell()!!, myWizard!!.id,
-            opponentWizard!!.id
-        ))
+        return GameRepository().castSpell(
+            currentTurn, SpellAction(
+                spellCasting.getSelectedSpell()!!, myWizard!!.id,
+                opponentWizard!!.id
+            )
+        )
     }
 
     fun forfeit() {
@@ -135,13 +101,13 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         forfeitSpell.isForfeit = true
         KtxAsync.launch {
             GameRepository().castSpell(currentTurn, forfeitSpell).collect {
-                when(it) {
+                when (it) {
                     is State.Loading -> {
                         LOG.debug { "Forfeiting..." }
                     }
                     is State.Success -> {
                         LOG.debug { "Forfeited successfully." }
-                        currentPhase = Phase.GameOver
+                        currentPhase.setCurrentPhase(Phase.GameOver)
                     }
                     is State.Failed -> {
                         LOG.error { "Failed to forfeit: ${it.message}" }
@@ -151,13 +117,13 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         }
     }
 
-    // SpellSubscription and GameSubscription may send updates through this channel
+    // SpellSubscription, GamePhase and GameSubscription (Observables) may send updates through this channel
     override fun update(p0: Observable?, p1: Any?) {
-        LOG.debug { "$p0 - $p1"}
+        LOG.debug { "$p0 - $p1" }
 
         if (p0 is SpellSubscription) {
             LOG.debug { "p0 is SpellSubscription" }
-            if (p1 is SpellAction && currentPhase != Phase.GameOver) {
+            if (p1 is SpellAction && currentPhase.getCurrentPhase() != Phase.GameOver) {
                 LOG.debug { "p1 is SpellAction" }
 
                 // In this game, users actually send a spell to forfeit!
@@ -165,8 +131,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                 // Only the user themselves may send a "forfeit" spell
                 if (p1.isForfeit) {
                     LOG.debug { "SpellAction was a forfeit spell!" }
-
-                    currentPhase = Phase.GameOver
+                    currentPhase.setCurrentPhase(Phase.GameOver)
 
                     when {
                         myWizard!!.id != p1.docId -> {
@@ -178,37 +143,74 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                             loosingWizard = myWizard
                         }
                     }
+
                     LOG.info { "Winner: ${winnerWizard?.displayName}" }
                     LOG.info { "Looser: ${loosingWizard?.displayName}" }
-
-                    if (GameData.instance.isHost && gamePrizes.isEmpty()) {
-                        distributePrizes()
-                    }
                 } else {
                     LOG.debug { "!IMPORTANT - Pushing spell to executor: ${p1.spell.spellName}" }
                     spellExecutor.addSpell(p1, currentTurn)
-                    if(spellExecutor.spellHistory[currentTurn]?.size == 2) {
+                    if (spellExecutor.spellHistory[currentTurn]?.size == 2) {
                         // Both have sent their spells - let's fast forward to attack phase.
-                        currentPhase = Phase.Action
+                        currentPhase.setCurrentPhase(Phase.Action)
                     }
                 }
             }
         }
         if (p0 is GameSubscription) {
             if (p1 is Game) {
-                if (p1.prizes.isNotEmpty()) {
+                if (p1.loot.isNotEmpty()) {
                     LOG.info { "Prices found! Adding all prices to map." }
-                    gamePrizes.addAll(p1.prizes)
-                    currentPhase = Phase.GameOver
+                    gameLoot.setLoot(p1.loot)
+                    currentPhase.setCurrentPhase(Phase.GameOver)
+                } else if (p1.endedAt != 0L) {
+                    LOG.info { "Game was ended since endedAt was > 0" }
+                    currentPhase.setCurrentPhase(Phase.GameOver)
                 }
-                if (p1.endedAt != 0L) {
-                    if (currentPhase != Phase.GameOver) {
-                        LOG.info { "Game was ended since endedAt was > 0" }
-                        currentPhase = Phase.GameOver
+            }
+        }
+
+        if(p0 is GamePhase) {
+            if (p1 is Phase) {
+                when(p1) {
+                    Phase.GameOver -> {
+                        spellsListener.cancel()
+                        if (GameData.instance.isHost && gameLoot.getLoot().isEmpty()) {
+                            distributePrizes()
+                        }
+                    }
+                    Phase.Preparation -> {
+                        if(!isGameOver()) {
+                            incrementCurrentTurn()
+                            // Subscribe to events on this preparation turn
+                            spellsListener = KtxAsync.launch {
+                                spellSubscription.subscribeToUpdatesOn(
+                                    "games/$gameId/turns/$currentTurn/spells",
+                                    currentTurn
+                                )
+                            }
+                        }
+
+                    }
+                    Phase.Action -> {
+                        resetCounter()
+                        spellCasting.reset()
+                        // Cancel subscription to events on from preparation turn
+                        spellsListener.cancel()
+                        // Set up next turn if host
+                        if (GameData.instance.isHost) {
+                            createTurn(currentTurn + 1)
+                        }
+                    }
+                    Phase.Waiting -> {
+
                     }
                 }
             }
         }
+    }
+
+    fun getSpellsCastCurrentTurn(): List<SpellActionWithAnimation> {
+        return spellExecutor.getSpellResultForTurn(currentTurn, wizardState)
     }
 
     private fun distributePrizes() {
@@ -222,17 +224,18 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             }
         }
 
-        val winnerLoot: List<Prize> = GamePrizeList().getWinnerPrizes(Random().nextInt(3))
+        val winnerLoot: List<Loot> = GamePrizeList().getWinnerPrizes(Random().nextInt(3))
         winnerLoot.forEach {
             it.receiver = winnerWizard!!.id
         }
-        val looserLoot: List<Prize> = GamePrizeList().getLooserPrizes(Random().nextInt(3))
+        val looserLoot: List<Loot> = GamePrizeList().getLooserPrizes(Random().nextInt(3))
         looserLoot.forEach {
             it.receiver = loosingWizard!!.id
         }
+
         KtxAsync.launch {
-            GameRepository().distributePrizes(winnerLoot.plus(looserLoot)).collect {
-                when(it) {
+            GameRepository().distributeLoot(winnerLoot.plus(looserLoot)).collect {
+                when (it) {
                     is State.Success -> {
                         LOG.debug { "Distributed loot successfully" }
                     }
@@ -248,29 +251,24 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
     }
 
     fun dispose() {
-        if(gameListener.isActive) {
+        if (gameListener.isActive) {
             gameListener.cancel()
         }
 
-        if(spellsListener.isActive) {
+        if (spellsListener.isActive) {
             spellsListener.cancel()
         }
     }
 
-    fun resetPhase() {
-        if(currentPhase != Phase.GameOver) {
-            currentPhase = if(wizardState.isAnyWizardDead()) {
+    private fun isGameOver() : Boolean {
+        if (currentPhase.getCurrentPhase() != Phase.GameOver) {
+            if (wizardState.isAnyWizardDead()) {
                 LOG.info { "A wizard is dead! Game is over!" }
-                if(GameData.instance.isHost) {
-                    distributePrizes()
-                }
-                Phase.GameOver
-            } else {
-                LOG.info { "Resetting phase to PREPARATION" }
-                Phase.Preparation
+                currentPhase.setCurrentPhase(Phase.GameOver)
+                return true;
             }
-            LOG.info { "Phase was set to $currentPhase" }
         }
+        return false;
     }
 
 
@@ -286,25 +284,28 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         gameId = game.id
         gameSubscription.addObserver(this)
         spellSubscription.addObserver(this)
-
+        currentPhase.addObserver(this)
         gameListener = KtxAsync.launch {
             gameSubscription.subscribeToUpdatesOn(game.id)
         }
+        if (GameData.instance.isHost) {
+            LOG.info { "User is host -> pushing create turn" }
+            createTurn(1)
+        }
+    }
 
-        if(GameData.instance.isHost) {
-            LOG.info { "User is host -> pushing create turn"}
-            KtxAsync.launch {
-                GameRepository().createTurn(1).collect {
-                    when(it) {
-                        is State.Success -> {
-                            LOG.info { "Initial turn created successfully" }
-                        }
-                        is State.Loading -> {
-                            LOG.info { "Loading turn" }
-                        }
-                        is State.Failed -> {
-                            LOG.error { "Failed to create turn: ${it.message}" }
-                        }
+    private fun createTurn(turnNumber: Int) {
+        KtxAsync.launch {
+            GameRepository().createTurn(turnNumber).collect {
+                when (it) {
+                    is State.Success -> {
+                        LOG.info { "turn $turnNumber was created" }
+                    }
+                    is State.Failed -> {
+                        LOG.error { it.message }
+                    }
+                    is State.Loading -> {
+                        LOG.info { "Loading next turn" }
                     }
                 }
             }

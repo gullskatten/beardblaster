@@ -1,6 +1,6 @@
 package no.ntnu.beardblaster.commons.game
 
-class Prize(
+class Loot(
     val item: String,
     val amount: Int
 ) {

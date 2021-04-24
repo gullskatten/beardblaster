@@ -117,7 +117,7 @@ class LobbyRepository(private val db: FirebaseFirestore = Firebase.firestore) :
             createdAt = LocalDateTime.now(ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC),
             startedAt = 0,
             endedAt = 0,
-            prizes = emptyList()
+            loot = emptyList()
         )
 
         val newDocRef = db.collection(GAME_COLLECTION).add(doc).await()

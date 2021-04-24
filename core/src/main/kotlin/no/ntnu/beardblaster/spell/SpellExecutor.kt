@@ -15,7 +15,7 @@ class SpellExecutor {
     private val mitigationSpells: MutableList<MitigationSpell> = ArrayList()
 
     fun addSpell(spell: SpellAction, turn: Int) {
-        LOG.info { "Adding spell ${spell.spell.spellName} cast by ${spell.caster}" }
+        LOG.info { "Adding spell ${spell.spell.spellName} cast by ${spell.caster} - turn $turn" }
         if(spellHistory.containsKey(turn)) {
             spellHistory[turn]?.add(spell)
         }
@@ -50,6 +50,8 @@ class SpellExecutor {
     fun getSpellResultForTurn(turn: Int, wizardState: WizardState): List<SpellActionWithAnimation> {
         // Since we need to handle mitigation spells that were included X turns ago,
         // we need to peek into our spells and update them with active mitigation spells.
+        LOG.debug { "Getting Spell Result for turn - $turn" }
+
         if (!spellHistory.containsKey(turn)) {
             return listOf()
         }

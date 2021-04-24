@@ -9,7 +9,7 @@ interface AbstractGameRepository<T> {
     fun castSpell(currentTurn: Int, spell: SpellAction): Flow<State<SpellAction>>
     fun createTurn(currentTurn: Int): Flow<State<Turn>>
     fun endGame(id: String): Flow<State<Boolean>>
-    fun distributePrizes(prizes: List<Prize>): Flow<State<Boolean>>
+    fun distributeLoot(loot: List<Loot>): Flow<State<Boolean>>
     @ExperimentalCoroutinesApi
     fun subscribeToGameUpdates(id: String): Flow<State<Game>>
     @ExperimentalCoroutinesApi

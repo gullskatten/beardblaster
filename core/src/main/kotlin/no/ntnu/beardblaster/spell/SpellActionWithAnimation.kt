@@ -13,6 +13,7 @@ class SpellActionWithAnimation(spellAction: SpellAction) : SpellAction(
     receiver = spellAction.receiver,
     caster = spellAction.caster,
 ) {
+
     init {
         super.docId = spellAction.docId
         super.damageDealt = spellAction.damageDealt
@@ -22,9 +23,6 @@ class SpellActionWithAnimation(spellAction: SpellAction) : SpellAction(
         super.casterWizard = spellAction.casterWizard
         super.isForfeit = spellAction.isForfeit
     }
-
-    var myWizardAnimation: WizardTextures = WizardTextures.GoodWizardIdle
-    var opponentWizardAnimation: WizardTextures = WizardTextures.EvilWizardIdle
 
     fun determineMyAnimation() : WizardTextures {
         if (receiverWizard!!.isWizardDefeated() || casterWizard!!.isWizardDefeated()) {
@@ -113,7 +111,6 @@ class SpellActionWithAnimation(spellAction: SpellAction) : SpellAction(
                 return WizardTextures.EvilWizardIdle
             }
         }
-
         return WizardTextures.EvilWizardIdle
     }
 
