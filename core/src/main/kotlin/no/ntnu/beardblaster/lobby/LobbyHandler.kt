@@ -90,23 +90,25 @@ class LobbyHandler : Observable() {
     }
 
     @ExperimentalCoroutinesApi
-    private suspend fun subscribeToUpdatesOn(id: String) {
+    private fun subscribeToUpdatesOn(id: String) {
         LOG.info { "Subscribing to updates on $id" }
-        LobbyRepository().subscribeToLobbyUpdates(id).collect {
-            when (it) {
-                is State.Success -> {
-                    game = it.data
-                    notifyObservers(it.data)
+        subscription = KtxAsync.launch {
+            LobbyRepository().subscribeToLobbyUpdates(id).collect {
+                when (it) {
+                    is State.Success -> {
+                        game = it.data
+                        notifyObservers(it.data)
+                    }
+                    is State.Loading -> {
+                    }
+                    is State.Failed -> {
+                        LOG.error { it.message }
+                        error = it.message
+                        notifyObservers(error)
+                    }
                 }
-                is State.Loading -> {
-                }
-                is State.Failed -> {
-                    LOG.error { it.message }
-                    error = it.message
-                    notifyObservers(error)
-                }
+                setChanged()
             }
-            setChanged()
         }
     }
 

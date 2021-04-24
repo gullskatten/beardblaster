@@ -2,6 +2,7 @@ package no.ntnu.beardblaster
 
 import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -12,9 +13,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
-import no.ntnu.beardblaster.commons.game.GamePlayer
 import no.ntnu.beardblaster.commons.leaderboard.AbstractLeaderBoardRepository
 import no.ntnu.beardblaster.commons.leaderboard.BeardScore
+import no.ntnu.beardblaster.commons.wizard.Wizard
 
 class LeaderBoardRepository(private val db: FirebaseFirestore = Firebase.firestore) :
     AbstractLeaderBoardRepository<Game> {
@@ -45,23 +46,35 @@ class LeaderBoardRepository(private val db: FirebaseFirestore = Firebase.firesto
         }
     }
 
-    override fun updateBeardLength(user: GamePlayer, newLength: Float): Flow<State<BeardScore>> =
-        flow {
+    override fun updateBeardLength(wizard: Wizard, beardLengthIncrease: Float): Flow<State<BeardScore>> = flow {
             emit(State.loading<BeardScore>())
-            val doc = BeardScore(
-                newLength,
-                user.displayName,
-                user.id
-            )
+
             val documentReference = db.collection(BEARDS_COLLECTION)
-                .document(user.id)
+            .document(wizard.id).get().await()
 
-            documentReference.set(doc).await()
-            Log.d(
-                TAG,
-                "Posted new beardlength $newLength cm of user ${user.displayName} successfully"
-            )
+            if(documentReference.exists()) {
+                db.collection(BEARDS_COLLECTION)
+                    .document(wizard.id)
+                    .update("beardLength", FieldValue.increment(beardLengthIncrease.toDouble()))
+                    .await()
+                emit(State.success(documentReference.toObject<BeardScore>()!!))
 
-            emit(State.success(doc))
+            } else {
+                val beardScore = BeardScore(
+                    beardLength = beardLengthIncrease.coerceAtLeast(0f),
+                    displayName = wizard.displayName,
+                    id = wizard.id
+                )
+                db.collection(BEARDS_COLLECTION)
+                    .document()
+                    .set(
+                        beardScore
+                    ).await()
+                emit(State.success(beardScore))
+            }
+        Log.d(
+            TAG,
+            "Posted new beardlength $beardLengthIncrease cm of user ${wizard.displayName} successfully"
+        )
         }
 }

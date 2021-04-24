@@ -16,6 +16,7 @@ import no.ntnu.beardblaster.commons.game.GamePrizeList
 import no.ntnu.beardblaster.commons.game.Loot
 import no.ntnu.beardblaster.commons.spell.SpellAction
 import no.ntnu.beardblaster.commons.wizard.Wizard
+import no.ntnu.beardblaster.leaderboard.LeaderBoardRepository
 import no.ntnu.beardblaster.models.SpellCasting
 import no.ntnu.beardblaster.screen.Phase
 import no.ntnu.beardblaster.spell.SpellActionWithAnimation
@@ -180,7 +181,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                         if (::spellsListener.isInitialized && spellsListener.isActive) {
                             spellsListener.cancel()
                         }
-                        if (!GameData.instance.isHost && gameLoot.getLoot().isEmpty()) {
+                        if (GameData.instance.isHost && gameLoot.getLoot().isEmpty()) {
                             generateLoot()
                         }
                     }
@@ -204,7 +205,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                             // Cancel subscription to events on from preparation turn
                             spellsListener.cancel()
                             // Set up next turn if host
-                            if (!GameData.instance.isHost) {
+                            if (GameData.instance.isHost) {
                                 createTurn(currentTurn + 1)
                             }
                         }
@@ -236,11 +237,32 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         }
 
         if (currentTurn < 3) {
-            winnerLoot = GamePrizeList().getWinnerPrizes(1, 0)
+            winnerLoot = GamePrizeList().getWinnerPrizes(1, 1)
             looserLoot = GamePrizeList().getLooserPrizes(1, -5)
+            KtxAsync.launch {
+                LeaderBoardRepository().updateBeardLength(
+                    winnerWizard!!,
+                    1f).collect {  }
+                LeaderBoardRepository().updateBeardLength(
+                    loosingWizard!!,
+                    -5f
+                ).collect {  }
+            }
+
+
+
         } else {
             winnerLoot = GamePrizeList().getWinnerPrizes(Random().nextInt(3), 7)
             looserLoot = GamePrizeList().getLooserPrizes(Random().nextInt(3), -5)
+            KtxAsync.launch {
+                LeaderBoardRepository().updateBeardLength(
+                    winnerWizard!!,
+                    7f).collect {  }
+                LeaderBoardRepository().updateBeardLength(
+                    loosingWizard!!,
+                    -5f
+                ).collect {  }
+            }
         }
         winnerLoot.forEach {
             it.receiver = winnerWizard!!.id
@@ -303,8 +325,8 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         gameListener = KtxAsync.launch {
             gameSubscription.subscribeToUpdatesOn(game.id)
         }
-        if (!GameData.instance.isHost) {
-            LOG.info { "User is not host -> pushing create turn" }
+        if (GameData.instance.isHost) {
+            LOG.info { "User is host -> pushing create turn" }
             createTurn(1)
         }
     }
