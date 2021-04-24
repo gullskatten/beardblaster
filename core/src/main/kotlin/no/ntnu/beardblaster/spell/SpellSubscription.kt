@@ -21,18 +21,18 @@ class SpellSubscription : Observable() {
         GameRepository().subscribeToSpellsOnTurn(id, currentTurn).collect {
             when (it) {
                 is State.Success -> {
-                    LOG.info { "Spell retrieved from FireStore ${it.data.spell.spellName}" }
+                    LOG.info { "Spell from FireStore: ${it.data.spell.spellName}" }
                     LOG.info { "Notifying ${countObservers()} observers"}
-                    notifyObservers(it.data)
                     setChanged()
+                    notifyObservers(it.data)
                 }
                 is State.Loading -> {
                 }
                 is State.Failed -> {
                     LOG.error { it.message }
                     error = it.message
-                    notifyObservers(error)
                     setChanged()
+                    notifyObservers(error)
                 }
             }
         }

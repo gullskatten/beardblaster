@@ -110,8 +110,8 @@ class LootDialog(
         }
     }
 
-    override fun getPrefWidth(): Float = WORLD_WIDTH * 0.5f
-    override fun getPrefHeight(): Float = WORLD_HEIGHT * 0.8f
+    override fun getPrefWidth(): Float = WORLD_WIDTH * 0.6f
+    override fun getPrefHeight(): Float = WORLD_HEIGHT * 0.85f
 
     override fun update(p0: Observable?, p1: Any?) {
         LOG.debug { "Loot received -> $p0 $p1" }

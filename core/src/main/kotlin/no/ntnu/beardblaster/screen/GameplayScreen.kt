@@ -189,8 +189,14 @@ class GameplayScreen(
         opponentHealthPointsLabel.setText(
             gameInstance.wizardState.getEnemyAsWizard()?.getHealthPoints()
         )
-        hostHealthbar.updateWidth(gameInstance.wizardState.getCurrentUserAsWizard()!!.currentHealthPoints, gameInstance.wizardState.getCurrentUserAsWizard()!!.maxHealthPoints)
-        opponentHealthbar.updateWidth(gameInstance.wizardState.getEnemyAsWizard()!!.currentHealthPoints, gameInstance.wizardState.getEnemyAsWizard()!!.maxHealthPoints)
+        hostHealthbar.updateWidth(
+            gameInstance.wizardState.getCurrentUserAsWizard()!!.currentHealthPoints,
+            gameInstance.wizardState.getCurrentUserAsWizard()!!.maxHealthPoints
+        )
+        opponentHealthbar.updateWidth(
+            gameInstance.wizardState.getEnemyAsWizard()!!.currentHealthPoints,
+            gameInstance.wizardState.getEnemyAsWizard()!!.maxHealthPoints
+        )
     }
 
     private fun initWaitingForPlayerPhase() {
@@ -234,13 +240,25 @@ class GameplayScreen(
                         if (spell.caster == UserData.instance.user!!.id) {
                             myHealthPointsLabel.setText(spell.casterWizard?.getHealthPoints())
                             opponentHealthPointsLabel.setText(spell.receiverWizard?.getHealthPoints())
-                            hostHealthbar.updateWidth(spell.casterWizard!!.currentHealthPoints, spell.casterWizard!!.maxHealthPoints)
-                            opponentHealthbar.updateWidth(spell.receiverWizard!!.currentHealthPoints, spell.receiverWizard!!.maxHealthPoints)
+                            hostHealthbar.updateWidth(
+                                spell.casterWizard!!.currentHealthPoints,
+                                spell.casterWizard!!.maxHealthPoints
+                            )
+                            opponentHealthbar.updateWidth(
+                                spell.receiverWizard!!.currentHealthPoints,
+                                spell.receiverWizard!!.maxHealthPoints
+                            )
                         } else {
                             myHealthPointsLabel.setText(spell.receiverWizard?.getHealthPoints())
                             opponentHealthPointsLabel.setText(spell.casterWizard?.getHealthPoints())
-                            hostHealthbar.updateWidth(spell.receiverWizard!!.currentHealthPoints, spell.receiverWizard!!.maxHealthPoints)
-                            opponentHealthbar.updateWidth(spell.casterWizard!!.currentHealthPoints, spell.casterWizard!!.maxHealthPoints)
+                            hostHealthbar.updateWidth(
+                                spell.receiverWizard!!.currentHealthPoints,
+                                spell.receiverWizard!!.maxHealthPoints
+                            )
+                            opponentHealthbar.updateWidth(
+                                spell.casterWizard!!.currentHealthPoints,
+                                spell.casterWizard!!.maxHealthPoints
+                            )
                         }
                     }
                 } catch (e: Exception) {
@@ -250,7 +268,9 @@ class GameplayScreen(
                 try {
                     Timer("SpellDialog", true).schedule(4000 * idx.toLong()) {
                         LOG.info { "Updating spell dialog" }
-                        spellAction.updateNameLabelText(spell.casterWizard?.displayName ?: "Unknown?")
+                        spellAction.updateNameLabelText(
+                            spell.casterWizard?.displayName ?: "Unknown?"
+                        )
                         spellAction.updateDescLabelText(spell.toString())
 
                         goodWizard.setAnimation(0f, 0f, assets, spell.determineMyAnimation())
@@ -266,7 +286,7 @@ class GameplayScreen(
                 val delay = 4000L * (spellsThisTurn.size)
                 LOG.info { "Swapping to prepare phase in $delay milliseconds" }
                 Timer("SwapToPreparePhase", true).schedule(delay) {
-                   gameInstance.currentPhase.setCurrentPhase(Phase.Preparation)
+                    gameInstance.currentPhase.setCurrentPhase(Phase.Preparation)
                 }
             } catch (e: Exception) {
                 LOG.error { "Phasing Timer failed: ${e.message}" }
@@ -285,7 +305,7 @@ class GameplayScreen(
         stage.clear()
         headingLabel.setText(Nls.gameOverPhase())
 
-       lootDialog = scene2d.lootDialog(gameInstance.gameLoot) {
+        lootDialog = scene2d.lootDialog(gameInstance.gameLoot) {
             setPosition(
                 (WORLD_WIDTH / 2) - (width / 2),
                 (WORLD_HEIGHT / 2) - (height / 2),
@@ -393,8 +413,8 @@ class GameplayScreen(
 
     override fun update(p0: Observable?, p1: Any?) {
         LOG.debug { "$p0 - $p1" }
-        if(p0 is GamePhase && p1 is Phase) {
-            when(p1) {
+        if (p0 is GamePhase && p1 is Phase) {
+            when (p1) {
                 Phase.GameOver -> {
                     LOG.debug { " CALLING GAME OVER PHASE " }
                     initGameOver()
@@ -405,11 +425,12 @@ class GameplayScreen(
                 }
                 Phase.Preparation -> {
                     LOG.debug { " CALLING PREPARATION PHASE " }
+                    LOG.debug { " CALLING ACTION PHASE " }
                     initPreparationPhase()
-                    }
+                }
                 Phase.Waiting -> {
                     LOG.debug { " CALLING WAITING PHASE " }
-                    initWaitingForPlayerPhase()
+                    //  initWaitingForPlayerPhase()
                 }
             }
         }

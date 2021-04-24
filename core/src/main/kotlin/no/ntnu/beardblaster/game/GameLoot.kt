@@ -9,8 +9,8 @@ class GameLoot : Observable() {
 
     fun setLoot(loot: List<Loot>) {
         this.loot = loot
-        notifyObservers(loot)
         setChanged()
+        notifyObservers(loot)
     }
 
     fun getLoot() : List<Loot> {

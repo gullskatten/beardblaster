@@ -107,7 +107,6 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                     }
                     is State.Success -> {
                         LOG.debug { "Forfeited successfully." }
-                        currentPhase.setCurrentPhase(Phase.GameOver)
                     }
                     is State.Failed -> {
                         LOG.error { "Failed to forfeit: ${it.message}" }
@@ -129,6 +128,9 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                 // Since spells may only be sent by the users themselves (spell docId = userId),
                 // Only the user themselves may send a "forfeit" spell
                 if (p1.isForfeit) {
+                    if(::spellsListener.isInitialized && spellsListener.isActive) {
+                        spellsListener.cancel()
+                    }
                     LOG.debug { "SpellAction was a forfeit spell!" }
                     when {
                         myWizard!!.id != p1.docId -> {
@@ -157,11 +159,17 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             if (p1 is Game) {
                 if (p1.loot.isNotEmpty()) {
                     LOG.info { "Prices found! Adding all prices to map." }
-                    gameLoot.setLoot(p1.loot)
-                    currentPhase.setCurrentPhase(Phase.GameOver)
+                    if(gameLoot.getLoot().isEmpty()) {
+                        gameLoot.setLoot(p1.loot)
+                    }
+                    if(currentPhase.getCurrentPhase() != Phase.GameOver) {
+                        currentPhase.setCurrentPhase(Phase.GameOver)
+                    }
                 } else if (p1.endedAt != 0L) {
                     LOG.info { "Game was ended since endedAt was > 0" }
-                    currentPhase.setCurrentPhase(Phase.GameOver)
+                    if(currentPhase.getCurrentPhase() != Phase.GameOver) {
+                        currentPhase.setCurrentPhase(Phase.GameOver)
+                    }
                 }
             }
         }
@@ -170,7 +178,9 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             if (p1 is Phase) {
                 when(p1) {
                     Phase.GameOver -> {
-                        spellsListener.cancel()
+                        if(::spellsListener.isInitialized && spellsListener.isActive) {
+                            spellsListener.cancel()
+                        }
                         if (GameData.instance.isHost && gameLoot.getLoot().isEmpty()) {
                             generateLoot()
                         }
@@ -189,6 +199,8 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
 
                     }
                     Phase.Action -> {
+                        if(!isGameOver()) {
+
                         resetCounter()
                         spellCasting.reset()
                         // Cancel subscription to events on from preparation turn
@@ -197,6 +209,8 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                         if (GameData.instance.isHost) {
                             createTurn(currentTurn + 1)
                         }
+                        }
+
                     }
                     Phase.Waiting -> {
 
@@ -229,15 +243,14 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             looserLoot = GamePrizeList().getLooserPrizes(1, -5)
         } else {
             winnerLoot = GamePrizeList().getWinnerPrizes(Random().nextInt(3), 7)
-            winnerLoot.forEach {
-                it.receiver = winnerWizard!!.id
-            }
             looserLoot = GamePrizeList().getLooserPrizes(Random().nextInt(3), -5)
-            looserLoot.forEach {
-                it.receiver = loosingWizard!!.id
-            }
         }
-
+        winnerLoot.forEach {
+            it.receiver = winnerWizard!!.id
+        }
+        looserLoot.forEach {
+            it.receiver = loosingWizard!!.id
+        }
         KtxAsync.launch {
             GameRepository().distributeLoot(winnerLoot.plus(looserLoot)).collect {
                 when (it) {
@@ -265,15 +278,15 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         }
     }
 
-    private fun isGameOver() : Boolean {
+    fun isGameOver() : Boolean {
         if (currentPhase.getCurrentPhase() != Phase.GameOver) {
-            if (wizardState.isAnyWizardDead()) {
+            if (wizardState.isAnyWizardDead() || (winnerWizard != null || loosingWizard != null)) {
                 LOG.info { "A wizard is dead! Game is over!" }
                 currentPhase.setCurrentPhase(Phase.GameOver)
                 return true;
             }
         }
-        return false;
+        return currentPhase.getCurrentPhase() == Phase.GameOver
     }
 
 
