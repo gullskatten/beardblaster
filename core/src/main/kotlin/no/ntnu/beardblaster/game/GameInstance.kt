@@ -114,7 +114,6 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         }
     }
 
-
     private fun resetCounter() {
         timeRemaining = preparationTime.toFloat()
     }

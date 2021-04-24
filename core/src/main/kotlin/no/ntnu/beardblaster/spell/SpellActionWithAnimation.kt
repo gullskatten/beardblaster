@@ -120,7 +120,7 @@ class SpellActionWithAnimation(spellAction: SpellAction) : SpellAction(
     override fun toString(): String {
         var text = "${casterWizard?.displayName} is casting ${spell.spellName}."
 
-        if (damageAbsorbed > 0 && damageAbsorbed >= damageDealt && damageDealt > 0) {
+        if (damageAbsorbed > 0 && damageAbsorbed >= damageDealt && spell.spellDamage > 0) {
             text += " All damage was absorbed by ${receiverWizard?.displayName}!"
         }
         if (healing > 0) {
@@ -130,11 +130,11 @@ class SpellActionWithAnimation(spellAction: SpellAction) : SpellAction(
         if (damageDealt > 0) {
             if (damageAbsorbed in 1 until damageDealt)  {
                 text += " ${casterWizard?.displayName} dealt $damageDealt damage ($damageAbsorbed damage was absorbed)"
-            } else {
-                if(healing > 0) {
+            } else  {
+                if(damageDealt > damageAbsorbed) {
+                        text += " It dealt $damageDealt damage!"
+                } else if(healing > 0) {
                     text += " It also dealt $damageDealt damage!"
-                } else {
-                    text += " It dealt $damageDealt damage!"
                 }
             }
         }
