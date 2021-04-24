@@ -6,9 +6,9 @@ class GamePrizeList {
      * Function to fetch random prizes from the winner loot table
      * @param amount amount of random prizes to fetch
      */
-    fun getWinnerPrizes(amount: Int): List<Loot> {
-        if (amount <= 1) return listOf(winnerPrizes.random())
-        if (amount >= winnerPrizes.size) return winnerPrizes
+    fun getWinnerPrizes(amount: Int, beardLengthIncrease: Int): List<Loot> {
+        if (amount <= 1) return mutableListOf(winnerPrizes.random()).plus(Loot("Beard Length", beardLengthIncrease))
+        if (amount >= winnerPrizes.size)  return winnerPrizes.plus(Loot("Beard Length", beardLengthIncrease))
 
         val itemList = ArrayList<String>()
         val returnedPrizes = ArrayList<Loot>()
@@ -25,16 +25,16 @@ class GamePrizeList {
             }
          }
 
-        return returnedPrizes;
+        return returnedPrizes.plus(Loot("Beard Length", beardLengthIncrease))
     }
 
     /**
      * Function to fetch random prizes from the looser loot table
      * @param amount amount of random prizes to fetch
      */
-    fun getLooserPrizes(amount: Int): List<Loot> {
-        if (amount <= 1) return listOf(loosingPrizes.random())
-        if (amount >= loosingPrizes.size) return loosingPrizes
+    fun getLooserPrizes(amount: Int, beardLengthIncrease: Int): List<Loot> {
+        if (amount <= 1) return mutableListOf(loosingPrizes.random()).plus(Loot("Beard Length", beardLengthIncrease))
+        if (amount >= loosingPrizes.size)  return loosingPrizes.plus(Loot("Beard Length", beardLengthIncrease))
 
         val itemList = ArrayList<String>()
         val returnedPrizes = ArrayList<Loot>()
@@ -50,8 +50,7 @@ class GamePrizeList {
                 itemList.add(nextPrize.item)
             }
         }
-
-        return returnedPrizes;
+        return returnedPrizes.plus(Loot("Beard Length", beardLengthIncrease))
     }
 
     companion object {

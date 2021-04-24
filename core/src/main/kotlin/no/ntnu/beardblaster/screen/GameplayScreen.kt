@@ -164,7 +164,7 @@ class GameplayScreen(
     }
 
     private fun initPreparationPhase() {
-        LOG.debug { "INIT GAME OVER PHASE" }
+        LOG.debug { "INIT PREPARATION PHASE" }
         spellInfo.updateButtonLabel(SpellLockState.UNLOCKED)
         stage.clear()
         spellBar.update()

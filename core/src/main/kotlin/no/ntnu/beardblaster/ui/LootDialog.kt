@@ -69,7 +69,7 @@ class LootDialog(
                 wrap = true
                 color = Color.valueOf("96ecff")
             }
-            val amountLabel: Label = scene2d.label("x${it.amount}", LabelStyle.LightText.name) {
+            val amountLabel: Label = scene2d.label(determineAmountText(it), LabelStyle.LightText.name) {
                 setAlignment(Align.center)
                 setFontScale(1.5f)
                 wrap = true
@@ -88,7 +88,7 @@ class LootDialog(
                 wrap = true
                 color = Color.LIGHT_GRAY
             }
-            val amountLabel: Label = scene2d.label("x${it.amount}", LabelStyle.LightText.name) {
+            val amountLabel: Label = scene2d.label(determineAmountText(it), LabelStyle.LightText.name) {
                 setAlignment(Align.center)
                 setFontScale(1.5f)
                 wrap = true
@@ -100,6 +100,14 @@ class LootDialog(
         }
         add(closeBtn).center().bottom()
         pack()
+    }
+
+    private fun determineAmountText(it: Loot): String {
+        return if(it.item == "Beard Length") {
+            "${it.amount}cm"
+        } else {
+            "x${it.amount}"
+        }
     }
 
     override fun getPrefWidth(): Float = WORLD_WIDTH * 0.5f

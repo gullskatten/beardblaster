@@ -125,14 +125,11 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             LOG.debug { "p0 is SpellSubscription" }
             if (p1 is SpellAction && currentPhase.getCurrentPhase() != Phase.GameOver) {
                 LOG.debug { "p1 is SpellAction" }
-
                 // In this game, users actually send a spell to forfeit!
                 // Since spells may only be sent by the users themselves (spell docId = userId),
                 // Only the user themselves may send a "forfeit" spell
                 if (p1.isForfeit) {
                     LOG.debug { "SpellAction was a forfeit spell!" }
-                    currentPhase.setCurrentPhase(Phase.GameOver)
-
                     when {
                         myWizard!!.id != p1.docId -> {
                             winnerWizard = myWizard
@@ -143,7 +140,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                             loosingWizard = myWizard
                         }
                     }
-
+                    currentPhase.setCurrentPhase(Phase.GameOver)
                     LOG.info { "Winner: ${winnerWizard?.displayName}" }
                     LOG.info { "Looser: ${loosingWizard?.displayName}" }
                 } else {
@@ -175,7 +172,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                     Phase.GameOver -> {
                         spellsListener.cancel()
                         if (GameData.instance.isHost && gameLoot.getLoot().isEmpty()) {
-                            distributePrizes()
+                            generateLoot()
                         }
                     }
                     Phase.Preparation -> {
@@ -213,7 +210,10 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         return spellExecutor.getSpellResultForTurn(currentTurn, wizardState)
     }
 
-    private fun distributePrizes() {
+    private fun generateLoot() {
+        var winnerLoot: List<Loot>
+        var looserLoot: List<Loot>
+
         if (winnerWizard == null || loosingWizard == null) {
             if (wizardState.opponents[myWizard!!.id]!!.isWizardDefeated()) {
                 winnerWizard = opponentWizard
@@ -224,13 +224,18 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             }
         }
 
-        val winnerLoot: List<Loot> = GamePrizeList().getWinnerPrizes(Random().nextInt(3))
-        winnerLoot.forEach {
-            it.receiver = winnerWizard!!.id
-        }
-        val looserLoot: List<Loot> = GamePrizeList().getLooserPrizes(Random().nextInt(3))
-        looserLoot.forEach {
-            it.receiver = loosingWizard!!.id
+        if(currentTurn < 3) {
+            winnerLoot = GamePrizeList().getWinnerPrizes(1, 0)
+            looserLoot = GamePrizeList().getLooserPrizes(1, -5)
+        } else {
+            winnerLoot = GamePrizeList().getWinnerPrizes(Random().nextInt(3), 7)
+            winnerLoot.forEach {
+                it.receiver = winnerWizard!!.id
+            }
+            looserLoot = GamePrizeList().getLooserPrizes(Random().nextInt(3), -5)
+            looserLoot.forEach {
+                it.receiver = loosingWizard!!.id
+            }
         }
 
         KtxAsync.launch {
