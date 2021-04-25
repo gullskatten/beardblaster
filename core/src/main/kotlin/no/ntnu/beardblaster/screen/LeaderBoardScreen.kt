@@ -47,7 +47,7 @@ class LeaderBoardScreen(
             setPosition(SCREEN_PADDING, WORLD_HEIGHT - SCREEN_PADDING - height)
         }
         table = scene2d.table {
-            background = skin[Image.Background]
+            background = skin[Image.BackgroundSecondary]
             pad(SCREEN_PADDING)
             defaults().space(SCREEN_PADDING)
             setBounds(0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)

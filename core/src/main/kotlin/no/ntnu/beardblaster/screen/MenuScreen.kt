@@ -9,12 +9,13 @@ import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
-import ktx.log.info
 import ktx.log.logger
 import ktx.scene2d.scene2d
+import ktx.scene2d.table
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.commons.user.User
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData
@@ -35,15 +36,20 @@ class MenuScreen(
     private lateinit var logoutBtn: TextButton
     private lateinit var exitBtn: TextButton
     private lateinit var wizardHeading: Label
+
     private val currentWizardLabel: Label =
         bodyLabel(
             UserData.instance.getCurrentUserString(),
             1.5f,
-            LabelStyle.BodyOutlined.name
-        ) // Kept it here as it can crash for lateinit since loading user can finish before screen has been initialized
+            LabelStyle.Body.name
+        )
+    private val currentWizardBeardLabel: Label = bodyLabel(
+        "",
+        1.5f,
+        LabelStyle.Body.name
+    )
 
     override fun initScreen() {
-
         createGameBtn = scene2d.textButton(Nls.createGame())
         joinGameBtn = scene2d.textButton(Nls.joinGame())
         leaderBoardBtn = scene2d.textButton(Nls.leaderBeard())
@@ -52,11 +58,18 @@ class MenuScreen(
         exitBtn = scene2d.textButton(Nls.exitGame())
         wizardHeading = headingLabel("BeardBlaster")
 
+        val wizNameTable = scene2d.table {
+            defaults().space(25f)
+            add(currentWizardLabel).left()
+            add(currentWizardBeardLabel).right()
+            background = dimmedLabelBackground()
+        }
+
         val table = fullSizeTable(20f).apply {
-            background = skin[Image.Background]
+            background = skin[Image.BackgroundSecondary]
             add(wizardHeading).colspan(4).center()
             row()
-            add(currentWizardLabel).colspan(4).center()
+            add(wizNameTable).colspan(4).center()
             row()
             add(createGameBtn).colspan(4).center()
             row()
@@ -81,7 +94,6 @@ class MenuScreen(
     override fun setBtnEventListeners() {
         createGameBtn.onClick {
             // Handle creation of game, and then go to Lobby screen to display code and wait for player 2
-            game.setScreen<GameplayScreen>()
             if (UserData.instance.user != null) {
                 game.setScreen<LobbyScreen>()
             }
@@ -114,9 +126,16 @@ class MenuScreen(
     override fun update(delta: Float) {
     }
 
-    override fun update(p0: Observable?, p1: Any?) {
-        LOG.info { p1.toString() }
-        currentWizardLabel.setText(p1.toString())
+    override fun update(o: Observable?, arg: Any?) {
+        if (o is UserData) {
+            if (arg is String) {
+                currentWizardLabel.setText(arg.toString())
+            } else if (arg is User) {
+                currentWizardLabel.setText(arg.displayName)
+                currentWizardBeardLabel.setText("${arg.beardLength}cm")
+                currentWizardBeardLabel.color = BeardScale.getBeardColor(arg.beardLength)
+            }
+        }
     }
 
     override fun dispose() {

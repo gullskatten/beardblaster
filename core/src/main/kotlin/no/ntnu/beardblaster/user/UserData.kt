@@ -5,6 +5,7 @@ import ktx.log.info
 import ktx.log.logger
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.user.User
+import no.ntnu.beardblaster.leaderboard.LeaderBoardRepository
 import pl.mk5.gdx.fireapp.GdxFIRAuth
 import java.util.*
 
@@ -33,9 +34,24 @@ class UserData private constructor() : Observable() {
                     when (it) {
                         is State.Success -> {
                             isLoading = false
-                            setUserData(it.data)
                             LOG.info { "Found Current User (!): ${it.data.displayName}" }
-                            notifyObservers(getCurrentUserString())
+                            LOG.info { "Loading beard for current user..." }
+                            LeaderBoardRepository().getBeardLengthForUser(GdxFIRAuth.inst().currentUser.userInfo.uid)
+                                .collect { state ->
+                                    when(state) {
+                                        is State.Success -> {
+                                            LOG.info { "Beard of ${state.data}cm locked and loaded..." }
+                                            it.data.beardLength = state.data
+                                            setUserData(it.data)
+                                            notifyObservers(it.data)
+                                        }
+                                        is State.Failed -> {
+                                        }
+                                        is State.Loading -> {
+
+                                        }
+                                    }
+                                }
                             error = null
                         }
                         is State.Loading -> {
@@ -58,8 +74,13 @@ class UserData private constructor() : Observable() {
     }
 
     fun getCurrentUserString(): String {
-        user?.let { return "${user!!.displayName} - ${user!!.beardLength}cm" }
-        return ""
+        user?.let { return user!!.displayName }
+        return "Loading User.."
+    }
+
+    fun getBeardLength(): Float {
+        user?.let { return user!!.beardLength }
+        return 0f
     }
 
     companion object {

@@ -1,24 +1,29 @@
-package no.ntnu.beardblaster.game
+package no.ntnu.beardblaster.spell
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import ktx.log.debug
 import ktx.log.error
 import ktx.log.info
 import ktx.log.logger
 import no.ntnu.beardblaster.commons.State
+import no.ntnu.beardblaster.game.GameRepository
 import java.util.*
 
-private val LOG = logger<GameSubscription>()
+private val LOG = logger<SpellSubscription>()
 
-class GameSubscription : Observable() {
+class SpellSubscription : Observable() {
     var error: String? = null
 
     @ExperimentalCoroutinesApi
-    suspend fun subscribeToUpdatesOn(id: String) {
+    suspend fun subscribeToUpdatesOn(id: String, currentTurn: Int) {
         LOG.info { "Subscribing to updates on $id" }
-        GameRepository().subscribeToGameUpdates(id).collect {
+        GameRepository().subscribeToSpellsOnTurn(id, currentTurn).collect {
             when (it) {
                 is State.Success -> {
+                    LOG.info { "Spell from FireStore: ${it.data.spell.spellName}" }
+                    LOG.info { "Notifying ${countObservers()} observers"}
+                    setChanged()
                     notifyObservers(it.data)
                 }
                 is State.Loading -> {
@@ -26,10 +31,15 @@ class GameSubscription : Observable() {
                 is State.Failed -> {
                     LOG.error { it.message }
                     error = it.message
+                    setChanged()
                     notifyObservers(error)
                 }
             }
-            setChanged()
         }
+    }
+
+    override fun addObserver(o: Observer?) {
+        super.addObserver(o)
+        LOG.debug { "Adding observer -> $o" }
     }
 }

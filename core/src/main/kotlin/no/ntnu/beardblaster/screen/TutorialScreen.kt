@@ -31,7 +31,7 @@ class TutorialScreen(
 
         setBtnEventListeners()
         val table = fullSizeTable(30f).apply {
-            background = skin[Image.Background]
+            background = skin[Image.BackgroundSecondary]
             add(headingLabel(Nls.tutorial()))
             row()
             add(closeBtn)
