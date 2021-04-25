@@ -21,14 +21,16 @@ class SpellExecutor {
                 spellHistory[turn]?.add(spell)
             }
             spellHistory.putIfAbsent(turn, mutableListOf(spell))
+
             if (spell.spell.spellHealing > 0) {
                 mitigationSpells.add(HealingOverTime(spell.caster, turn, spell.spell.duration, spell.spell.spellHealing))
             }
+
             if (spell.spell.spellMitigation > 0) {
                 mitigationSpells.add(
                     DamageReduction(
                         spell.caster,
-                        turn + 1, // Damage reduction spells should be activated 1 turn after current
+                        turn,
                         spell.spell.duration,
                         spell.spell.spellMitigation
                     )
