@@ -28,9 +28,7 @@ import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
-import no.ntnu.beardblaster.game.GameData
-import no.ntnu.beardblaster.game.GameInstance
-import no.ntnu.beardblaster.game.GamePhase
+import no.ntnu.beardblaster.game.*
 import no.ntnu.beardblaster.leaderboard.BeardScale
 import no.ntnu.beardblaster.spell.*
 import no.ntnu.beardblaster.sprites.WizardTexture

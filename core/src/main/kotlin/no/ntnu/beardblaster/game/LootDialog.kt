@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.ui
+package no.ntnu.beardblaster.game
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.ui.Button
@@ -11,8 +11,10 @@ import ktx.log.logger
 import ktx.scene2d.*
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.game.Loot
-import no.ntnu.beardblaster.game.GameInstance
-import no.ntnu.beardblaster.game.GameLoot
+import no.ntnu.beardblaster.ui.ButtonStyle
+import no.ntnu.beardblaster.ui.Image
+import no.ntnu.beardblaster.ui.LabelStyle
+import no.ntnu.beardblaster.ui.get
 import no.ntnu.beardblaster.user.UserData
 import java.util.*
 
