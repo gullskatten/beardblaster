@@ -9,14 +9,18 @@ import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData
 import java.util.*
 
-class MenuPresenter(private val view: View, val game: BeardBlasterGame): Observer {
+class MenuPresenter(private val view: View, val game: BeardBlasterGame) : Observer {
 
     interface View {
         fun updateWizardLabel(string: String)
         fun updateBeardLengthLabel(beardLength: Float)
+        fun setDisabledButtons(isDisabled: Boolean)
     }
 
     fun init() {
+        if (UserData.instance.user == null) {
+            view.setDisabledButtons(true)
+        }
         if (UserData.instance.user == null && !UserData.instance.isLoading) {
             KtxAsync.launch {
                 UserData.instance.loadUserData()
@@ -26,23 +30,21 @@ class MenuPresenter(private val view: View, val game: BeardBlasterGame): Observe
     }
 
     fun onCreateGameBtnClick() {
-        if (UserData.instance.user != null) {
-            game.setScreen<LobbyScreen>()
-        }
+        game.setScreen<LobbyScreen>()
     }
+
     fun onJoinGameBtnClick() {
-        if (UserData.instance.user != null) {
-            game.setScreen<JoinLobbyScreen>()
-        }
+        game.setScreen<JoinLobbyScreen>()
     }
+
     fun onLeaderBoardBtnClick() {
-        if (UserData.instance.user != null) {
-            game.setScreen<LeaderBoardScreen>()
-        }
+        game.setScreen<LeaderBoardScreen>()
     }
+
     fun onTutorialBtnClick() {
         game.setScreen<TutorialScreen>()
     }
+
     fun onLogoutBtnClick() {
         if (UserAuth().isLoggedIn()) {
             UserData.instance.setUserData(null)
@@ -50,6 +52,7 @@ class MenuPresenter(private val view: View, val game: BeardBlasterGame): Observe
         }
         game.setScreen<LoginMenuScreen>()
     }
+
     fun onExitBtnClick() {
         Gdx.app.exit()
     }
@@ -61,6 +64,7 @@ class MenuPresenter(private val view: View, val game: BeardBlasterGame): Observe
             } else if (p1 is User) {
                 view.updateWizardLabel(p1.displayName)
                 view.updateBeardLengthLabel(p1.beardLength)
+                view.setDisabledButtons(false)
             }
         }
     }

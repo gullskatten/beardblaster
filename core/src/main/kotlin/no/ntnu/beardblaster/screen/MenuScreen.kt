@@ -2,12 +2,11 @@ package no.ntnu.beardblaster.screen
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
-import ktx.async.KtxAsync
 import ktx.log.logger
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
@@ -90,6 +89,17 @@ class MenuScreen(
     override fun updateBeardLengthLabel(beardLength: Float) {
         currentWizardBeardLabel.setText("${beardLength}cm")
         currentWizardBeardLabel.color = BeardScale.getBeardColor(beardLength)
+    }
+
+    override fun setDisabledButtons(isDisabled: Boolean) {
+        createGameBtn.touchable = if (isDisabled) Touchable.disabled else Touchable.enabled
+        createGameBtn.isDisabled = isDisabled
+        joinGameBtn.isDisabled = isDisabled
+        joinGameBtn.touchable = if (isDisabled) Touchable.disabled else Touchable.enabled
+        leaderBoardBtn.isDisabled = isDisabled
+        leaderBoardBtn.touchable = if (isDisabled) Touchable.disabled else Touchable.enabled
+        logoutBtn.isDisabled = isDisabled
+        logoutBtn.touchable = if (isDisabled) Touchable.disabled else Touchable.enabled
     }
 
     override fun setBtnEventListeners() {
