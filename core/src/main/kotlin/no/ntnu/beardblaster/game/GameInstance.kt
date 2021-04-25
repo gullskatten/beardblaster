@@ -314,7 +314,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
 
 
     companion object {
-        private const val MAX_HP_PLAYERS = 30
+        private const val MAX_HP_PLAYERS = 15
     }
 
     init {

@@ -197,8 +197,8 @@ class GameplayScreen(
             add(headingLabel).pad(50f)
             row()
         }
-        addWizards()
         stage.addActor(table)
+        addWizards()
         stage.addActor(countDownLabel)
         stage.addActor(elementButtonsTable)
         stage.addActor(spellBar)
@@ -220,31 +220,21 @@ class GameplayScreen(
         )
     }
 
-    private fun initWaitingForPlayerPhase() {
-        val table = fullSizeTable().apply {
-            add(waitingLabel).pad(50f)
-        }
-        stage.clear()
-        stage.addActor(table)
-    }
-
     private fun initActionPhase() {
         LOG.debug { "INIT ACTION PHASE" }
         spellInfo.updateButtonLabel(SpellLockState.UNLOCKED)
         headingLabel.setText(Nls.actionPhase())
         stage.clear()
 
-        addWizards()
         val table = fullSizeTable().apply {
             background = skin[Image.Background]
             add(headingLabel("Action Phase"))
             row()
             add(spellAction).center()
             row()
-            add(myHealthPointsTable).left()
-            add(opponentHealthPointsTable).right()
         }
         stage.addActor(table)
+        addWizards()
         stage.addActor(quitBtn)
         cycleSpells()
     }
