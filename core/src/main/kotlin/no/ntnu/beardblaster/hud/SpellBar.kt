@@ -3,7 +3,6 @@ package no.ntnu.beardblaster.hud
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import ktx.actors.onClick
-import ktx.log.debug
 import ktx.log.logger
 import ktx.scene2d.*
 import no.ntnu.beardblaster.ElementType
@@ -55,8 +54,7 @@ class SpellBar(
         }
     }
 
-    override fun update(p0: Observable?, p1: Any?) {
-        LOG.debug { "Update spell bar" }
+    override fun update(o: Observable?, arg: Any?) {
         this.update()
     }
 }

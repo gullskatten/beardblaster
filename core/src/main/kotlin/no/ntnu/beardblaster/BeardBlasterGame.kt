@@ -22,6 +22,7 @@ class BeardBlasterGame : KtxGame<KtxScreen>() {
         Gdx.app.logLevel = Application.LOG_DEBUG
         KtxAsync.initiate()
         context.register {
+            // Using singletons and dependency injection
             bindSingleton<SpriteBatch>(SpriteBatch())
             bindSingleton(AssetStorage())
             bindSingleton(OrthographicCamera().apply {

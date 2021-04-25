@@ -11,6 +11,7 @@ class Game(
     val opponent: GamePlayer? = null,
     val startedAt: Long,
     val endedAt: Long,
+    val loot: List<Loot>,
     override var id: String = ""
 ) : DocumentType {
     constructor() : this(
@@ -19,7 +20,8 @@ class Game(
         null,
         null,
         0L,
-        0L
+        0L,
+        emptyList()
     )
 
 }

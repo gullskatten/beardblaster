@@ -69,7 +69,7 @@ class JoinLobbyScreen(
             this.add(submitCodeBtn)
         }
         val table = fullSizeTable().apply {
-            background = skin[Image.Background]
+            background = skin[Image.BackgroundSecondary]
             add(backBtn).expandY().top().padTop(50f).width(91f)
             add(content).width(WORLD_WIDTH * 0.9f).fillY()
         }
@@ -101,7 +101,7 @@ class JoinLobbyScreen(
                             is State.Failed -> {
                                 errorLabel.setText("Failed to leave lobby.. Please retry.")
                                 errorLabel.isVisible = true
-                                if (errorLabel.text.equals("Failed to leave lobby.. Please retry.")) {
+                                if (errorLabel.isVisible) {
                                     // Just force quit if it fails once more.
                                     game.setScreen<MenuScreen>()
                                 }
@@ -120,16 +120,15 @@ class JoinLobbyScreen(
     // Listens for changes on lobby -> when entering lobby and when lobby starts.
     override fun update(o: Observable?, arg: Any?) {
         if (o is LobbyHandler) {
-
             if (arg is String) {
                 errorLabel.setText(arg)
                 errorLabel.isVisible = true
                 waitingLabel.isVisible = false
-
             }
             if (arg is Game) {
                 if (arg.startedAt > 0L) {
                     GameData.instance.game = arg
+                    lobbyHandler.deleteObserver(this)
                     game.setScreen<GameplayScreen>()
                 } else {
                     errorLabel.isVisible = false

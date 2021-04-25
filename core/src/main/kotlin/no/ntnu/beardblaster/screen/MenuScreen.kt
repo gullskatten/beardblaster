@@ -1,25 +1,20 @@
 package no.ntnu.beardblaster.screen
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
-import ktx.async.KtxAsync
-import ktx.log.info
 import ktx.log.logger
 import ktx.scene2d.scene2d
+import ktx.scene2d.table
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
-import no.ntnu.beardblaster.spell.SpellRepository
 import no.ntnu.beardblaster.ui.*
-import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData
-import java.util.*
 
 private val LOG = logger<MenuScreen>()
 
@@ -28,7 +23,9 @@ class MenuScreen(
     batch: SpriteBatch,
     assets: AssetStorage,
     camera: OrthographicCamera,
-) : BaseScreen(game, batch, assets, camera), Observer {
+) : BaseScreen(game, batch, assets, camera), MenuPresenter.View {
+    private val presenter: MenuPresenter = MenuPresenter(this, game)
+
     private lateinit var createGameBtn: TextButton
     private lateinit var joinGameBtn: TextButton
     private lateinit var leaderBoardBtn: TextButton
@@ -36,22 +33,20 @@ class MenuScreen(
     private lateinit var logoutBtn: TextButton
     private lateinit var exitBtn: TextButton
     private lateinit var wizardHeading: Label
+
     private val currentWizardLabel: Label =
         bodyLabel(
             UserData.instance.getCurrentUserString(),
             1.5f,
-            LabelStyle.BodyOutlined.name
-        ) // Kept it here as it can crash for lateinit since loading user can finish before screen has been initialized
+            LabelStyle.Body.name
+        )
+    private val currentWizardBeardLabel: Label = bodyLabel(
+        "",
+        1.5f,
+        LabelStyle.Body.name
+    )
 
     override fun initScreen() {
-
-        val foundSpell = SpellRepository().getSpellById(1)
-        if(foundSpell != null) {
-            LOG.info {foundSpell.spellName }
-        } else {
-            LOG.info { "Spell not found!" }
-        }
-
         createGameBtn = scene2d.textButton(Nls.createGame())
         joinGameBtn = scene2d.textButton(Nls.joinGame())
         leaderBoardBtn = scene2d.textButton(Nls.leaderBeard())
@@ -60,11 +55,18 @@ class MenuScreen(
         exitBtn = scene2d.textButton(Nls.exitGame())
         wizardHeading = headingLabel("BeardBlaster")
 
+        val wizNameTable = scene2d.table {
+            defaults().space(25f)
+            add(currentWizardLabel).left()
+            add(currentWizardBeardLabel).right()
+            background = dimmedLabelBackground()
+        }
+
         val table = fullSizeTable(20f).apply {
-            background = skin[Image.Background]
+            background = skin[Image.BackgroundSecondary]
             add(wizardHeading).colspan(4).center()
             row()
-            add(currentWizardLabel).colspan(4).center()
+            add(wizNameTable).colspan(4).center()
             row()
             add(createGameBtn).colspan(4).center()
             row()
@@ -77,58 +79,55 @@ class MenuScreen(
             add(exitBtn).colspan(2).center()
         }
         stage.addActor(table)
+        presenter.init()
+    }
 
-        if (UserData.instance.user == null && !UserData.instance.isLoading) {
-            KtxAsync.launch {
-                UserData.instance.loadUserData()
-            }
-            UserData.instance.addObserver(this)
-        }
+    override fun updateWizardLabel(string: String) {
+        currentWizardLabel.setText(string)
+    }
+
+    override fun updateBeardLengthLabel(beardLength: Float) {
+        currentWizardBeardLabel.setText("${beardLength}cm")
+        currentWizardBeardLabel.color = BeardScale.getBeardColor(beardLength)
+    }
+
+    override fun setDisabledButtons(isDisabled: Boolean) {
+        createGameBtn.touchable = if (isDisabled) Touchable.disabled else Touchable.enabled
+        createGameBtn.isDisabled = isDisabled
+        joinGameBtn.isDisabled = isDisabled
+        joinGameBtn.touchable = if (isDisabled) Touchable.disabled else Touchable.enabled
+        leaderBoardBtn.isDisabled = isDisabled
+        leaderBoardBtn.touchable = if (isDisabled) Touchable.disabled else Touchable.enabled
+        logoutBtn.isDisabled = isDisabled
+        logoutBtn.touchable = if (isDisabled) Touchable.disabled else Touchable.enabled
     }
 
     override fun setBtnEventListeners() {
         createGameBtn.onClick {
-            // Handle creation of game, and then go to Lobby screen to display code and wait for player 2
-            game.setScreen<GameplayScreen>()
-            if (UserData.instance.user != null) {
-                game.setScreen<LobbyScreen>()
-            }
+            presenter.onCreateGameBtnClick()
         }
         joinGameBtn.onClick {
-            if (UserData.instance.user != null) {
-                game.setScreen<JoinLobbyScreen>()
-            }
+            presenter.onJoinGameBtnClick()
         }
         leaderBoardBtn.onClick {
-            if (UserData.instance.user != null) {
-                game.setScreen<LeaderBoardScreen>()
-            }
+            presenter.onLeaderBoardBtnClick()
         }
         tutorialBtn.onClick {
-            game.setScreen<TutorialScreen>()
+            presenter.onTutorialBtnClick()
         }
         logoutBtn.onClick {
-            if (UserAuth().isLoggedIn()) {
-                UserData.instance.setUserData(null)
-                UserAuth().signOut()
-            }
-            game.setScreen<LoginMenuScreen>()
+            presenter.onLogoutBtnClick()
         }
         exitBtn.onClick {
-            Gdx.app.exit()
+            presenter.onExitBtnClick()
         }
     }
 
     override fun update(delta: Float) {
     }
 
-    override fun update(p0: Observable?, p1: Any?) {
-        LOG.info { p1.toString() }
-        currentWizardLabel.setText(p1.toString())
-    }
-
     override fun dispose() {
         super.dispose()
-        UserData.instance.deleteObserver(this)
+        presenter.dispose()
     }
 }

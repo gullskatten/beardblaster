@@ -3,14 +3,14 @@ package no.ntnu.beardblaster.commons.game
 import no.ntnu.beardblaster.commons.user.User
 
 
-class GamePlayer(val id: String, val beardLength: Float = 0f, val displayName: String) {
+open class GamePlayer(val id: String, val beardLength: Float = 0f, val displayName: String) {
     constructor() : this(
         "", 0f,
         "",
     )
 
     override fun toString(): String {
-        return "$displayName\n${beardLength}cm"
+        return "$displayName ${beardLength}cm"
     }
 
     companion object {

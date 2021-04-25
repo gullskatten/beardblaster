@@ -28,6 +28,10 @@ enum class Image(val atlasKey: String) {
     ButtonPrimaryHover("button_green_hover"),
     ButtonPrimaryPressed("button_green_pressed"),
 
+    ButtonCancel("button_orange"),
+    ButtonCancelHover("button_orange_hover"),
+    ButtonCancelPressed("button_orange_pressed"),
+
     // Dialog buttons
     DialogButtonOK("modal_fancy_header_button_green_check"),
     DialogButtonOKDisabled("modal_fancy_header_button_green_check_disabled"),
@@ -40,6 +44,7 @@ enum class Image(val atlasKey: String) {
 
     // Backgrounds
     Background("background"),
+    BackgroundSecondary("epic_mage_battle_3000_x2"),
     Modal("modal_fancy"),
     ModalSkull("modal_fancy_skull"),
     ModalHeader("modal_fancy_header"),
@@ -169,6 +174,15 @@ fun createSkin(assets: AssetStorage): Skin {
             pressedOffsetY = 4f
         }
 
+        textButton(ButtonStyle.Cancel.name) {
+            font = skin[FontStyle.Default]
+            up = skin[Image.ButtonCancel]
+            over = skin[Image.ButtonCancelHover]
+            down = skin[Image.ButtonCancelPressed]
+            pressedOffsetX = 4f
+            pressedOffsetY = 4f
+        }
+
         textField {
             font = skin[FontStyle.Default]
             fontColor = Color.DARK_GRAY
@@ -208,7 +222,7 @@ private fun dimmedBackground(): Drawable {
     )
 }
 
-private fun dimmedLabelBackground(): Drawable {
+ fun dimmedLabelBackground(): Drawable {
     return SpriteDrawable(
         Sprite(
             Texture(
@@ -219,7 +233,7 @@ private fun dimmedLabelBackground(): Drawable {
                 )
             )
         ).apply {
-            color = Color(1f, 1f, 1f, 0.25f)
+            color = Color(1f, 1f, 1f, 0.35f)
         }
     )
 }

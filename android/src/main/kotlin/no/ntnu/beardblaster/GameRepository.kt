@@ -1,6 +1,7 @@
 package no.ntnu.beardblaster
 
 import android.util.Log
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -11,25 +12,49 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import no.ntnu.beardblaster.commons.AbstractGameRepository
 import no.ntnu.beardblaster.commons.State
+import no.ntnu.beardblaster.commons.game.AbstractGameRepository
 import no.ntnu.beardblaster.commons.game.Game
-import no.ntnu.beardblaster.commons.game.SpellCast
+import no.ntnu.beardblaster.commons.game.Loot
 import no.ntnu.beardblaster.commons.game.Turn
+import no.ntnu.beardblaster.commons.spell.SpellAction
 import no.ntnu.beardblaster.game.GameData
 import no.ntnu.beardblaster.user.UserData
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 
 class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
     AbstractGameRepository<Game> {
+
     private val TAG = "GameRepository"
     private val GAMES_COLLECTION = "games"
     private val TURNS_COLLECTION = "turns"
     private val SPELLS_COLLECTION = "spells"
 
+    override fun castSpell(currentTurn: Int, spell: SpellAction): Flow<State<SpellAction>> = flow {
+        emit(State.loading<SpellAction>())
+        Log.i(TAG, "Pushing spell to Firebase")
+
+        val newSpellDocRef = db.collection(GAMES_COLLECTION)
+            .document(GameData.instance.game!!.id)
+            .collection(TURNS_COLLECTION)
+            .document(currentTurn.toString())
+            .collection(SPELLS_COLLECTION)
+            .document(UserData.instance.user!!.id)
+
+        newSpellDocRef.set(spell).await()
+
+        Log.d(TAG, "Spell created successfully")
+
+        spell.docId = newSpellDocRef.id
+        emit(State.success(spell))
+    }
+
     override fun createTurn(currentTurn: Int): Flow<State<Turn>> = flow {
-        GameData.instance.game.let { }
+
         emit(State.loading<Turn>())
+        Log.i(TAG, "Creating turn $currentTurn")
         val doc = Turn()
         val documentReference = db.collection(GAMES_COLLECTION)
             .document(GameData.instance.game!!.id)
@@ -47,35 +72,6 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         emit(State.success(doc))
     }
 
-    override fun endTurn(currentTurn: Int, chosenSpellId: Int): Flow<State<SpellCast>> = flow {
-        GameData.instance.game.let { }
-        emit(State.loading<SpellCast>())
-
-        val turnDocRef = db.collection(GAMES_COLLECTION)
-            .document(GameData.instance.game!!.id)
-            .collection(TURNS_COLLECTION)
-            .document("$currentTurn")
-        turnDocRef.update(
-            if (GameData.instance.isHost) {
-                "hostFinished"
-            } else "opponentFinished", true
-        ).await()
-
-        val spellDoc = SpellCast(chosenSpell = chosenSpellId)
-        val newSpellDocRef = db.collection(GAMES_COLLECTION)
-            .document(GameData.instance.game!!.id)
-            .collection(TURNS_COLLECTION)
-            .document(turnDocRef.id)
-            .collection(SPELLS_COLLECTION)
-            .document(UserData.instance.user!!.id)
-        newSpellDocRef.set(spellDoc).await()
-
-        Log.d(TAG, "Turn $currentTurn ended successfully")
-
-        spellDoc.id = newSpellDocRef.id
-        emit(State.success(spellDoc))
-    }
-
     @ExperimentalCoroutinesApi
     override fun subscribeToGameUpdates(id: String): Flow<State<Game>> = callbackFlow {
         if (id.isEmpty()) {
@@ -85,6 +81,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
             awaitClose { }
             return@callbackFlow
         }
+
         val subscription = db
             .collection(GAMES_COLLECTION)
             .document(id)
@@ -107,5 +104,84 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         // Required: Else stream closes immediately!
         //Finally if collect is not in use or collecting any data we cancel this channel to prevent any leak and remove the subscription listener to the database
         awaitClose { subscription.remove() }
+    }
+
+    @ExperimentalCoroutinesApi
+    override fun subscribeToSpellsOnTurn(collection: String, currentTurn: Int): Flow<State<SpellAction>> =
+        callbackFlow {
+            if (collection.isEmpty()) {
+                val message = "Id of document cannot be empty"
+                Log.e(TAG, message)
+                offer(State.failed(message))
+                awaitClose { }
+                return@callbackFlow
+            }
+            val subscription = db
+                .collection(collection)
+                .addSnapshotListener { snapshot, _ ->
+                    Log.i(
+                        TAG,
+                        "Spell snapshot was updated externally! Documents: ${snapshot?.documents?.size} ,  DocumentChanges: ${snapshot?.documentChanges?.size}"
+                    )
+                    if(currentTurn == 1) {
+                        Log.i(TAG, "Documents found, pushed!")
+                        snapshot!!.documents.map { s: DocumentSnapshot ->
+                            val c = s.toObject<SpellAction>()
+                            c?.docId = s.id
+                            c
+                        }.forEach { spell -> offer(State.Success(spell!!)) }
+                    } else if (snapshot?.documentChanges?.size ?: 0 > 0) {
+                        snapshot!!.documentChanges.map { s ->
+                            val c = s.document.toObject<SpellAction>()
+                            c.docId = s.document.id
+                            c
+                        }
+                            .forEach { spell -> offer(State.Success(spell)) }
+                    } else if (snapshot?.documents?.size ?: 0 == 1 || snapshot?.documents?.size ?: 0 == 2) {
+                        Log.i(TAG, "Documents found, pushed!")
+                        snapshot!!.documents.map { s: DocumentSnapshot ->
+                            val c = s.toObject<SpellAction>()
+                            c?.docId = s.id
+                            c
+                        }.forEach { spell -> offer(State.Success(spell!!)) }
+                    }
+                }
+            // Required: Else stream closes immediately!
+            //Finally if collect is not in use or collecting any data we cancel this channel to prevent any leak and remove the subscription listener to the database
+            awaitClose { subscription.remove() }
+        }
+
+    override fun endGame(id: String): Flow<State<Boolean>> = flow {
+        emit(State.loading<Boolean>())
+        try {
+            db.collection(GAMES_COLLECTION)
+                .document(id)
+                .update(
+                    "endedAt", LocalDateTime.now(ZoneOffset.UTC)
+                    .toEpochSecond(ZoneOffset.UTC)
+                )
+                .await()
+            emit(State.success(true))
+        } catch (e: Exception) {
+            emit(State.failed<Boolean>("Failed to end game!"))
+        }
+    }
+
+    override fun distributeLoot(loot: List<Loot>): Flow<State<Boolean>> = flow {
+        emit(State.loading<Boolean>())
+        try {
+            db.collection(GAMES_COLLECTION)
+                .document(GameData.instance.game!!.id)
+                .update(
+                    "endedAt", LocalDateTime.now(ZoneOffset.UTC)
+                    .toEpochSecond(ZoneOffset.UTC),
+                    "loot",
+                    loot
+                )
+                .await()
+            emit(State.success(true))
+        } catch (e: Exception) {
+            emit(State.failed<Boolean>("Failed to end game and distribute loot!"))
+        }
     }
 }
