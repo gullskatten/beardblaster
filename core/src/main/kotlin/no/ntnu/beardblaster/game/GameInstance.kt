@@ -24,8 +24,9 @@ import no.ntnu.beardblaster.spell.SpellExecutor
 import no.ntnu.beardblaster.spell.SpellSubscription
 import no.ntnu.beardblaster.spell.WizardState
 import java.util.*
+import kotlin.random.Random
 
-private val LOG = logger<GameInstance>();
+private val LOG = logger<GameInstance>()
 
 @ExperimentalCoroutinesApi
 class GameInstance(preparationTime: Int, game: Game) : Observer {
@@ -223,10 +224,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         return spellExecutor.getSpellResultForTurn(currentTurn, wizardState)
     }
 
-    private fun generateLoot() {
-        var winnerLoot: List<Loot>
-        var loserLoot: List<Loot>
-
+    private fun determineWinner() {
         if (winningWizard == null || losingWizard == null) {
             if (wizardState.opponents[myWizard!!.id]!!.isWizardDefeated()) {
                 winningWizard = opponentWizard
@@ -236,42 +234,47 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                 losingWizard = opponentWizard
             }
         }
+    }
 
-        if (currentTurn < 3) {
-            winnerLoot = GamePrizeList().getWinnerPrizes(1, 1)
-            loserLoot = GamePrizeList().getLoserPrizes(1, -5)
-            KtxAsync.launch {
-                LeaderBoardRepository().updateBeardLength(
-                    winningWizard!!,
-                    1f).collect {  }
-                LeaderBoardRepository().updateBeardLength(
-                    losingWizard!!,
-                    -5f
-                ).collect {  }
+    var isDraw: Boolean = false
+        private set
+
+    private fun generateLoot() {
+        determineWinner()
+
+        val winner = winningWizard!!
+        val loser = losingWizard!!
+        val winnerLoot: List<Loot>
+        val loserLoot: List<Loot>
+        var winnerBeardInc = 7
+        var loserBeardInc = -5
+
+        isDraw = winner.isWizardDefeated() && loser.isWizardDefeated()
+
+        when {
+            currentTurn < 3 -> {
+                winnerBeardInc = 1
+                winnerLoot = GamePrizeList().getWinnerPrizes(1, winnerBeardInc)
+                loserLoot = GamePrizeList().getLoserPrizes(1, loserBeardInc)
             }
-
-
-
-        } else {
-            winnerLoot = GamePrizeList().getWinnerPrizes(Random().nextInt(3), 7)
-            loserLoot = GamePrizeList().getLoserPrizes(Random().nextInt(3), -5)
-            KtxAsync.launch {
-                LeaderBoardRepository().updateBeardLength(
-                    winningWizard!!,
-                    7f).collect {  }
-                LeaderBoardRepository().updateBeardLength(
-                    losingWizard!!,
-                    -5f
-                ).collect {  }
+            isDraw -> {
+                winnerBeardInc = -1
+                loserBeardInc = -1
+                winnerLoot = GamePrizeList().getLoserPrizes(1, winnerBeardInc)
+                loserLoot = GamePrizeList().getLoserPrizes(1, loserBeardInc)
+            }
+            else -> {
+                winnerLoot = GamePrizeList().getWinnerPrizes(Random.nextInt(3), winnerBeardInc)
+                loserLoot = GamePrizeList().getLoserPrizes(Random.nextInt(3), loserBeardInc)
             }
         }
-        winnerLoot.forEach {
-            it.receiver = winningWizard!!.id
-        }
-        loserLoot.forEach {
-            it.receiver = losingWizard!!.id
-        }
+
+        winnerLoot.forEach { it.receiver = winner.id }
+        loserLoot.forEach { it.receiver = loser.id }
+
         KtxAsync.launch {
+            LeaderBoardRepository().updateBeardLength(winner, winnerBeardInc.toFloat()).collect()
+            LeaderBoardRepository().updateBeardLength(loser, loserBeardInc.toFloat()).collect()
             GameRepository().distributeLoot(winnerLoot.plus(loserLoot)).collect {
                 when (it) {
                     is State.Success -> {
@@ -281,7 +284,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                         LOG.debug { "Failed to distribute loot: ${it.message}" }
                     }
                     is State.Loading -> {
-                        LOG.debug { "Distributing loot.." }
+                        LOG.debug { "Distributing loot…" }
                     }
                 }
             }
@@ -303,7 +306,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             if (wizardState.isAnyWizardDead() || (winningWizard != null || losingWizard != null)) {
                 LOG.info { "A wizard is dead! Game is over!" }
                 currentPhase.setCurrentPhase(Phase.GameOver)
-                return true;
+                return true
             }
         }
         return currentPhase.getCurrentPhase() == Phase.GameOver
