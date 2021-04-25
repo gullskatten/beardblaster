@@ -1,10 +1,15 @@
-package no.ntnu.beardblaster.screen
+package no.ntnu.beardblaster.menu
 
 import com.badlogic.gdx.Gdx
 import kotlinx.coroutines.launch
 import ktx.async.KtxAsync
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.commons.user.User
+import no.ntnu.beardblaster.leaderboard.LeaderBoardScreen
+import no.ntnu.beardblaster.lobby.JoinLobbyScreen
+import no.ntnu.beardblaster.lobby.LobbyScreen
+import no.ntnu.beardblaster.tutorial.TutorialScreen
+import no.ntnu.beardblaster.user.LoginMenuScreen
 import no.ntnu.beardblaster.user.UserAuth
 import no.ntnu.beardblaster.user.UserData
 import java.util.*

@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.screen
+package no.ntnu.beardblaster
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -10,10 +10,16 @@ import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
 import ktx.graphics.use
-import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.*
 import no.ntnu.beardblaster.commons.user.User
+import no.ntnu.beardblaster.game.GameplayScreen
+import no.ntnu.beardblaster.leaderboard.LeaderBoardScreen
+import no.ntnu.beardblaster.lobby.JoinLobbyScreen
+import no.ntnu.beardblaster.lobby.LobbyScreen
+import no.ntnu.beardblaster.menu.MenuScreen
+import no.ntnu.beardblaster.tutorial.TutorialScreen
 import no.ntnu.beardblaster.ui.createSkin
+import no.ntnu.beardblaster.user.LoginMenuScreen
 import no.ntnu.beardblaster.user.UserAuth
 
 

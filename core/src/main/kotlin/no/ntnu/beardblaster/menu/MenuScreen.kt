@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.screen
+package no.ntnu.beardblaster.menu
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -11,6 +11,7 @@ import ktx.log.logger
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
 import ktx.scene2d.textButton
+import no.ntnu.beardblaster.BaseScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.leaderboard.BeardScale

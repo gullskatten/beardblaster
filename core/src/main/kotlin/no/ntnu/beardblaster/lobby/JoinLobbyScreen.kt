@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.screen
+package no.ntnu.beardblaster.lobby
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -16,13 +16,15 @@ import ktx.scene2d.button
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
 import ktx.scene2d.textButton
+import no.ntnu.beardblaster.BaseScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.game.GameData
-import no.ntnu.beardblaster.lobby.LobbyHandler
+import no.ntnu.beardblaster.game.GameplayScreen
+import no.ntnu.beardblaster.menu.MenuScreen
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserData
 import pl.mk5.gdx.fireapp.GdxFIRAuth

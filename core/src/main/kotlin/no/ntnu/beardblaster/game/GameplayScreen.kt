@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.screen
+package no.ntnu.beardblaster.game
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -22,14 +22,15 @@ import ktx.scene2d.button
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
 import ktx.scene2d.textButton
+import no.ntnu.beardblaster.BaseScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.spell.ElementType
 import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
-import no.ntnu.beardblaster.game.*
 import no.ntnu.beardblaster.leaderboard.BeardScale
+import no.ntnu.beardblaster.menu.MenuScreen
 import no.ntnu.beardblaster.spell.*
 import no.ntnu.beardblaster.wizard.WizardTexture
 import no.ntnu.beardblaster.wizard.WizardTextures

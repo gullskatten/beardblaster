@@ -3,7 +3,7 @@ package no.ntnu.beardblaster.wizard
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Array
 import ktx.log.logger
-import no.ntnu.beardblaster.screen.GameplayScreen
+import no.ntnu.beardblaster.game.GameplayScreen
 
 private val log = logger<GameplayScreen>()
 class Animation {

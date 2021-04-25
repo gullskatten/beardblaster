@@ -2,7 +2,6 @@ package no.ntnu.beardblaster.game
 
 import ktx.log.info
 import ktx.log.logger
-import no.ntnu.beardblaster.screen.Phase
 import java.util.*
 
 private val LOG = logger<GamePhase>()

@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.screen
+package no.ntnu.beardblaster.leaderboard
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -15,14 +15,13 @@ import ktx.scene2d.scene2d
 import ktx.scene2d.scrollPane
 import ktx.scene2d.table
 import ktx.scene2d.textButton
+import no.ntnu.beardblaster.BaseScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.leaderboard.BeardScore
-import no.ntnu.beardblaster.leaderboard.BeardScale
-import no.ntnu.beardblaster.leaderboard.LeaderBoard
-import no.ntnu.beardblaster.leaderboard.LeaderBoardHandler
+import no.ntnu.beardblaster.menu.MenuScreen
 import no.ntnu.beardblaster.ui.*
 import java.util.*
 
