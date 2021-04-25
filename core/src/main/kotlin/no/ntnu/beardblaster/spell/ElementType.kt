@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster
+package no.ntnu.beardblaster.spell
 
 enum class ElementType {
     Fire,

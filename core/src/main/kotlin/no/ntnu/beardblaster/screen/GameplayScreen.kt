@@ -23,7 +23,7 @@ import ktx.scene2d.scene2d
 import ktx.scene2d.table
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
-import no.ntnu.beardblaster.ElementType
+import no.ntnu.beardblaster.spell.ElementType
 import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
