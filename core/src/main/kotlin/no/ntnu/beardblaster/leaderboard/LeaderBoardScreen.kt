@@ -5,12 +5,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
-import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
-import ktx.async.KtxAsync
-import ktx.log.debug
-import ktx.log.logger
 import ktx.scene2d.scene2d
 import ktx.scene2d.scrollPane
 import ktx.scene2d.table
@@ -21,21 +17,18 @@ import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.leaderboard.BeardScore
-import no.ntnu.beardblaster.menu.MenuScreen
 import no.ntnu.beardblaster.ui.Image
 import no.ntnu.beardblaster.ui.get
 import no.ntnu.beardblaster.ui.headingLabel
-import java.util.*
-
-private val LOG = logger<LeaderBoardScreen>()
 
 class LeaderBoardScreen(
     game: BeardBlasterGame,
     batch: SpriteBatch,
     assets: AssetStorage,
     camera: OrthographicCamera,
-) : BaseScreen(game, batch, assets, camera), Observer {
-    private val leaderBoardHandler = LeaderBoardHandler()
+) : BaseScreen(game, batch, assets, camera), LeaderBoardPresenter.View {
+    private val presenter = LeaderBoardPresenter(this, game)
+
     private lateinit var table: Table
     private lateinit var backBtn: TextButton
     private val leaderBoard = LeaderBoard()
@@ -70,29 +63,21 @@ class LeaderBoardScreen(
     }
 
     override fun initScreen() {
-        leaderBoardHandler.addObserver(this)
-        KtxAsync.launch {
-            LOG.debug { "Summoning the beards…" }
-            leaderBoardHandler.getTopTenBeards()
-        }
+        presenter.init()
         stage.addActor(table)
         stage.addActor(backBtn)
     }
 
     override fun setBtnEventListeners() {
         backBtn.onClick {
-            game.setScreen<MenuScreen>()
+            presenter.onBackBtnClick()
         }
     }
 
-    override fun update(delta: Float) {}
-
-    override fun update(o: Observable, arg: Any?) {
-        if (o is LeaderBoardHandler) {
-            leaderBoard.clear()
-            for (score: BeardScore in o.topTen) {
-                leaderBoard.addScore(score)
-            }
+    override fun fillLeaderBoard(beardScores: List<BeardScore>) {
+        leaderBoard.clear()
+        for (score: BeardScore in beardScores) {
+            leaderBoard.addScore(score)
         }
     }
 }

@@ -3,9 +3,9 @@ package no.ntnu.beardblaster.wizard
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Array
 import ktx.log.logger
-import no.ntnu.beardblaster.game.GameplayScreen
+import no.ntnu.beardblaster.game.GamePlayScreen
 
-private val log = logger<GameplayScreen>()
+private val log = logger<GamePlayScreen>()
 class Animation {
     private var frames: Array<TextureRegion>? = Array()
     private var maxFrameTime: Float
