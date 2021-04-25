@@ -31,6 +31,7 @@ import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.game.GameData
 import no.ntnu.beardblaster.game.GameInstance
 import no.ntnu.beardblaster.game.GamePhase
+import no.ntnu.beardblaster.leaderboard.BeardScale
 import no.ntnu.beardblaster.spell.*
 import no.ntnu.beardblaster.sprites.WizardTexture
 import no.ntnu.beardblaster.sprites.WizardTextures

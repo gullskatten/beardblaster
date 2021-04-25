@@ -20,6 +20,8 @@ import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.leaderboard.BeardScore
+import no.ntnu.beardblaster.leaderboard.BeardScale
+import no.ntnu.beardblaster.leaderboard.LeaderBoard
 import no.ntnu.beardblaster.leaderboard.LeaderBoardHandler
 import no.ntnu.beardblaster.ui.*
 import java.util.*

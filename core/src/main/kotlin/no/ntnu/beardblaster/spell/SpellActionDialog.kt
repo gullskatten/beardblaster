@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.Align
 import ktx.scene2d.*
 import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
-import no.ntnu.beardblaster.ui.BeardScale
+import no.ntnu.beardblaster.leaderboard.BeardScale
 import no.ntnu.beardblaster.ui.Image
 import no.ntnu.beardblaster.ui.LabelStyle
 import no.ntnu.beardblaster.ui.get

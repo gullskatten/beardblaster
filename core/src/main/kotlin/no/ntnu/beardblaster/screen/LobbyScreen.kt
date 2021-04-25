@@ -23,6 +23,7 @@ import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.game.GameData
+import no.ntnu.beardblaster.leaderboard.BeardScale
 import no.ntnu.beardblaster.lobby.LobbyHandler
 import no.ntnu.beardblaster.lobby.LobbyRepository
 import no.ntnu.beardblaster.ui.*

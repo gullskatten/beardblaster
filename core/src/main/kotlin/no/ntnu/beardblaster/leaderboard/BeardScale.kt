@@ -1,10 +1,14 @@
-package no.ntnu.beardblaster.ui
+package no.ntnu.beardblaster.leaderboard
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import ktx.log.debug
 import ktx.log.logger
 import ktx.scene2d.*
+import no.ntnu.beardblaster.ui.Image
+import no.ntnu.beardblaster.ui.LabelStyle
+import no.ntnu.beardblaster.ui.dimmedLabelBackground
+import no.ntnu.beardblaster.ui.get
 
 private val log = logger<BeardScale>()
 

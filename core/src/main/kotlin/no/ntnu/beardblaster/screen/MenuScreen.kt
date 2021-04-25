@@ -13,6 +13,7 @@ import ktx.scene2d.table
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.leaderboard.BeardScale
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserData
 

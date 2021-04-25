@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.ui
+package no.ntnu.beardblaster.leaderboard
 
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
@@ -7,6 +7,7 @@ import ktx.scene2d.Scene2DSkin
 import ktx.scene2d.label
 import ktx.scene2d.scene2d
 import no.ntnu.beardblaster.commons.leaderboard.BeardScore
+import no.ntnu.beardblaster.ui.LabelStyle
 
 class LeaderBoard : Table(Scene2DSkin.defaultSkin) {
     init {
