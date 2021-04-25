@@ -38,8 +38,8 @@ class SpellSubscription : Observable() {
         }
     }
 
-    override fun addObserver(p0: Observer?) {
-        super.addObserver(p0)
-        LOG.debug { "Adding observer -> $p0" }
+    override fun addObserver(o: Observer?) {
+        super.addObserver(o)
+        LOG.debug { "Adding observer -> $o" }
     }
 }

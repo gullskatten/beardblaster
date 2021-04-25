@@ -119,23 +119,23 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
     }
 
     // SpellSubscription, GamePhase and GameSubscription (Observables) may send updates through this channel
-    override fun update(p0: Observable?, p1: Any?) {
-        LOG.debug { "$p0 - $p1" }
+    override fun update(o: Observable?, arg: Any?) {
+        LOG.debug { "$o - $arg" }
 
-        if (p0 is SpellSubscription) {
-            LOG.debug { "p0 is SpellSubscription" }
-            if (p1 is SpellAction && currentPhase.getCurrentPhase() != Phase.GameOver) {
-                LOG.debug { "p1 is SpellAction" }
+        if (o is SpellSubscription) {
+            LOG.debug { "o is SpellSubscription" }
+            if (arg is SpellAction && currentPhase.getCurrentPhase() != Phase.GameOver) {
+                LOG.debug { "arg is SpellAction" }
                 // In this game, users actually send a spell to forfeit!
                 // Since spells may only be sent by the users themselves (spell docId = userId),
                 // Only the user themselves may send a "forfeit" spell
-                if (p1.isForfeit) {
+                if (arg.isForfeit) {
                     if (::spellsListener.isInitialized && spellsListener.isActive) {
                         spellsListener.cancel()
                     }
                     LOG.debug { "SpellAction was a forfeit spell!" }
                     when {
-                        myWizard!!.id != p1.docId -> {
+                        myWizard!!.id != arg.docId -> {
                             winnerWizard = myWizard
                             losingWizard = opponentWizard
                         }
@@ -148,8 +148,8 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                     LOG.info { "Winner: ${winnerWizard?.displayName}" }
                     LOG.info { "Loser: ${losingWizard?.displayName}" }
                 } else {
-                    LOG.debug { "!IMPORTANT - Pushing spell to executor: ${p1.spell.spellName}" }
-                    spellExecutor.addSpell(p1, currentTurn)
+                    LOG.debug { "!IMPORTANT - Pushing spell to executor: ${arg.spell.spellName}" }
+                    spellExecutor.addSpell(arg, currentTurn)
                     if (spellExecutor.spellHistory[currentTurn]?.size == 2) {
                         // Both have sent their spells - let's fast forward to attack phase.
                         currentPhase.setCurrentPhase(Phase.Action)
@@ -157,17 +157,17 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                 }
             }
         }
-        if (p0 is GameSubscription) {
-            if (p1 is Game) {
-                if (p1.loot.isNotEmpty()) {
+        if (o is GameSubscription) {
+            if (arg is Game) {
+                if (arg.loot.isNotEmpty()) {
                     LOG.info { "Prices found! Adding all prices to map." }
                     if (gameLoot.getLoot().isEmpty()) {
-                        gameLoot.setLoot(p1.loot)
+                        gameLoot.setLoot(arg.loot)
                     }
                     if (currentPhase.getCurrentPhase() != Phase.GameOver) {
                         currentPhase.setCurrentPhase(Phase.GameOver)
                     }
-                } else if (p1.endedAt != 0L) {
+                } else if (arg.endedAt != 0L) {
                     LOG.info { "Game was ended since endedAt was > 0" }
                     if (currentPhase.getCurrentPhase() != Phase.GameOver) {
                         currentPhase.setCurrentPhase(Phase.GameOver)
@@ -176,9 +176,9 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             }
         }
 
-        if (p0 is GamePhase) {
-            if (p1 is Phase) {
-                when (p1) {
+        if (o is GamePhase) {
+            if (arg is Phase) {
+                when (arg) {
                     Phase.GameOver -> {
                         if (::spellsListener.isInitialized && spellsListener.isActive) {
                             spellsListener.cancel()

@@ -126,14 +126,14 @@ class MenuScreen(
     override fun update(delta: Float) {
     }
 
-    override fun update(p0: Observable?, p1: Any?) {
-        if (p0 is UserData) {
-            if (p1 is String) {
-                currentWizardLabel.setText(p1.toString())
-            } else if (p1 is User) {
-                currentWizardLabel.setText(p1.displayName)
-                currentWizardBeardLabel.setText("${p1.beardLength}cm")
-                currentWizardBeardLabel.color = BeardScale.getBeardColor(p1.beardLength)
+    override fun update(o: Observable?, arg: Any?) {
+        if (o is UserData) {
+            if (arg is String) {
+                currentWizardLabel.setText(arg.toString())
+            } else if (arg is User) {
+                currentWizardLabel.setText(arg.displayName)
+                currentWizardBeardLabel.setText("${arg.beardLength}cm")
+                currentWizardBeardLabel.color = BeardScale.getBeardColor(arg.beardLength)
             }
         }
     }

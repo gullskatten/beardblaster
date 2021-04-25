@@ -86,12 +86,12 @@ class LootDialog(
         }
     }
 
-    override fun update(p0: Observable?, p1: Any?) {
-        LOG.debug { "Loot received -> $p0 $p1" }
-        if (p0 is GameLoot) {
-            if (p1 is List<*>) {
+    override fun update(o: Observable?, arg: Any?) {
+        LOG.debug { "Loot received -> $o $arg" }
+        if (o is GameLoot) {
+            if (arg is List<*>) {
                 LOG.debug { "Adding loot (render)" }
-                renderLoot(p1 as List<Loot>)
+                renderLoot(arg as List<Loot>)
             }
         }
     }
