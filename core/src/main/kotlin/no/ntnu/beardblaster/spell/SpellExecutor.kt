@@ -15,35 +15,43 @@ class SpellExecutor {
     private val mitigationSpells: MutableList<MitigationSpell> = ArrayList()
 
     fun addSpell(spell: SpellAction, turn: Int) {
-        LOG.info { "Adding spell ${spell.spell.spellName} cast by ${spell.caster} - turn $turn" }
-        if(spellHistory.containsKey(turn)) {
-            spellHistory[turn]?.add(spell)
-        }
-        spellHistory.putIfAbsent(turn, mutableListOf(spell))
+        if(isSpellValidForTurn(spell, turn)) {
+            LOG.info { "Adding spell ${spell.spell.spellName} cast by ${spell.caster} - turn $turn" }
+            if(spellHistory.containsKey(turn)) {
+                spellHistory[turn]?.add(spell)
+            }
+            spellHistory.putIfAbsent(turn, mutableListOf(spell))
 
-        if (spell.spell.spellHealing > 0) {
-            mitigationSpells.add(HealingOverTime(spell.caster, turn, spell.spell.duration, spell.spell.spellHealing))
-        }
+            if (spell.spell.spellHealing > 0) {
+                mitigationSpells.add(HealingOverTime(spell.caster, turn, spell.spell.duration, spell.spell.spellHealing))
+            }
 
-        if (spell.spell.spellMitigation > 0) {
-            mitigationSpells.add(
-                DamageReduction(
-                    spell.caster,
-                    turn + 1, // Damage reduction spells should be activated 1 turn after current
-                    spell.spell.duration,
-                    spell.spell.spellMitigation
+            if (spell.spell.spellMitigation > 0) {
+                mitigationSpells.add(
+                    DamageReduction(
+                        spell.caster,
+                        turn,
+                        spell.spell.duration,
+                        spell.spell.spellMitigation
+                    )
                 )
-            )
-        }
-        LOG.debug { "Current Spell History \n" }
-        spellHistory.keys.forEach { i ->
-            LOG.debug { "Turn $i" }
-            spellHistory[i]!!.forEach {
-                item ->
-                LOG.debug { "Caster ${item.caster}: ${item.spell.spellName}" }
+            }
+            LOG.debug { "Current Spell History \n" }
+            spellHistory.keys.forEach { i ->
+                LOG.debug { "Turn $i" }
+                spellHistory[i]!!.forEach {
+                        item ->
+                    LOG.debug { "Caster ${item.caster}: ${item.spell.spellName}" }
+                }
             }
         }
+    }
 
+    private fun isSpellValidForTurn(spell: SpellAction, turn: Int): Boolean {
+        if(!spellHistory.containsKey(turn)) {
+            return true
+        }
+        return spellHistory[turn]!!.none { registeredSpell -> spell.caster == registeredSpell.caster }
     }
 
     // Actions are simply snapshots of spells that occurs (like a log of spells for a turn)
