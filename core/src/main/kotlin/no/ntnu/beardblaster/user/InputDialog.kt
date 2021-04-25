@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.ui
+package no.ntnu.beardblaster.user
 
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
@@ -9,6 +9,7 @@ import ktx.scene2d.button
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
 import no.ntnu.beardblaster.assets.Nls
+import no.ntnu.beardblaster.ui.*
 
 open class InputDialog(
     private val title: String,
