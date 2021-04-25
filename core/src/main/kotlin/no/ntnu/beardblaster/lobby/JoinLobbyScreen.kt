@@ -23,7 +23,7 @@ import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.game.GameData
-import no.ntnu.beardblaster.game.GameplayScreen
+import no.ntnu.beardblaster.game.GamePlayScreen
 import no.ntnu.beardblaster.menu.MenuScreen
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserData
@@ -117,8 +117,6 @@ class JoinLobbyScreen(
         }
     }
 
-    override fun update(delta: Float) {}
-
     // Listens for changes on lobby -> when entering lobby and when lobby starts.
     override fun update(o: Observable?, arg: Any?) {
         if (o is LobbyHandler) {
@@ -131,7 +129,7 @@ class JoinLobbyScreen(
                 if (arg.startedAt > 0L) {
                     GameData.instance.game = arg
                     lobbyHandler.deleteObserver(this)
-                    game.setScreen<GameplayScreen>()
+                    game.setScreen<GamePlayScreen>()
                 } else {
                     errorLabel.isVisible = false
                     waitingLabel.isVisible = true

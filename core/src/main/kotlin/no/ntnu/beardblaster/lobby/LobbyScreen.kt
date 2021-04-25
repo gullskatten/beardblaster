@@ -24,7 +24,7 @@ import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.game.GameData
-import no.ntnu.beardblaster.game.GameplayScreen
+import no.ntnu.beardblaster.game.GamePlayScreen
 import no.ntnu.beardblaster.leaderboard.BeardScale
 import no.ntnu.beardblaster.menu.MenuScreen
 import no.ntnu.beardblaster.ui.*
@@ -105,7 +105,7 @@ class LobbyScreen(
                             LOG.error { it.message }
                         }
                         is State.Success -> {
-                            game.setScreen<GameplayScreen>()
+                            game.setScreen<GamePlayScreen>()
                         }
                     }
                 }

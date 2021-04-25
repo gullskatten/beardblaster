@@ -12,7 +12,7 @@ import ktx.async.KtxAsync
 import ktx.graphics.use
 import no.ntnu.beardblaster.assets.*
 import no.ntnu.beardblaster.commons.user.User
-import no.ntnu.beardblaster.game.GameplayScreen
+import no.ntnu.beardblaster.game.GamePlayScreen
 import no.ntnu.beardblaster.leaderboard.LeaderBoardScreen
 import no.ntnu.beardblaster.lobby.JoinLobbyScreen
 import no.ntnu.beardblaster.lobby.LobbyScreen
@@ -80,7 +80,7 @@ class LoadingScreen(
         game.addScreen(LeaderBoardScreen(game, batch, assets, camera))
         game.addScreen(LobbyScreen(game, batch, assets, camera))
         game.addScreen(JoinLobbyScreen(game, batch, assets, camera))
-        game.addScreen(GameplayScreen(game, batch, assets, camera))
+        game.addScreen(GamePlayScreen(game, batch, assets, camera))
     }
 
     override fun dispose() {

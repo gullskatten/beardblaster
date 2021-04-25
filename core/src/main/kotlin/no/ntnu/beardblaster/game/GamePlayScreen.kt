@@ -39,7 +39,7 @@ import no.ntnu.beardblaster.wizard.WizardTextures
 import java.util.*
 import kotlin.concurrent.schedule
 
-private val LOG = logger<GameplayScreen>()
+private val LOG = logger<GamePlayScreen>()
 
 enum class Phase {
     Preparation,
@@ -48,7 +48,7 @@ enum class Phase {
     GameOver
 }
 
-class GameplayScreen(
+class GamePlayScreen(
     game: BeardBlasterGame,
     batch: SpriteBatch,
     assets: AssetStorage,
