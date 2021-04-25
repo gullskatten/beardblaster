@@ -138,9 +138,9 @@ class LobbyScreen(
     override fun update(delta: Float) {}
 
     @ExperimentalCoroutinesApi
-    override fun update(p0: Observable?, p1: Any?) {
-        if (p1 is Game) {
-            codeLabel.setText(p1.code)
+    override fun update(o: Observable?, arg: Any?) {
+        if (arg is Game) {
+            codeLabel.setText(arg.code)
 
             LOG.debug { "Game created - Subscribing to new game." }
             LOG.debug { "Should I subscribe? ${!::subscription.isInitialized || !subscription.isActive}." }
@@ -155,9 +155,9 @@ class LobbyScreen(
             if(!::subscription.isInitialized || !subscription.isActive) {
                 // Yeah, this is ugly! Listen for live updates on lobby with id
                 subscription = KtxAsync.launch {
-                    LOG.debug { "Running subscribe to game with id ${p1.id}" }
+                    LOG.debug { "Running subscribe to game with id ${arg.id}" }
 
-                    LobbyRepository().subscribeToLobbyUpdates(p1.id).collect {
+                    LobbyRepository().subscribeToLobbyUpdates(arg.id).collect {
                         when (it) {
                             is State.Success -> {
                                 // On received update: Check if opponent of updated Game is not null

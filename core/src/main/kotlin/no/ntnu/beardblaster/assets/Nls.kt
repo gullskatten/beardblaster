@@ -17,6 +17,7 @@ enum class Nls : BundleLine {
     emailAddress,
     exitGame,
     gameCode,
+    itsADraw,
     joinGame,
     leaderBeard,
     lobby,

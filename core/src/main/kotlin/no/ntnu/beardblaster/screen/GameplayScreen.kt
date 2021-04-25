@@ -435,10 +435,10 @@ class GameplayScreen(
         gameInstance.dispose();
     }
 
-    override fun update(p0: Observable?, p1: Any?) {
-        LOG.debug { "$p0 - $p1" }
-        if (p0 is GamePhase && p1 is Phase) {
-            when (p1) {
+    override fun update(o: Observable?, arg: Any?) {
+        LOG.debug { "$o - $arg" }
+        if (o is GamePhase && arg is Phase) {
+            when (arg) {
                 Phase.GameOver -> {
                     LOG.debug { " CALLING GAME OVER PHASE " }
                     initGameOver()

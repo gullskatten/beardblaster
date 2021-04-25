@@ -24,8 +24,9 @@ import no.ntnu.beardblaster.spell.SpellExecutor
 import no.ntnu.beardblaster.spell.SpellSubscription
 import no.ntnu.beardblaster.spell.WizardState
 import java.util.*
+import kotlin.random.Random
 
-private val LOG = logger<GameInstance>();
+private val LOG = logger<GameInstance>()
 
 @ExperimentalCoroutinesApi
 class GameInstance(preparationTime: Int, game: Game) : Observer {
@@ -41,10 +42,9 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
     private val opponentWizard: Wizard?
 
     var gameLoot: GameLoot = GameLoot()
-    var winnerWizard: Wizard? = null
+    var winningWizard: Wizard? = null
         private set
-    var losingWizard: Wizard? = null
-        private set
+    private var losingWizard: Wizard? = null
 
     val wizardState: WizardState = WizardState(
         Wizard(MAX_HP_PLAYERS, game.host!!),
@@ -119,37 +119,37 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
     }
 
     // SpellSubscription, GamePhase and GameSubscription (Observables) may send updates through this channel
-    override fun update(p0: Observable?, p1: Any?) {
-        LOG.debug { "$p0 - $p1" }
+    override fun update(o: Observable?, arg: Any?) {
+        LOG.debug { "$o - $arg" }
 
-        if (p0 is SpellSubscription) {
-            LOG.debug { "p0 is SpellSubscription" }
-            if (p1 is SpellAction && currentPhase.getCurrentPhase() != Phase.GameOver) {
-                LOG.debug { "p1 is SpellAction" }
+        if (o is SpellSubscription) {
+            LOG.debug { "o is SpellSubscription" }
+            if (arg is SpellAction && currentPhase.getCurrentPhase() != Phase.GameOver) {
+                LOG.debug { "arg is SpellAction" }
                 // In this game, users actually send a spell to forfeit!
                 // Since spells may only be sent by the users themselves (spell docId = userId),
                 // Only the user themselves may send a "forfeit" spell
-                if (p1.isForfeit) {
+                if (arg.isForfeit) {
                     if (::spellsListener.isInitialized && spellsListener.isActive) {
                         spellsListener.cancel()
                     }
                     LOG.debug { "SpellAction was a forfeit spell!" }
                     when {
-                        myWizard!!.id != p1.docId -> {
-                            winnerWizard = myWizard
+                        myWizard!!.id != arg.docId -> {
+                            winningWizard = myWizard
                             losingWizard = opponentWizard
                         }
                         else -> {
-                            winnerWizard = opponentWizard
+                            winningWizard = opponentWizard
                             losingWizard = myWizard
                         }
                     }
                     currentPhase.setCurrentPhase(Phase.GameOver)
-                    LOG.info { "Winner: ${winnerWizard?.displayName}" }
+                    LOG.info { "Winner: ${winningWizard?.displayName}" }
                     LOG.info { "Loser: ${losingWizard?.displayName}" }
                 } else {
-                    LOG.debug { "!IMPORTANT - Pushing spell to executor: ${p1.spell.spellName}" }
-                    spellExecutor.addSpell(p1, currentTurn)
+                    LOG.debug { "!IMPORTANT - Pushing spell to executor: ${arg.spell.spellName}" }
+                    spellExecutor.addSpell(arg, currentTurn)
                     if (spellExecutor.spellHistory[currentTurn]?.size == 2) {
                         // Both have sent their spells - let's fast forward to attack phase.
                         currentPhase.setCurrentPhase(Phase.Action)
@@ -157,17 +157,17 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                 }
             }
         }
-        if (p0 is GameSubscription) {
-            if (p1 is Game) {
-                if (p1.loot.isNotEmpty()) {
+        if (o is GameSubscription) {
+            if (arg is Game) {
+                if (arg.loot.isNotEmpty()) {
                     LOG.info { "Prices found! Adding all prices to map." }
                     if (gameLoot.getLoot().isEmpty()) {
-                        gameLoot.setLoot(p1.loot)
+                        gameLoot.setLoot(arg.loot)
                     }
                     if (currentPhase.getCurrentPhase() != Phase.GameOver) {
                         currentPhase.setCurrentPhase(Phase.GameOver)
                     }
-                } else if (p1.endedAt != 0L) {
+                } else if (arg.endedAt != 0L) {
                     LOG.info { "Game was ended since endedAt was > 0" }
                     if (currentPhase.getCurrentPhase() != Phase.GameOver) {
                         currentPhase.setCurrentPhase(Phase.GameOver)
@@ -176,9 +176,9 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             }
         }
 
-        if (p0 is GamePhase) {
-            if (p1 is Phase) {
-                when (p1) {
+        if (o is GamePhase) {
+            if (arg is Phase) {
+                when (arg) {
                     Phase.GameOver -> {
                         if (::spellsListener.isInitialized && spellsListener.isActive) {
                             spellsListener.cancel()
@@ -224,55 +224,57 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         return spellExecutor.getSpellResultForTurn(currentTurn, wizardState)
     }
 
-    private fun generateLoot() {
-        var winnerLoot: List<Loot>
-        var loserLoot: List<Loot>
-
-        if (winnerWizard == null || losingWizard == null) {
+    private fun determineWinner() {
+        if (winningWizard == null || losingWizard == null) {
             if (wizardState.opponents[myWizard!!.id]!!.isWizardDefeated()) {
-                winnerWizard = opponentWizard
+                winningWizard = opponentWizard
                 losingWizard = myWizard
             } else if (wizardState.opponents[opponentWizard!!.id]!!.isWizardDefeated()) {
-                winnerWizard = myWizard
+                winningWizard = myWizard
                 losingWizard = opponentWizard
             }
         }
+    }
 
-        if (currentTurn < 3) {
-            winnerLoot = GamePrizeList().getWinnerPrizes(1, 1)
-            loserLoot = GamePrizeList().getLoserPrizes(1, -5)
-            KtxAsync.launch {
-                LeaderBoardRepository().updateBeardLength(
-                    winnerWizard!!,
-                    1f).collect {  }
-                LeaderBoardRepository().updateBeardLength(
-                    losingWizard!!,
-                    -5f
-                ).collect {  }
+    var isDraw: Boolean = false
+        private set
+
+    private fun generateLoot() {
+        determineWinner()
+
+        val winner = winningWizard!!
+        val loser = losingWizard!!
+        val winnerLoot: List<Loot>
+        val loserLoot: List<Loot>
+        var winnerBeardInc = 7
+        var loserBeardInc = -5
+
+        isDraw = winner.isWizardDefeated() && loser.isWizardDefeated()
+
+        when {
+            currentTurn < 3 -> {
+                winnerBeardInc = 1
+                winnerLoot = GamePrizeList().getWinnerPrizes(1, winnerBeardInc)
+                loserLoot = GamePrizeList().getLoserPrizes(1, loserBeardInc)
             }
-
-
-
-        } else {
-            winnerLoot = GamePrizeList().getWinnerPrizes(Random().nextInt(3), 7)
-            loserLoot = GamePrizeList().getLoserPrizes(Random().nextInt(3), -5)
-            KtxAsync.launch {
-                LeaderBoardRepository().updateBeardLength(
-                    winnerWizard!!,
-                    7f).collect {  }
-                LeaderBoardRepository().updateBeardLength(
-                    losingWizard!!,
-                    -5f
-                ).collect {  }
+            isDraw -> {
+                winnerBeardInc = -1
+                loserBeardInc = -1
+                winnerLoot = GamePrizeList().getLoserPrizes(1, winnerBeardInc)
+                loserLoot = GamePrizeList().getLoserPrizes(1, loserBeardInc)
+            }
+            else -> {
+                winnerLoot = GamePrizeList().getWinnerPrizes(Random.nextInt(3), winnerBeardInc)
+                loserLoot = GamePrizeList().getLoserPrizes(Random.nextInt(3), loserBeardInc)
             }
         }
-        winnerLoot.forEach {
-            it.receiver = winnerWizard!!.id
-        }
-        loserLoot.forEach {
-            it.receiver = losingWizard!!.id
-        }
+
+        winnerLoot.forEach { it.receiver = winner.id }
+        loserLoot.forEach { it.receiver = loser.id }
+
         KtxAsync.launch {
+            LeaderBoardRepository().updateBeardLength(winner, winnerBeardInc.toFloat()).collect()
+            LeaderBoardRepository().updateBeardLength(loser, loserBeardInc.toFloat()).collect()
             GameRepository().distributeLoot(winnerLoot.plus(loserLoot)).collect {
                 when (it) {
                     is State.Success -> {
@@ -282,7 +284,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                         LOG.debug { "Failed to distribute loot: ${it.message}" }
                     }
                     is State.Loading -> {
-                        LOG.debug { "Distributing loot.." }
+                        LOG.debug { "Distributing loot…" }
                     }
                 }
             }
@@ -301,10 +303,10 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
 
     fun isGameOver(): Boolean {
         if (currentPhase.getCurrentPhase() != Phase.GameOver) {
-            if (wizardState.isAnyWizardDead() || (winnerWizard != null || losingWizard != null)) {
+            if (wizardState.isAnyWizardDead() || (winningWizard != null || losingWizard != null)) {
                 LOG.info { "A wizard is dead! Game is over!" }
                 currentPhase.setCurrentPhase(Phase.GameOver)
-                return true;
+                return true
             }
         }
         return currentPhase.getCurrentPhase() == Phase.GameOver

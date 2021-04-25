@@ -54,7 +54,7 @@ class SpellBar(
         }
     }
 
-    override fun update(p0: Observable?, p1: Any?) {
+    override fun update(o: Observable?, arg: Any?) {
         this.update()
     }
 }
