@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.user
+package no.ntnu.beardblaster.menu
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -21,8 +21,11 @@ import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.user.User
-import no.ntnu.beardblaster.menu.MenuScreen
 import no.ntnu.beardblaster.ui.*
+import no.ntnu.beardblaster.user.LoginDialog
+import no.ntnu.beardblaster.user.RegisterDialog
+import no.ntnu.beardblaster.user.UserAuth
+import no.ntnu.beardblaster.user.UserRepository
 import pl.mk5.gdx.fireapp.auth.GdxFirebaseUser
 
 private val LOG = logger<LoginMenuScreen>()

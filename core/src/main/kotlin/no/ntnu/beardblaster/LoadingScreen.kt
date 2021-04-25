@@ -16,10 +16,10 @@ import no.ntnu.beardblaster.game.GameplayScreen
 import no.ntnu.beardblaster.leaderboard.LeaderBoardScreen
 import no.ntnu.beardblaster.lobby.JoinLobbyScreen
 import no.ntnu.beardblaster.lobby.LobbyScreen
+import no.ntnu.beardblaster.menu.LoginMenuScreen
 import no.ntnu.beardblaster.menu.MenuScreen
 import no.ntnu.beardblaster.tutorial.TutorialScreen
 import no.ntnu.beardblaster.ui.createSkin
-import no.ntnu.beardblaster.user.LoginMenuScreen
 import no.ntnu.beardblaster.user.UserAuth
 
 
