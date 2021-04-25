@@ -20,7 +20,7 @@ abstract class BaseScreen(
         result
     }
 
-    // Template method pattern: https://refactoring.guru/design-patterns/template-method
+    // Template method pattern
     final override fun show() {
         stage.clear()
         initComponents()
@@ -32,7 +32,7 @@ abstract class BaseScreen(
     abstract fun initScreen() // Abstract step
     open fun initComponents() {}
     abstract fun setBtnEventListeners()
-    abstract fun update(delta: Float)
+    open fun update(delta: Float) {}
 
     override fun render(delta: Float) {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)

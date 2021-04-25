@@ -26,7 +26,7 @@ class MenuScreen(
     assets: AssetStorage,
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera), MenuPresenter.View {
-    private val presenter: MenuPresenter = MenuPresenter(this, game)
+    private val presenter = MenuPresenter(this, game)
 
     private lateinit var createGameBtn: TextButton
     private lateinit var joinGameBtn: TextButton
@@ -123,9 +123,6 @@ class MenuScreen(
         exitBtn.onClick {
             presenter.onExitBtnClick()
         }
-    }
-
-    override fun update(delta: Float) {
     }
 
     override fun dispose() {
