@@ -29,23 +29,23 @@ class GamePrizeList {
     }
 
     /**
-     * Function to fetch random prizes from the looser loot table
+     * Function to fetch random prizes from the loser loot table
      * @param amount amount of random prizes to fetch
      */
-    fun getLooserPrizes(amount: Int, beardLengthIncrease: Int): List<Loot> {
-        if (amount <= 1) return mutableListOf(loosingPrizes.random()).plus(Loot("Beard Length", beardLengthIncrease))
-        if (amount >= loosingPrizes.size)  return loosingPrizes.plus(Loot("Beard Length", beardLengthIncrease))
+    fun getLoserPrizes(amount: Int, beardLengthIncrease: Int): List<Loot> {
+        if (amount <= 1) return mutableListOf(losingPrizes.random()).plus(Loot("Beard Length", beardLengthIncrease))
+        if (amount >= losingPrizes.size)  return losingPrizes.plus(Loot("Beard Length", beardLengthIncrease))
 
         val itemList = ArrayList<String>()
         val returnedPrizes = ArrayList<Loot>()
 
         for (iterations in 0..amount) {
             if(itemList.isEmpty()) {
-                val nextPrize = loosingPrizes.random()
+                val nextPrize = losingPrizes.random()
                 returnedPrizes.add(nextPrize)
                 itemList.add(nextPrize.item)
             } else {
-                val nextPrize = loosingPrizes.filter { aPrice -> !itemList.contains(aPrice.item) }.random()
+                val nextPrize = losingPrizes.filter { aPrice -> !itemList.contains(aPrice.item) }.random()
                 returnedPrizes.add(nextPrize)
                 itemList.add(nextPrize.item)
             }
@@ -64,7 +64,7 @@ class GamePrizeList {
             Loot("The Perfect Robe", 1),
             Loot("Gandalf's Magical Tobacco", 1)
         )
-        val loosingPrizes = listOf(
+        val losingPrizes = listOf(
             Loot("Wool sock. 'Love, Mom' is imprinted inside", 1),
             Loot("King's Invitation - from last year", 1),
             Loot("Scrap Metal", 1),
