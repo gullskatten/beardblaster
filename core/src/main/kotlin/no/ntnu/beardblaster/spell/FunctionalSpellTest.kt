@@ -6,6 +6,7 @@ import no.ntnu.beardblaster.commons.game.GamePlayer
 import no.ntnu.beardblaster.commons.spell.Spell
 import no.ntnu.beardblaster.commons.spell.SpellAction
 import no.ntnu.beardblaster.commons.wizard.Wizard
+import no.ntnu.beardblaster.wizard.WizardState
 import java.util.*
 import java.util.function.Consumer
 

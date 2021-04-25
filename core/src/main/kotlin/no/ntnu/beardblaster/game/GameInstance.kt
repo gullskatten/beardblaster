@@ -19,6 +19,7 @@ import no.ntnu.beardblaster.commons.wizard.Wizard
 import no.ntnu.beardblaster.leaderboard.LeaderBoardRepository
 import no.ntnu.beardblaster.screen.Phase
 import no.ntnu.beardblaster.spell.*
+import no.ntnu.beardblaster.wizard.WizardState
 import java.util.*
 import kotlin.random.Random
 

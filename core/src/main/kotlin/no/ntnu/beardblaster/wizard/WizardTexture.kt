@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.sprites
+package no.ntnu.beardblaster.wizard
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Rectangle
@@ -7,7 +7,6 @@ import ktx.assets.async.AssetStorage
 import ktx.log.logger
 import no.ntnu.beardblaster.assets.AtlasAsset
 import no.ntnu.beardblaster.assets.get
-import no.ntnu.beardblaster.screen.GameplayScreen
 
 private val log = logger<WizardTexture>()
 class WizardTexture {

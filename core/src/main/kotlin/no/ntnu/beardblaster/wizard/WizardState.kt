@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.spell
+package no.ntnu.beardblaster.wizard
 
 import no.ntnu.beardblaster.commons.spell.SpellAction
 import no.ntnu.beardblaster.commons.wizard.Wizard

@@ -31,10 +31,11 @@ import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.game.*
 import no.ntnu.beardblaster.leaderboard.BeardScale
 import no.ntnu.beardblaster.spell.*
-import no.ntnu.beardblaster.sprites.WizardTexture
-import no.ntnu.beardblaster.sprites.WizardTextures
+import no.ntnu.beardblaster.wizard.WizardTexture
+import no.ntnu.beardblaster.wizard.WizardTextures
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserData
+import no.ntnu.beardblaster.wizard.Healthbar
 import java.util.*
 import kotlin.concurrent.schedule
 

@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.sprites
+package no.ntnu.beardblaster.wizard
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Array

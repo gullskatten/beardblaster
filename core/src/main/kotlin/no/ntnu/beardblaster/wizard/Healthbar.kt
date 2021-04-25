@@ -1,7 +1,9 @@
-package no.ntnu.beardblaster.ui
+package no.ntnu.beardblaster.wizard
 
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
+import no.ntnu.beardblaster.ui.Image
+import no.ntnu.beardblaster.ui.get
 
 class Healthbar {
     private val barMaxWidth = 280f

@@ -4,6 +4,7 @@ import ktx.log.debug
 import ktx.log.info
 import ktx.log.logger
 import no.ntnu.beardblaster.commons.spell.SpellAction
+import no.ntnu.beardblaster.wizard.WizardState
 import java.util.function.Consumer
 import java.util.stream.Collectors
 

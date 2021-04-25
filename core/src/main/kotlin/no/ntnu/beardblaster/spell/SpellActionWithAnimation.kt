@@ -3,7 +3,7 @@ package no.ntnu.beardblaster.spell
 import ktx.log.info
 import ktx.log.logger
 import no.ntnu.beardblaster.commons.spell.SpellAction
-import no.ntnu.beardblaster.sprites.WizardTextures
+import no.ntnu.beardblaster.wizard.WizardTextures
 import no.ntnu.beardblaster.user.UserData
 
 private val LOG = logger<SpellActionWithAnimation>()
