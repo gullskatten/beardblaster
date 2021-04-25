@@ -12,10 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable
 import ktx.assets.async.AssetStorage
 import ktx.scene2d.Scene2DSkin
 import ktx.style.*
-import no.ntnu.beardblaster.spell.ElementType
 import no.ntnu.beardblaster.assets.AtlasAsset
 import no.ntnu.beardblaster.assets.FontAsset
 import no.ntnu.beardblaster.assets.get
+import no.ntnu.beardblaster.spell.ElementType
 import kotlin.math.roundToInt
 
 enum class Image(val atlasKey: String) {

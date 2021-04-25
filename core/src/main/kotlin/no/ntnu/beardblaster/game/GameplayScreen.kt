@@ -24,7 +24,6 @@ import ktx.scene2d.table
 import ktx.scene2d.textButton
 import no.ntnu.beardblaster.BaseScreen
 import no.ntnu.beardblaster.BeardBlasterGame
-import no.ntnu.beardblaster.spell.ElementType
 import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
@@ -32,11 +31,11 @@ import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.leaderboard.BeardScale
 import no.ntnu.beardblaster.menu.MenuScreen
 import no.ntnu.beardblaster.spell.*
-import no.ntnu.beardblaster.wizard.WizardTexture
-import no.ntnu.beardblaster.wizard.WizardTextures
 import no.ntnu.beardblaster.ui.*
 import no.ntnu.beardblaster.user.UserData
 import no.ntnu.beardblaster.wizard.Healthbar
+import no.ntnu.beardblaster.wizard.WizardTexture
+import no.ntnu.beardblaster.wizard.WizardTextures
 import java.util.*
 import kotlin.concurrent.schedule
 

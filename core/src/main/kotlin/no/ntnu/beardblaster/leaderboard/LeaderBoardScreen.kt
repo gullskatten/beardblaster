@@ -22,7 +22,9 @@ import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.leaderboard.BeardScore
 import no.ntnu.beardblaster.menu.MenuScreen
-import no.ntnu.beardblaster.ui.*
+import no.ntnu.beardblaster.ui.Image
+import no.ntnu.beardblaster.ui.get
+import no.ntnu.beardblaster.ui.headingLabel
 import java.util.*
 
 private val LOG = logger<LeaderBoardScreen>()

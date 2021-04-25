@@ -1,8 +1,8 @@
 package no.ntnu.beardblaster.user
 
 import kotlinx.coroutines.flow.Flow
-import no.ntnu.beardblaster.commons.user.AbstractRepository
 import no.ntnu.beardblaster.commons.State
+import no.ntnu.beardblaster.commons.user.AbstractRepository
 import no.ntnu.beardblaster.commons.user.User
 import pl.mk5.gdx.fireapp.PlatformDistributor
 
