@@ -41,10 +41,9 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
     private val opponentWizard: Wizard?
 
     var gameLoot: GameLoot = GameLoot()
-    var winnerWizard: Wizard? = null
+    var winningWizard: Wizard? = null
         private set
-    var losingWizard: Wizard? = null
-        private set
+    private var losingWizard: Wizard? = null
 
     val wizardState: WizardState = WizardState(
         Wizard(MAX_HP_PLAYERS, game.host!!),
@@ -136,16 +135,16 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
                     LOG.debug { "SpellAction was a forfeit spell!" }
                     when {
                         myWizard!!.id != arg.docId -> {
-                            winnerWizard = myWizard
+                            winningWizard = myWizard
                             losingWizard = opponentWizard
                         }
                         else -> {
-                            winnerWizard = opponentWizard
+                            winningWizard = opponentWizard
                             losingWizard = myWizard
                         }
                     }
                     currentPhase.setCurrentPhase(Phase.GameOver)
-                    LOG.info { "Winner: ${winnerWizard?.displayName}" }
+                    LOG.info { "Winner: ${winningWizard?.displayName}" }
                     LOG.info { "Loser: ${losingWizard?.displayName}" }
                 } else {
                     LOG.debug { "!IMPORTANT - Pushing spell to executor: ${arg.spell.spellName}" }
@@ -228,12 +227,12 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         var winnerLoot: List<Loot>
         var loserLoot: List<Loot>
 
-        if (winnerWizard == null || losingWizard == null) {
+        if (winningWizard == null || losingWizard == null) {
             if (wizardState.opponents[myWizard!!.id]!!.isWizardDefeated()) {
-                winnerWizard = opponentWizard
+                winningWizard = opponentWizard
                 losingWizard = myWizard
             } else if (wizardState.opponents[opponentWizard!!.id]!!.isWizardDefeated()) {
-                winnerWizard = myWizard
+                winningWizard = myWizard
                 losingWizard = opponentWizard
             }
         }
@@ -243,7 +242,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             loserLoot = GamePrizeList().getLoserPrizes(1, -5)
             KtxAsync.launch {
                 LeaderBoardRepository().updateBeardLength(
-                    winnerWizard!!,
+                    winningWizard!!,
                     1f).collect {  }
                 LeaderBoardRepository().updateBeardLength(
                     losingWizard!!,
@@ -258,7 +257,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             loserLoot = GamePrizeList().getLoserPrizes(Random().nextInt(3), -5)
             KtxAsync.launch {
                 LeaderBoardRepository().updateBeardLength(
-                    winnerWizard!!,
+                    winningWizard!!,
                     7f).collect {  }
                 LeaderBoardRepository().updateBeardLength(
                     losingWizard!!,
@@ -267,7 +266,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
             }
         }
         winnerLoot.forEach {
-            it.receiver = winnerWizard!!.id
+            it.receiver = winningWizard!!.id
         }
         loserLoot.forEach {
             it.receiver = losingWizard!!.id
@@ -301,7 +300,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
 
     fun isGameOver(): Boolean {
         if (currentPhase.getCurrentPhase() != Phase.GameOver) {
-            if (wizardState.isAnyWizardDead() || (winnerWizard != null || losingWizard != null)) {
+            if (wizardState.isAnyWizardDead() || (winningWizard != null || losingWizard != null)) {
                 LOG.info { "A wizard is dead! Game is over!" }
                 currentPhase.setCurrentPhase(Phase.GameOver)
                 return true;

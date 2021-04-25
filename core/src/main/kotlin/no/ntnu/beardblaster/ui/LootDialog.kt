@@ -42,7 +42,7 @@ class LootDialog(
 
     private fun renderLoot(loot: List<Loot>) {
         val userId = UserData.instance.user!!.id
-        val isWinner = userId == gameInstance.winnerWizard?.id
+        val isWinner = userId == gameInstance.winningWizard?.id
         val text = if (isWinner) Nls.youWin() else Nls.youLose()
         add(scene2d.label(text, LabelStyle.LightText.name) {
             setFontScale(2f)
