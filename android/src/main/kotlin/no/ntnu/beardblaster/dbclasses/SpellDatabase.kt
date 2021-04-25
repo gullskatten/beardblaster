@@ -29,7 +29,7 @@ abstract class SpellDatabase: RoomDatabase() {
                         context.applicationContext,
                         SpellDatabase::class.java,
                         "beardblaster-db"
-                    ).createFromAsset("bb-db-v5.db")
+                    ).createFromAsset("bb-db.db")
                         .fallbackToDestructiveMigration()
                         .build()
 
