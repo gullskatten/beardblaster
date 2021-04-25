@@ -6,12 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
-import ktx.async.KtxAsync
-import ktx.log.logger
 import ktx.scene2d.button
 import ktx.scene2d.scene2d
 import ktx.scene2d.table
@@ -20,35 +16,23 @@ import no.ntnu.beardblaster.BaseScreen
 import no.ntnu.beardblaster.BeardBlasterGame
 import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
-import no.ntnu.beardblaster.commons.State
-import no.ntnu.beardblaster.commons.game.Game
-import no.ntnu.beardblaster.game.GameData
-import no.ntnu.beardblaster.game.GamePlayScreen
-import no.ntnu.beardblaster.menu.MenuScreen
 import no.ntnu.beardblaster.ui.*
-import no.ntnu.beardblaster.user.UserData
-import pl.mk5.gdx.fireapp.GdxFIRAuth
-import java.util.*
-
-private val LOG = logger<JoinLobbyScreen>()
 
 class JoinLobbyScreen(
     game: BeardBlasterGame,
     batch: SpriteBatch,
     assets: AssetStorage,
     camera: OrthographicCamera,
-) : BaseScreen(game, batch, assets, camera), Observer {
-
+) : BaseScreen(game, batch, assets, camera), JoinLobbyPresenter.View {
+    private val presenter = JoinLobbyPresenter(this, game)
     private lateinit var waitingLabel: Label
     private lateinit var errorLabel: Label
     private lateinit var codeInput: TextField
     private lateinit var submitCodeBtn: TextButton
     private lateinit var backBtn: Button
-    private var lobbyHandler: LobbyHandler = LobbyHandler()
 
     override fun initScreen() {
-        // Listen for updates on LobbyData
-        lobbyHandler.addObserver(this)
+        presenter.init()
         codeInput = inputField(Nls.gameCode())
         submitCodeBtn = scene2d.textButton(Nls.submit())
         backBtn = scene2d.button(ButtonStyle.Cancel.name)
@@ -80,64 +64,38 @@ class JoinLobbyScreen(
 
     override fun setBtnEventListeners() {
         submitCodeBtn.onClick {
-            if (codeInput.text.isNotEmpty() && codeInput.text.isNotBlank())
-
-                if (UserData.instance.user == null || GdxFIRAuth.inst().currentUser == null) {
-                    errorLabel.isVisible = true
-                    errorLabel.setText("Failed to join: Try to log into BeardBlaster again.")
-                    return@onClick;
-                }
-            // This will eventually trigger "update()"
-            lobbyHandler.joinLobbyWithCode(codeInput.text)
-            waitingLabel.setText("Verifying code...")
-            waitingLabel.isVisible = true
+            presenter.onSubmitCodeBtnClick(codeInput.text)
         }
         backBtn.onClick {
-            KtxAsync.launch {
-                if (lobbyHandler.game != null) {
-                    lobbyHandler.leaveLobby()?.collect {
-                        when (it) {
-                            is State.Success -> {
-                                game.setScreen<MenuScreen>()
-                            }
-                            is State.Failed -> {
-                                errorLabel.setText("Failed to leave lobby.. Please retry.")
-                                errorLabel.isVisible = true
-                                if (errorLabel.isVisible) {
-                                    // Just force quit if it fails once more.
-                                    game.setScreen<MenuScreen>()
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    game.setScreen<MenuScreen>()
-                }
-            }
+            presenter.onBackBtnClick()
         }
     }
 
-    // Listens for changes on lobby -> when entering lobby and when lobby starts.
-    override fun update(o: Observable?, arg: Any?) {
-        if (o is LobbyHandler) {
-            if (arg is String) {
-                errorLabel.setText(arg)
-                errorLabel.isVisible = true
-                waitingLabel.isVisible = false
-            }
-            if (arg is Game) {
-                if (arg.startedAt > 0L) {
-                    GameData.instance.game = arg
-                    lobbyHandler.deleteObserver(this)
-                    game.setScreen<GamePlayScreen>()
-                } else {
-                    errorLabel.isVisible = false
-                    waitingLabel.isVisible = true
-                    waitingLabel.setFontScale(0.8f)
-                    waitingLabel.setText("Success! Waiting for player to start the game.")
-                    submitCodeBtn.isVisible = false
-                }
-            }
-        }
+    override fun setErrorLabel(msg: String) {
+        errorLabel.setText(msg)
+    }
+
+    override fun setWaitingLabel(msg: String) {
+        waitingLabel.setText(msg)
+    }
+
+    override fun setWaitingLabelFontScale(scale: Float) {
+        waitingLabel.setFontScale(scale)
+    }
+
+    override fun setErrorLabelVisibility(isVisible: Boolean) {
+        errorLabel.isVisible = isVisible
+    }
+
+    override fun isErrorLabelVisible(): Boolean {
+        return errorLabel.isVisible
+    }
+
+    override fun setWaitingLabelVisibility(isVisible: Boolean) {
+        waitingLabel.isVisible = isVisible
+    }
+
+    override fun setSubmitCodeBtnVisibility(isVisible: Boolean) {
+        submitCodeBtn.isVisible = isVisible
     }
 }
