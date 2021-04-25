@@ -17,12 +17,11 @@ import no.ntnu.beardblaster.commons.game.Loot
 import no.ntnu.beardblaster.commons.spell.SpellAction
 import no.ntnu.beardblaster.commons.wizard.Wizard
 import no.ntnu.beardblaster.leaderboard.LeaderBoardRepository
-import no.ntnu.beardblaster.models.SpellCasting
-import no.ntnu.beardblaster.screen.Phase
 import no.ntnu.beardblaster.spell.SpellActionWithAnimation
+import no.ntnu.beardblaster.spell.SpellCasting
 import no.ntnu.beardblaster.spell.SpellExecutor
 import no.ntnu.beardblaster.spell.SpellSubscription
-import no.ntnu.beardblaster.spell.WizardState
+import no.ntnu.beardblaster.wizard.WizardState
 import java.util.*
 import kotlin.random.Random
 

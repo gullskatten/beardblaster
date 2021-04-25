@@ -10,7 +10,6 @@ import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
 import ktx.inject.Context
 import ktx.inject.register
-import no.ntnu.beardblaster.screen.LoadingScreen
 
 const val WORLD_WIDTH = 1920f
 const val WORLD_HEIGHT = 1080f
