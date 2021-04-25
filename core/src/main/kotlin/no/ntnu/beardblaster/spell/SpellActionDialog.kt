@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.ui
+package no.ntnu.beardblaster.spell
 
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
@@ -6,10 +6,13 @@ import com.badlogic.gdx.utils.Align
 import ktx.scene2d.*
 import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
+import no.ntnu.beardblaster.ui.BeardScale
+import no.ntnu.beardblaster.ui.Image
+import no.ntnu.beardblaster.ui.LabelStyle
+import no.ntnu.beardblaster.ui.get
 
 @Scene2dDsl
-class SpellActionDialog(
-) : Table(Scene2DSkin.defaultSkin), KTable {
+class SpellActionDialog : Table(Scene2DSkin.defaultSkin), KTable {
 
     private val nameLabel: Label =
         scene2d.label("Calculating Spells", LabelStyle.LightText.name) {
@@ -31,9 +34,11 @@ class SpellActionDialog(
         const val PADDING = 20f
         const val LABEL_WIDTH = 860f
     }
+
     fun updateNameLabelText(name: String) {
-            nameLabel.setText(name)
+        nameLabel.setText(name)
     }
+
     fun updateBeardLengthLabelText(length: Float) {
         beardLength.setText("${length}cm")
         beardLength.color = BeardScale.getBeardColor(length)

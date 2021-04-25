@@ -3,7 +3,6 @@ package no.ntnu.beardblaster.spell
 import no.ntnu.beardblaster.commons.spell.SpellAction
 import no.ntnu.beardblaster.commons.wizard.Wizard
 import no.ntnu.beardblaster.user.UserData
-import java.util.*
 
 class WizardState(vararg opponents: Wizard) {
     val opponents: MutableMap<String, Wizard> = HashMap()

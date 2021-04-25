@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.hud
+package no.ntnu.beardblaster.spell
 
 import java.util.*
 

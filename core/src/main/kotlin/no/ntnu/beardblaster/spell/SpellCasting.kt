@@ -1,13 +1,10 @@
-package no.ntnu.beardblaster.models
+package no.ntnu.beardblaster.spell
 
 import ktx.log.debug
 import ktx.log.error
 import ktx.log.logger
 import no.ntnu.beardblaster.commons.spell.Element
 import no.ntnu.beardblaster.commons.spell.Spell
-import no.ntnu.beardblaster.hud.ElementChangedObserver
-import no.ntnu.beardblaster.hud.ElementClickedObserver
-import no.ntnu.beardblaster.spell.SpellRepository
 import java.util.*
 
 private val LOG = logger<SpellCasting>()

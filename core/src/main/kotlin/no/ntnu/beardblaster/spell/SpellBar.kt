@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster.hud
+package no.ntnu.beardblaster.spell
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
@@ -7,7 +7,6 @@ import ktx.log.logger
 import ktx.scene2d.*
 import no.ntnu.beardblaster.ElementType
 import no.ntnu.beardblaster.commons.spell.Element
-import no.ntnu.beardblaster.models.SpellCasting
 import no.ntnu.beardblaster.ui.Image
 import no.ntnu.beardblaster.ui.get
 import java.util.*
