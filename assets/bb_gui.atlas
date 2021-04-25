@@ -11,86 +11,128 @@ background
   orig: 700, 700
   offset: 0, 0
   index: -1
-bg_modal_small
+bar_container
   rotate: false
-  xy: 1525, 1075
-  size: 508, 168
-  orig: 508, 168
+  xy: 1468, 1956
+  size: 570, 81
+  orig: 570, 81
   offset: 0, 0
   index: -1
-bg_modal_wooden
+beard_scale
   rotate: false
-  xy: 1468, 1245
-  size: 508, 278
-  orig: 508, 278
+  xy: 1468, 1832
+  size: 538, 49
+  orig: 538, 49
+  offset: 0, 0
+  index: -1
+button_default
+  rotate: false
+  xy: 1525, 744
+  size: 295, 134
+  orig: 295, 134
   offset: 0, 0
   index: -1
 button_default_disabled
   rotate: false
-  xy: 1733, 393
+  xy: 1468, 1424
+  size: 295, 134
+  orig: 295, 134
+  offset: 0, 0
+  index: -1
+button_default_hover
+  rotate: false
+  xy: 1525, 1152
+  size: 295, 134
+  orig: 295, 134
+  offset: 0, 0
+  index: -1
+button_default_pressed
+  rotate: false
+  xy: 1644, 608
+  size: 295, 134
+  orig: 295, 134
+  offset: 0, 0
+  index: -1
+button_green
+  rotate: false
+  xy: 1644, 472
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_green_disabled
   rotate: false
-  xy: 1733, 257
+  xy: 1468, 1288
+  size: 295, 134
+  orig: 295, 134
+  offset: 0, 0
+  index: -1
+button_green_hover
+  rotate: false
+  xy: 1525, 1016
+  size: 295, 134
+  orig: 295, 134
+  offset: 0, 0
+  index: -1
+button_green_pressed
+  rotate: false
+  xy: 1644, 336
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_icon
   rotate: false
-  xy: 1990, 1984
+  xy: 1468, 1233
   size: 53, 53
   orig: 53, 53
   offset: 0, 0
   index: -1
 button_orange
   rotate: false
-  xy: 1733, 121
+  xy: 1395, 6
+  size: 295, 134
+  orig: 295, 134
+  offset: 0, 0
+  index: -1
+button_orange_disabled
+  rotate: false
+  xy: 1525, 880
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_orange_hover
   rotate: false
-  xy: 1733, 665
+  xy: 1468, 1696
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 button_orange_pressed
   rotate: false
-  xy: 1733, 529
-  size: 295, 134
-  orig: 295, 134
-  offset: 0, 0
-  index: -1
-button_purple
-  rotate: false
-  xy: 1525, 939
-  size: 295, 134
-  orig: 295, 134
-  offset: 0, 0
-  index: -1
-button_purple_hover
-  rotate: false
-  xy: 1733, 801
+  xy: 1468, 1560
   size: 295, 134
   orig: 295, 134
   offset: 0, 0
   index: -1
 element_fire
   rotate: false
-  xy: 1537, 55
+  xy: 1765, 1469
   size: 85, 85
   orig: 85, 85
   offset: 0, 0
   index: -1
 element_ice
   rotate: false
-  xy: 1644, 137
+  xy: 1525, 657
+  size: 85, 85
+  orig: 85, 85
+  offset: 0, 0
+  index: -1
+element_nature
+  rotate: false
+  xy: 1858, 1607
   size: 85, 85
   orig: 85, 85
   offset: 0, 0
@@ -104,51 +146,23 @@ epic_mage_battle_3000_x2
   index: -1
 health_bar_indicator
   rotate: false
-  xy: 823, 2
+  xy: 823, 12
   size: 538, 49
   orig: 538, 49
   offset: 0, 0
   index: -1
-icon_accept_fancy
+input_texture_dark
   rotate: false
-  xy: 1624, 82
-  size: 57, 53
-  orig: 57, 53
+  xy: 823, 63
+  size: 570, 77
+  orig: 570, 77
   offset: 0, 0
   index: -1
-icon_accept_gold
+input_texture_light
   rotate: false
-  xy: 2010, 1055
-  size: 18, 18
-  orig: 18, 18
-  offset: 0, 0
-  index: -1
-icon_cancel_gold
-  rotate: false
-  xy: 798, 630
-  size: 18, 18
-  orig: 18, 18
-  offset: 0, 0
-  index: -1
-icon_exit_gold
-  rotate: false
-  xy: 1619, 919
-  size: 18, 18
-  orig: 18, 18
-  offset: 0, 0
-  index: -1
-mana_bar_indicator
-  rotate: false
-  xy: 1363, 2
-  size: 538, 49
-  orig: 538, 49
-  offset: 0, 0
-  index: -1
-minimalpixelfont
-  rotate: false
-  xy: 1683, 55
-  size: 128, 64
-  orig: 128, 64
+  xy: 1468, 1883
+  size: 570, 71
+  orig: 570, 71
   offset: 0, 0
   index: -1
 modal_fancy
@@ -167,37 +181,30 @@ modal_fancy_dark
   index: -1
 modal_fancy_header_button_green_check
   rotate: false
-  xy: 1822, 937
-  size: 92, 136
-  orig: 92, 136
-  offset: 0, 0
-  index: -1
-modal_fancy_header_button_green_check_left
-  rotate: false
-  xy: 1525, 801
-  size: 92, 136
-  orig: 92, 136
-  offset: 0, 0
-  index: -1
-modal_fancy_header_button_green_left
-  rotate: false
-  xy: 1525, 663
-  size: 92, 136
-  orig: 92, 136
-  offset: 0, 0
-  index: -1
-modal_fancy_header_button_red
-  rotate: false
   xy: 704, 512
   size: 92, 136
   orig: 92, 136
   offset: 0, 0
   index: -1
-modal_fancy_header_button_red_cross
+modal_fancy_header_button_green_check_disabled
   rotate: false
-  xy: 1916, 937
+  xy: 1765, 1694
   size: 92, 136
   orig: 92, 136
+  offset: 0, 0
+  index: -1
+modal_fancy_header_button_red_cross_left
+  rotate: false
+  xy: 1765, 1556
+  size: 91, 136
+  orig: 91, 136
+  offset: 0, 0
+  index: -1
+modal_fancy_header_button_red_cross_left_disabled
+  rotate: false
+  xy: 1859, 1694
+  size: 91, 136
+  orig: 91, 136
   offset: 0, 0
   index: -1
 modal_fancy_skull
@@ -207,226 +214,16 @@ modal_fancy_skull
   orig: 819, 561
   offset: 0, 0
   index: -1
-nevis
-  rotate: false
-  xy: 1468, 1525
-  size: 512, 512
-  orig: 512, 512
-  offset: 0, 0
-  index: -1
-scroll_indicator_fancy_arrows_horizontal
-  rotate: false
-  xy: 823, 53
-  size: 712, 87
-  orig: 712, 87
-  offset: 0, 0
-  index: -1
-scroll_indicator_fancy_arrows_vertical
-  rotate: false
-  xy: 1644, 224
-  size: 87, 713
-  orig: 87, 713
-  offset: 0, 0
-  index: -1
-scroll_indicator_nugget
-  rotate: false
-  xy: 1468, 1223
-  size: 20, 20
-  orig: 20, 20
-  offset: 0, 0
-  index: -1
-scroll_indicator_nugget_fancy
-  rotate: false
-  xy: 1903, 8
-  size: 108, 111
-  orig: 108, 111
-  offset: 0, 0
-  index: -1
-scroll_indicator_path
-  rotate: false
-  xy: 1982, 1877
-  size: 6, 160
-  orig: 6, 160
-  offset: 0, 0
-  index: -1
 
 bb_gui2.png
-size: 2048,1024
+size: 1024,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-bar_container
-  rotate: false
-  xy: 2, 426
-  size: 570, 81
-  orig: 570, 81
-  offset: 0, 0
-  index: -1
-beard_scale
-  rotate: false
-  xy: 823, 758
-  size: 538, 49
-  orig: 538, 49
-  offset: 0, 0
-  index: -1
-button_dark_long
-  rotate: false
-  xy: 2, 602
-  size: 570, 154
-  orig: 570, 154
-  offset: 0, 0
-  index: -1
-button_default
-  rotate: false
-  xy: 871, 622
-  size: 295, 134
-  orig: 295, 134
-  offset: 0, 0
-  index: -1
-button_default_hover
-  rotate: false
-  xy: 1652, 862
-  size: 295, 134
-  orig: 295, 134
-  offset: 0, 0
-  index: -1
-button_default_pressed
-  rotate: false
-  xy: 2, 2
-  size: 295, 134
-  orig: 295, 134
-  offset: 0, 0
-  index: -1
-button_green
-  rotate: false
-  xy: 299, 2
-  size: 295, 134
-  orig: 295, 134
-  offset: 0, 0
-  index: -1
-button_green_hover
-  rotate: false
-  xy: 574, 622
-  size: 295, 134
-  orig: 295, 134
-  offset: 0, 0
-  index: -1
-button_green_pressed
-  rotate: false
-  xy: 574, 350
-  size: 295, 134
-  orig: 295, 134
-  offset: 0, 0
-  index: -1
-button_orange_disabled
-  rotate: false
-  xy: 2, 138
-  size: 295, 134
-  orig: 295, 134
-  offset: 0, 0
-  index: -1
-button_purple_disabled
-  rotate: false
-  xy: 299, 138
-  size: 295, 134
-  orig: 295, 134
-  offset: 0, 0
-  index: -1
-button_purple_pressed
-  rotate: false
-  xy: 582, 486
-  size: 295, 134
-  orig: 295, 134
-  offset: 0, 0
-  index: -1
-element_nature
-  rotate: false
-  xy: 1168, 671
-  size: 85, 85
-  orig: 85, 85
-  offset: 0, 0
-  index: -1
-input_texture_dark
-  rotate: false
-  xy: 2, 347
-  size: 570, 77
-  orig: 570, 77
-  offset: 0, 0
-  index: -1
-input_texture_light
-  rotate: false
-  xy: 2, 274
-  size: 570, 71
-  orig: 570, 71
-  offset: 0, 0
-  index: -1
-modal_fancy_dark_small
-  rotate: false
-  xy: 2, 758
-  size: 819, 238
-  orig: 819, 238
-  offset: 0, 0
-  index: -1
 modal_fancy_header
   rotate: false
-  xy: 823, 809
+  xy: 2, 2
   size: 827, 187
   orig: 827, 187
-  offset: 0, 0
-  index: -1
-modal_fancy_header_button_green
-  rotate: false
-  xy: 1949, 860
-  size: 92, 136
-  orig: 92, 136
-  offset: 0, 0
-  index: -1
-modal_fancy_header_button_green_check_disabled
-  rotate: false
-  xy: 596, 212
-  size: 92, 136
-  orig: 92, 136
-  offset: 0, 0
-  index: -1
-modal_fancy_header_button_red_cross_left
-  rotate: false
-  xy: 596, 74
-  size: 91, 136
-  orig: 91, 136
-  offset: 0, 0
-  index: -1
-modal_fancy_header_button_red_cross_left_disabled
-  rotate: false
-  xy: 690, 212
-  size: 91, 136
-  orig: 91, 136
-  offset: 0, 0
-  index: -1
-modal_fancy_header_button_red_left
-  rotate: false
-  xy: 1255, 620
-  size: 92, 136
-  orig: 92, 136
-  offset: 0, 0
-  index: -1
-scroll_indicator_path_fancy_horizontal
-  rotate: false
-  xy: 2, 509
-  size: 578, 91
-  orig: 578, 91
-  offset: 0, 0
-  index: -1
-scroll_indicator_path_fancy_vertical
-  rotate: false
-  xy: 2, 509
-  size: 578, 91
-  orig: 578, 91
-  offset: 0, 0
-  index: -1
-skull
-  rotate: false
-  xy: 879, 516
-  size: 288, 104
-  orig: 288, 104
   offset: 0, 0
   index: -1
