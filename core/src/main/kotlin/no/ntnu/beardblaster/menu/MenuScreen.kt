@@ -49,10 +49,10 @@ class MenuScreen(
     )
 
     override fun initScreen() {
-        createGameBtn = scene2d.textButton(Nls.createGame())
-        joinGameBtn = scene2d.textButton(Nls.joinGame())
-        leaderBoardBtn = scene2d.textButton(Nls.leaderBeard())
-        tutorialBtn = scene2d.textButton(Nls.tutorial())
+        createGameBtn = scene2d.textButton(Nls.createGame(), ButtonStyle.Primary.name)
+        joinGameBtn = scene2d.textButton(Nls.joinGame(), ButtonStyle.Primary.name)
+        leaderBoardBtn = scene2d.textButton(Nls.leaderBeard(), ButtonStyle.Secondary.name)
+        tutorialBtn = scene2d.textButton(Nls.tutorial(), ButtonStyle.Secondary.name)
         logoutBtn = scene2d.textButton(Nls.logOut())
         exitBtn = scene2d.textButton(Nls.exitGame())
         wizardHeading = headingLabel("BeardBlaster")

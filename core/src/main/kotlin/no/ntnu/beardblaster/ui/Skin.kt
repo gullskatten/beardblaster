@@ -28,6 +28,10 @@ enum class Image(val atlasKey: String) {
     ButtonPrimaryHover("button_green_hover"),
     ButtonPrimaryPressed("button_green_pressed"),
 
+    ButtonSecondary("button_purple"),
+    ButtonSecondaryHover("button_purple_hover"),
+    ButtonSecondaryPressed("button_purple_pressed"),
+
     ButtonCancel("button_orange"),
     ButtonCancelHover("button_orange_hover"),
     ButtonCancelPressed("button_orange_pressed"),
@@ -86,6 +90,7 @@ enum class ButtonStyle {
     OK,
     Cancel,
     Primary,
+    Secondary,
 }
 
 enum class Style {
@@ -170,6 +175,15 @@ fun createSkin(assets: AssetStorage): Skin {
             up = skin[Image.ButtonPrimary]
             over = skin[Image.ButtonPrimaryHover]
             down = skin[Image.ButtonPrimaryPressed]
+            pressedOffsetX = 4f
+            pressedOffsetY = 4f
+        }
+
+        textButton(ButtonStyle.Secondary.name) {
+            font = skin[FontStyle.Default]
+            up = skin[Image.ButtonSecondary]
+            over = skin[Image.ButtonSecondaryHover]
+            down = skin[Image.ButtonSecondaryPressed]
             pressedOffsetX = 4f
             pressedOffsetY = 4f
         }
