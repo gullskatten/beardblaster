@@ -31,6 +31,7 @@ enum class Nls : BundleLine {
     actionPhase,
     gameOverPhase,
     quit,
+    forfeit,
     quitGame,
     register,
     selectMaxElement,

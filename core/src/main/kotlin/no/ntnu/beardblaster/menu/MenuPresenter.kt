@@ -27,7 +27,7 @@ class MenuPresenter(private val view: View, val game: BeardBlasterGame) : Observ
         }
         if (UserData.instance.user == null && !UserData.instance.isLoading) {
             KtxAsync.launch {
-                UserData.instance.loadUserData()
+                UserData.instance.loadUserData(false)
             }
             UserData.instance.addObserver(this)
         }

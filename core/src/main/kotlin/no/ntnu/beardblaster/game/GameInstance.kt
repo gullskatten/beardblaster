@@ -158,6 +158,17 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         }
         if (o is GameSubscription) {
             if (arg is Game) {
+                if (arg.winner != null) {
+                    winningWizard = arg.winner
+                }
+                if (arg.loser != null) {
+                    losingWizard = arg.loser
+                }
+                if (arg.isDraw == true) {
+                    LOG.info { "It's a draw." }
+                    isDraw = true
+                }
+
                 if (arg.loot.isNotEmpty()) {
                     LOG.info { "Prices found! Adding all prices to map." }
                     if (gameLoot.getLoot().isEmpty()) {
@@ -239,42 +250,66 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
         private set
 
     private fun generateLoot() {
-        determineWinner()
 
-        val winner = winningWizard!!
-        val loser = losingWizard!!
+        isDraw = wizardState.getCurrentUserAsWizard()!!
+            .isWizardDefeated() && wizardState.getEnemyAsWizard()!!.isWizardDefeated()
+        var winner: Wizard? = null
+        var loser: Wizard? = null
         val winnerLoot: List<Loot>
         val loserLoot: List<Loot>
         var winnerBeardInc = 7
         var loserBeardInc = -5
 
-        isDraw = winner.isWizardDefeated() && loser.isWizardDefeated()
-
-        when {
-            currentTurn < 3 -> {
-                winnerBeardInc = 1
-                winnerLoot = GamePrizeList().getWinnerPrizes(1, winnerBeardInc)
-                loserLoot = GamePrizeList().getLoserPrizes(1, loserBeardInc)
-            }
-            isDraw -> {
-                winnerBeardInc = -1
-                loserBeardInc = -1
-                winnerLoot = GamePrizeList().getLoserPrizes(1, winnerBeardInc)
-                loserLoot = GamePrizeList().getLoserPrizes(1, loserBeardInc)
-            }
-            else -> {
-                winnerLoot = GamePrizeList().getWinnerPrizes(Random.nextInt(3), winnerBeardInc)
-                loserLoot = GamePrizeList().getLoserPrizes(Random.nextInt(3), loserBeardInc)
+        if (isDraw) {
+            winnerBeardInc = -1
+            loserBeardInc = -1
+            winnerLoot = GamePrizeList().getLoserPrizes(1, winnerBeardInc)
+            loserLoot = GamePrizeList().getLoserPrizes(1, loserBeardInc)
+        } else {
+            determineWinner()
+            winner = winningWizard
+            loser = losingWizard
+            when {
+                currentTurn < 3 -> {
+                    winnerBeardInc = 1
+                    winnerLoot = GamePrizeList().getWinnerPrizes(1, winnerBeardInc)
+                    loserLoot = GamePrizeList().getLoserPrizes(1, loserBeardInc)
+                }
+                else -> {
+                    winnerLoot = GamePrizeList().getWinnerPrizes(Random.nextInt(3), winnerBeardInc)
+                    loserLoot = GamePrizeList().getLoserPrizes(Random.nextInt(3), loserBeardInc)
+                }
             }
         }
 
-        winnerLoot.forEach { it.receiver = winner.id }
-        loserLoot.forEach { it.receiver = loser.id }
+        LOG.info { "Distributing loot to _winner = ${winner?.id ?: wizardState.getCurrentUserAsWizard()!!.id} amount: ${winnerLoot.size}" }
+        LOG.info { "Winner id: ${winner?.id}" }
+
+        winnerLoot.forEach {
+            it.receiver =
+                winner?.id ?: wizardState.getCurrentUserAsWizard()!!.id
+        }
+
+        LOG.info { "Distributing loot to _loser = ${loser?.id ?: wizardState.getEnemyAsWizard()!!.id} amount: ${loserLoot.size}" }
+        LOG.info { "Loser id: ${loser?.id}" }
+
+        loserLoot.forEach { it.receiver = loser?.id ?: wizardState.getEnemyAsWizard()!!.id }
 
         KtxAsync.launch {
-            LeaderBoardRepository().updateBeardLength(winner, winnerBeardInc.toFloat()).collect()
-            LeaderBoardRepository().updateBeardLength(loser, loserBeardInc.toFloat()).collect()
-            GameRepository().distributeLoot(winnerLoot.plus(loserLoot)).collect {
+            LeaderBoardRepository().updateBeardLength(
+                winner ?: wizardState.getCurrentUserAsWizard()!!, winnerBeardInc.toFloat()
+            ).collect()
+            LeaderBoardRepository().updateBeardLength(
+                loser ?: wizardState.getEnemyAsWizard()!!,
+                loserBeardInc.toFloat()
+            ).collect()
+
+            GameRepository().distributeLoot(
+                winnerLoot.plus(loserLoot),
+                winner,
+                loser,
+                isDraw
+            ).collect {
                 when (it) {
                     is State.Success -> {
                         LOG.debug { "Distributed loot successfully" }
@@ -302,7 +337,7 @@ class GameInstance(preparationTime: Int, game: Game) : Observer {
 
     fun isGameOver(): Boolean {
         if (currentPhase.getCurrentPhase() != Phase.GameOver) {
-            if (wizardState.isAnyWizardDead() || (winningWizard != null || losingWizard != null)) {
+            if (wizardState.isAnyWizardDead() || (winningWizard != null || losingWizard != null) || isDraw) {
                 LOG.info { "A wizard is dead! Game is over!" }
                 currentPhase.setCurrentPhase(Phase.GameOver)
                 return true

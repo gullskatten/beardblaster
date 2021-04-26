@@ -26,8 +26,8 @@ class UserData private constructor() : Observable() {
     }
 
 
-    suspend fun loadUserData() {
-        if (user == null) {
+    suspend fun loadUserData(forceRefresh: Boolean?) {
+        if (user == null || forceRefresh == true) {
             UserRepository().getDocument(GdxFIRAuth.inst().currentUser.userInfo.uid, "users")
                 .collect {
 

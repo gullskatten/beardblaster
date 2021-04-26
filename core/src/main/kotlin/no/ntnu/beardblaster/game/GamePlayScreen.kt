@@ -55,7 +55,7 @@ class GamePlayScreen(
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera), Observer {
     private lateinit var gameInstance: GameInstance
-    private lateinit var quitBtn: TextButton
+    private lateinit var forfeitBtn: TextButton
     private lateinit var fireElementBtn: Button
     private lateinit var iceElementBtn: Button
     private lateinit var natureElementBtn: Button
@@ -146,8 +146,8 @@ class GamePlayScreen(
         countDownLabel = headingLabel(gameInstance.timeRemaining.toInt().toString())
         countDownLabel.setPosition(10f, WORLD_HEIGHT - countDownLabel.height - 100f)
 
-        quitBtn = scene2d.textButton(Nls.quit())
-        quitBtn.setPosition(WORLD_WIDTH - quitBtn.width - 50f, WORLD_HEIGHT - quitBtn.height - 50f)
+        forfeitBtn = scene2d.textButton(Nls.forfeit())
+        forfeitBtn.setPosition(WORLD_WIDTH - forfeitBtn.width - 50f, WORLD_HEIGHT - forfeitBtn.height - 50f)
         fireElementBtn = scene2d.button(ElementType.Fire.name)
         iceElementBtn = scene2d.button(ElementType.Ice.name)
         natureElementBtn = scene2d.button(ElementType.Nature.name)
@@ -178,7 +178,7 @@ class GamePlayScreen(
 
     override fun initScreen() {
         initPreparationPhase()
-        stage.addActor(quitBtn)
+        stage.addActor(forfeitBtn)
     }
 
     private fun initPreparationPhase() {
@@ -201,7 +201,7 @@ class GamePlayScreen(
         stage.addActor(elementButtonsTable)
         stage.addActor(spellBar)
         stage.addActor(spellInfo)
-        stage.addActor(quitBtn)
+        stage.addActor(forfeitBtn)
         myHealthPointsLabel.setText(
             gameInstance.wizardState.getCurrentUserAsWizard()?.getHealthPoints()
         )
@@ -233,7 +233,7 @@ class GamePlayScreen(
         }
         stage.addActor(table)
         addWizards()
-        stage.addActor(quitBtn)
+        stage.addActor(forfeitBtn)
         cycleSpells()
     }
 
@@ -324,6 +324,9 @@ class GamePlayScreen(
         }
 
         lootDialog.closeBtn.onClick {
+            KtxAsync.launch {
+                UserData.instance.loadUserData(true)
+            }
             disposeSafely()
             game.setScreen<MenuScreen>()
         }
@@ -345,7 +348,7 @@ class GamePlayScreen(
     }
 
     override fun setBtnEventListeners() {
-        quitBtn.onClick {
+        forfeitBtn.onClick {
             gameInstance.forfeit()
         }
         fireElementBtn.onClick {
