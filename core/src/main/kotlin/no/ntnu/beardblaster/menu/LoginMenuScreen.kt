@@ -33,7 +33,7 @@ class LoginMenuScreen(
         registerBtn = scene2d.textButton(Nls.register())
 
         val table = fullSizeTable().apply {
-            background = skin[Image.Modal]
+            background = skin[Image.BackgroundSecondary]
             add(headingLabel(Nls.appName())).pad(50f)
             row()
             add(loginBtn).pad(40f)
