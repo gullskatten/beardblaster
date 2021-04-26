@@ -19,7 +19,7 @@ class GameRepository : PlatformDistributor<AbstractGameRepository<Game>>(),
     }
 
     override fun getAndroidClassName(): String {
-        return "no.ntnu.beardblaster.GameRepository"
+        return "no.ntnu.beardblaster.repositories.GameRepository"
     }
 
     override fun getWebGLClassName(): String {
@@ -32,8 +32,11 @@ class GameRepository : PlatformDistributor<AbstractGameRepository<Game>>(),
     }
 
     @ExperimentalCoroutinesApi
-    override fun subscribeToSpellsOnTurn(collection: String, currentTurn: Int): Flow<State<SpellAction>> {
-       return platformObject.subscribeToSpellsOnTurn(collection, currentTurn)
+    override fun subscribeToSpellsOnTurn(
+        collection: String,
+        currentTurn: Int
+    ): Flow<State<SpellAction>> {
+        return platformObject.subscribeToSpellsOnTurn(collection, currentTurn)
     }
 
     override fun castSpell(currentTurn: Int, spell: SpellAction): Flow<State<SpellAction>> {
@@ -44,8 +47,18 @@ class GameRepository : PlatformDistributor<AbstractGameRepository<Game>>(),
         return platformObject.endGame(id)
     }
 
-    override fun distributeLoot(loot: List<Loot>, winner: Wizard?, loser: Wizard?, isDraw: Boolean): Flow<State<Boolean>> {
-        return platformObject.distributeLoot(loot, winner = winner, loser = loser, isDraw) // explicit assign
+    override fun distributeLoot(
+        loot: List<Loot>,
+        winner: Wizard?,
+        loser: Wizard?,
+        isDraw: Boolean
+    ): Flow<State<Boolean>> {
+        return platformObject.distributeLoot(
+            loot,
+            winner = winner,
+            loser = loser,
+            isDraw
+        ) // explicit assign
     }
 
     override fun createTurn(currentTurn: Int): Flow<State<Turn>> {
