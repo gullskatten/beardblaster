@@ -8,6 +8,7 @@ import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.commons.game.Loot
 import no.ntnu.beardblaster.commons.game.Turn
 import no.ntnu.beardblaster.commons.spell.SpellAction
+import no.ntnu.beardblaster.commons.wizard.Wizard
 import pl.mk5.gdx.fireapp.PlatformDistributor
 
 class GameRepository : PlatformDistributor<AbstractGameRepository<Game>>(),
@@ -43,8 +44,8 @@ class GameRepository : PlatformDistributor<AbstractGameRepository<Game>>(),
         return platformObject.endGame(id)
     }
 
-    override fun distributeLoot(loot: List<Loot>): Flow<State<Boolean>> {
-        return platformObject.distributeLoot(loot)
+    override fun distributeLoot(loot: List<Loot>, winner: Wizard?, loser: Wizard?, isDraw: Boolean): Flow<State<Boolean>> {
+        return platformObject.distributeLoot(loot, winner = winner, loser = loser, isDraw) // explicit assign
     }
 
     override fun createTurn(currentTurn: Int): Flow<State<Turn>> {

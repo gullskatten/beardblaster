@@ -56,7 +56,7 @@ class LootDialog(
         val text: String
 
         when {
-            gameInstance.isDraw -> {
+            gameInstance.isDraw || gameInstance.winningWizard == null -> {
                 text = Nls.itsADraw()
                 myColor = Color.YELLOW
                 opponentColor = Color.YELLOW

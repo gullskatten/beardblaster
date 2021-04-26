@@ -18,6 +18,7 @@ import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.commons.game.Loot
 import no.ntnu.beardblaster.commons.game.Turn
 import no.ntnu.beardblaster.commons.spell.SpellAction
+import no.ntnu.beardblaster.commons.wizard.Wizard
 import no.ntnu.beardblaster.game.GameData
 import no.ntnu.beardblaster.user.UserData
 import java.time.LocalDateTime
@@ -167,7 +168,7 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
         }
     }
 
-    override fun distributeLoot(loot: List<Loot>): Flow<State<Boolean>> = flow {
+    override fun distributeLoot(loot: List<Loot>, winner: Wizard?, loser: Wizard?, isDraw: Boolean): Flow<State<Boolean>> = flow {
         emit(State.loading<Boolean>())
         try {
             db.collection(GAMES_COLLECTION)
@@ -176,7 +177,13 @@ class GameRepository(private val db: FirebaseFirestore = Firebase.firestore) :
                     "endedAt", LocalDateTime.now(ZoneOffset.UTC)
                     .toEpochSecond(ZoneOffset.UTC),
                     "loot",
-                    loot
+                    loot,
+                    "winner",
+                    winner,
+                    "loser",
+                    loser,
+                    "isDraw",
+                    isDraw
                 )
                 .await()
             emit(State.success(true))

@@ -8,6 +8,13 @@ class Wizard(
     beardLength: Float = 0f,
     displayName: String,
 ) : GamePlayer(id, beardLength, displayName) {
+    constructor():this(
+        15,
+        "",
+        0f,
+        ""
+    )
+
     constructor(maxHealthPoints: Int, gamePlayer: GamePlayer) :
         this(maxHealthPoints, gamePlayer.id, gamePlayer.beardLength, gamePlayer.displayName)
     var currentHealthPoints = maxHealthPoints
@@ -17,6 +24,6 @@ class Wizard(
     }
 
     fun getHealthPoints(): String {
-        return "${currentHealthPoints}/${maxHealthPoints} ♥"
+        return "${currentHealthPoints}/${maxHealthPoints}"
     }
 }
