@@ -41,6 +41,7 @@ enum class Nls : BundleLine {
     startGame,
     submit,
     tutorial,
+    tutorialGuide,
     welcomeWizard,
     wizardName,
     wizardNAttacks,

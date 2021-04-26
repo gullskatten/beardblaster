@@ -1,24 +1,23 @@
 package no.ntnu.beardblaster.tutorial
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.utils.Align
 import ktx.actors.onClick
 import ktx.assets.async.AssetStorage
-import ktx.log.logger
-import ktx.scene2d.scene2d
-import ktx.scene2d.textButton
+import ktx.scene2d.*
 import no.ntnu.beardblaster.BaseScreen
 import no.ntnu.beardblaster.BeardBlasterGame
+import no.ntnu.beardblaster.WORLD_HEIGHT
+import no.ntnu.beardblaster.WORLD_WIDTH
 import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.menu.MenuScreen
 import no.ntnu.beardblaster.ui.Image
-import no.ntnu.beardblaster.ui.fullSizeTable
+import no.ntnu.beardblaster.ui.LabelStyle
 import no.ntnu.beardblaster.ui.get
 import no.ntnu.beardblaster.ui.headingLabel
-
-private val LOG = logger<TutorialScreen>()
 
 class TutorialScreen(
     game: BeardBlasterGame,
@@ -27,19 +26,42 @@ class TutorialScreen(
     camera: OrthographicCamera,
 ) : BaseScreen(game, batch, assets, camera) {
     private lateinit var closeBtn: TextButton
+    private lateinit var table: Table
 
-    override fun initScreen() {
+    companion object {
+        const val SCREEN_PADDING = 30f
+    }
+
+    override fun initComponents() {
         closeBtn = scene2d.textButton(Nls.close())
-
-        setBtnEventListeners()
-        val table = fullSizeTable(30f).apply {
+        table = scene2d.table {
             background = skin[Image.BackgroundSecondary]
+            pad(SCREEN_PADDING)
+            defaults().space(SCREEN_PADDING)
+            setBounds(0f, 0f, WORLD_WIDTH, WORLD_HEIGHT)
+            columnDefaults(0).width(WORLD_WIDTH / 2)
             add(headingLabel(Nls.tutorial()))
+            row()
+            add(scene2d.table {
+                background = skin[Image.ModalDark]
+                pad(50f)
+                add(scene2d.scrollPane {
+                    addActor(scene2d.label(
+                        Nls.tutorialGuide(),
+                        LabelStyle.LightText.name
+                    ) {
+                        setFontScale(1f)
+                        wrap = true
+                    })
+                }).expand().growX().align(Align.topRight)
+            }).grow()
             row()
             add(closeBtn)
         }
+    }
+
+    override fun initScreen() {
         stage.addActor(table)
-        Gdx.input.inputProcessor = stage
     }
 
     override fun setBtnEventListeners() {
