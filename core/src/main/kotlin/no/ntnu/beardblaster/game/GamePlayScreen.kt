@@ -95,16 +95,22 @@ class GamePlayScreen(
         gameInstance = GameInstance(35, GameData.instance.game!!)
         gameInstance.currentPhase.addObserver(this)
         headingLabel = headingLabel(Nls.preparationPhase())
-        hostLabel = bodyLabel("${gameInstance.wizardState.getCurrentUserAsWizard()!!.displayName}", 1.25f)
-        hostBeardLabel = bodyLabel("${gameInstance.wizardState.getCurrentUserAsWizard()!!.beardLength}cm", 1.25f)
+        hostLabel =
+            bodyLabel("${gameInstance.wizardState.getCurrentUserAsWizard()!!.displayName}", 1.25f)
+        hostBeardLabel =
+            bodyLabel("${gameInstance.wizardState.getCurrentUserAsWizard()!!.beardLength}cm", 1.25f)
 
         myHealthPointsLabel = gameInstance.wizardState.getCurrentUserAsWizard()
             ?.let { bodyLabel(it.getHealthPoints()) } ?: bodyLabel("Unknown")
-        hostBeardLabel.color = BeardScale.getBeardColor(gameInstance.wizardState.getCurrentUserAsWizard()!!.beardLength)
-        opponentLabel = bodyLabel("${gameInstance.wizardState.getEnemyAsWizard()!!.displayName}", 1.25f)
-        opponentBeardLabel = bodyLabel("${gameInstance.wizardState.getEnemyAsWizard()!!.beardLength}cm", 1.25f)
+        hostBeardLabel.color =
+            BeardScale.getBeardColor(gameInstance.wizardState.getCurrentUserAsWizard()!!.beardLength)
+        opponentLabel =
+            bodyLabel("${gameInstance.wizardState.getEnemyAsWizard()!!.displayName}", 1.25f)
+        opponentBeardLabel =
+            bodyLabel("${gameInstance.wizardState.getEnemyAsWizard()!!.beardLength}cm", 1.25f)
         opponentBeardLabel.setText("${gameInstance.wizardState.getEnemyAsWizard()!!.beardLength}cm")
-        opponentBeardLabel.color = BeardScale.getBeardColor(gameInstance.wizardState.getEnemyAsWizard()!!.beardLength)
+        opponentBeardLabel.color =
+            BeardScale.getBeardColor(gameInstance.wizardState.getEnemyAsWizard()!!.beardLength)
         opponentHealthPointsLabel =
             gameInstance.wizardState.getEnemyAsWizard()?.let { bodyLabel(it.getHealthPoints()) }
                 ?: bodyLabel("Unknown")
@@ -147,7 +153,10 @@ class GamePlayScreen(
         countDownLabel.setPosition(10f, WORLD_HEIGHT - countDownLabel.height - 100f)
 
         forfeitBtn = scene2d.textButton(Nls.forfeit())
-        forfeitBtn.setPosition(WORLD_WIDTH - forfeitBtn.width - 50f, WORLD_HEIGHT - forfeitBtn.height - 50f)
+        forfeitBtn.setPosition(
+            WORLD_WIDTH - forfeitBtn.width - 50f,
+            WORLD_HEIGHT - forfeitBtn.height - 50f
+        )
         fireElementBtn = scene2d.button(ElementType.Fire.name)
         iceElementBtn = scene2d.button(ElementType.Ice.name)
         natureElementBtn = scene2d.button(ElementType.Nature.name)
@@ -233,7 +242,6 @@ class GamePlayScreen(
         }
         stage.addActor(table)
         addWizards()
-        stage.addActor(forfeitBtn)
         cycleSpells()
     }
 
