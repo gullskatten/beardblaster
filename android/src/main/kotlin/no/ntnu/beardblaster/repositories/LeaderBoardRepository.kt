@@ -1,4 +1,4 @@
-package no.ntnu.beardblaster
+package no.ntnu.beardblaster.repositories
 
 import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot

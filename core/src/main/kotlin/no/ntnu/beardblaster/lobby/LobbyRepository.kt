@@ -2,7 +2,7 @@ package no.ntnu.beardblaster.lobby
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import no.ntnu.beardblaster.commons.AbstractLobbyRepository
+import no.ntnu.beardblaster.commons.lobby.AbstractLobbyRepository
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.commons.game.GamePlayer
@@ -16,7 +16,7 @@ class LobbyRepository : PlatformDistributor<AbstractLobbyRepository<Game>>(),
     }
 
     override fun getAndroidClassName(): String {
-        return "no.ntnu.beardblaster.LobbyRepository"
+        return "no.ntnu.beardblaster.repositories.LobbyRepository"
     }
 
     override fun getWebGLClassName(): String {

@@ -13,7 +13,7 @@ class UserRepository : PlatformDistributor<AbstractRepository<User>>(), Abstract
     }
 
     override fun getAndroidClassName(): String {
-        return "no.ntnu.beardblaster.UserRepository"
+        return "no.ntnu.beardblaster.repositories.UserRepository"
     }
 
     override fun getWebGLClassName(): String {

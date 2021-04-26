@@ -16,7 +16,7 @@ class LeaderBoardRepository : PlatformDistributor<AbstractLeaderBoardRepository<
     }
 
     override fun getAndroidClassName(): String {
-        return "no.ntnu.beardblaster.LeaderBoardRepository"
+        return "no.ntnu.beardblaster.repositories.LeaderBoardRepository"
     }
 
     override fun getWebGLClassName(): String {
