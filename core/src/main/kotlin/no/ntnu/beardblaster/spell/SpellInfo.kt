@@ -30,7 +30,7 @@ class SpellInfo (
         setFontScale(1.5f)
         wrap = true
     }
-    var lockBtn: TextButton = scene2d.textButton("Lock Spell", ButtonStyle.Primary.name)
+    var lockBtn: TextButton = scene2d.textButton(Nls.lockSpell(), ButtonStyle.Primary.name)
 
     companion object {
         const val PADDING = 20f
@@ -82,7 +82,7 @@ class SpellInfo (
                     pressedOffsetX = 4f
                     pressedOffsetY = 4f
                 }
-                lockBtn.label.setText("Lock Spell")
+                lockBtn.label.setText(Nls.lockSpell())
                 lockBtn.isDisabled = false
             }
             SpellLockState.LOCKING -> {
@@ -94,7 +94,7 @@ class SpellInfo (
                     pressedOffsetX = 4f
                     pressedOffsetY = 4f
                 }
-                lockBtn.label.setText("Please Wait..")
+                lockBtn.label.setText(Nls.pleaseWait())
                 lockBtn.isDisabled = true
             }
             SpellLockState.LOCKED -> {
@@ -106,7 +106,7 @@ class SpellInfo (
                     pressedOffsetX = 4f
                     pressedOffsetY = 4f
                 }
-                lockBtn.label.setText("Waiting For Opponent")
+                lockBtn.label.setText(Nls.waitingForOpponent())
                 lockBtn.isDisabled = true
             }
             SpellLockState.FAILED -> {
@@ -118,7 +118,7 @@ class SpellInfo (
                     pressedOffsetX = 4f
                     pressedOffsetY = 4f
                 }
-                lockBtn.label.setText("Try Again")
+                lockBtn.label.setText(Nls.tryAgain())
                 lockBtn.isDisabled = false
             }
         }

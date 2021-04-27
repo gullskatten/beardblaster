@@ -55,7 +55,7 @@ class MenuScreen(
         tutorialBtn = scene2d.textButton(Nls.tutorial(), ButtonStyle.Secondary.name)
         logoutBtn = scene2d.textButton(Nls.logOut())
         exitBtn = scene2d.textButton(Nls.exitGame())
-        wizardHeading = headingLabel("BeardBlaster")
+        wizardHeading = headingLabel(Nls.appName())
 
         val wizNameTable = scene2d.table {
             defaults().space(25f)

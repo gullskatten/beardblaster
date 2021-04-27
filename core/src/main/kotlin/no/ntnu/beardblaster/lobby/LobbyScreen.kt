@@ -31,8 +31,8 @@ class LobbyScreen(
     private lateinit var backBtn: Button
 
     override fun initScreen() {
-        codeLabel = bodyLabel("Creating game..", 1.5f, LabelStyle.BodyOutlined.name)
-        opponentLabel = bodyLabel("Waiting for opponent to join..", 1.5f, LabelStyle.Body.name)
+        codeLabel = bodyLabel(Nls.creatingGame(), 1.5f, LabelStyle.BodyOutlined.name)
+        opponentLabel = bodyLabel(Nls.waitingForOpponentToJoin(), 1.5f, LabelStyle.Body.name)
         opponentBeardLabel = bodyLabel("", 1.5f, LabelStyle.Body.name)
 
         presenter.init()

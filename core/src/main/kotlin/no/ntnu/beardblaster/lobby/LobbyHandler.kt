@@ -9,6 +9,7 @@ import ktx.async.KtxAsync
 import ktx.log.error
 import ktx.log.info
 import ktx.log.logger
+import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.commons.game.GamePlayer
@@ -45,7 +46,7 @@ class LobbyHandler : Observable() {
                     GameData.instance.isHost = true
                 }
                 is State.Loading -> {
-                    notifyObservers("Loading..")
+                    notifyObservers(Nls.loading())
                 }
                 is State.Failed -> {
                     notifyObservers(it.message)

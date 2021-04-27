@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import ktx.async.KtxAsync
 import no.ntnu.beardblaster.BeardBlasterGame
+import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.game.Game
 import no.ntnu.beardblaster.game.GameData
@@ -35,13 +36,13 @@ class JoinLobbyPresenter(private val view: View, val game: BeardBlasterGame) : O
         if (codeInput.isNotEmpty() && codeInput.isNotBlank())
 
             if (UserData.instance.user == null || GdxFIRAuth.inst().currentUser == null) {
-                view.setErrorLabel("Failed to join: Try to log into BeardBlaster again.")
+                view.setErrorLabel(Nls.failedToJoinLobby())
                 view.setErrorLabelVisibility(true)
                 return
             }
         // This will eventually trigger "update()"
         lobbyHandler.joinLobbyWithCode(codeInput)
-        view.setWaitingLabel("Verifying code...")
+        view.setWaitingLabel(Nls.verifyingCode())
         view.setWaitingLabelVisibility(true)
     }
 
@@ -54,7 +55,7 @@ class JoinLobbyPresenter(private val view: View, val game: BeardBlasterGame) : O
                             game.setScreen<MenuScreen>()
                         }
                         is State.Failed -> {
-                            view.setErrorLabel("Failed to leave lobby.. Please retry.")
+                            view.setErrorLabel(Nls.failedToLeaveLobby())
                             view.setErrorLabelVisibility(true)
                             if (view.isErrorLabelVisible()) {
                                 // Just force quit if it fails once more.
@@ -86,7 +87,7 @@ class JoinLobbyPresenter(private val view: View, val game: BeardBlasterGame) : O
                     view.setErrorLabelVisibility(false)
                     view.setWaitingLabelVisibility(true)
                     view.setWaitingLabelFontScale(0.8f)
-                    view.setWaitingLabel("Success! Waiting for player to start the game.")
+                    view.setWaitingLabel(Nls.waitingForHostToStart())
                     view.setSubmitCodeBtnVisibility(false)
                 }
             }
