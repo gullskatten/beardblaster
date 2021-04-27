@@ -15,15 +15,22 @@ class SpellExecutor {
     private val mitigationSpells: MutableList<MitigationSpell> = ArrayList()
 
     fun addSpell(spell: SpellAction, turn: Int) {
-        if(isSpellValidForTurn(spell, turn)) {
+        if (isSpellValidForTurn(spell, turn)) {
             LOG.info { "Adding spell ${spell.spell.spellName} cast by ${spell.caster} - turn $turn" }
-            if(spellHistory.containsKey(turn)) {
+            if (spellHistory.containsKey(turn)) {
                 spellHistory[turn]?.add(spell)
             }
             spellHistory.putIfAbsent(turn, mutableListOf(spell))
 
             if (spell.spell.spellHealing > 0) {
-                mitigationSpells.add(HealingOverTime(spell.caster, turn, spell.spell.duration, spell.spell.spellHealing))
+                mitigationSpells.add(
+                    HealingOverTime(
+                        spell.caster,
+                        turn,
+                        spell.spell.duration,
+                        spell.spell.spellHealing
+                    )
+                )
             }
 
             if (spell.spell.spellMitigation > 0) {
@@ -39,8 +46,7 @@ class SpellExecutor {
             LOG.debug { "Current Spell History \n" }
             spellHistory.keys.forEach { i ->
                 LOG.debug { "Turn $i" }
-                spellHistory[i]!!.forEach {
-                        item ->
+                spellHistory[i]!!.forEach { item ->
                     LOG.debug { "Caster ${item.caster}: ${item.spell.spellName}" }
                 }
             }
@@ -48,7 +54,7 @@ class SpellExecutor {
     }
 
     private fun isSpellValidForTurn(spell: SpellAction, turn: Int): Boolean {
-        if(!spellHistory.containsKey(turn)) {
+        if (!spellHistory.containsKey(turn)) {
             return true
         }
         return spellHistory[turn]!!.none { registeredSpell -> spell.caster == registeredSpell.caster }
@@ -86,18 +92,17 @@ class SpellExecutor {
         })
 
 
-            actions.forEach {
-                    item ->
-                LOG.debug { "Caster ${item.caster}" }
-                LOG.debug { "Spell ${item.spell.spellName}" }
-                LOG.debug { "CasterWizard: ${item.casterWizard?.displayName}" }
-                LOG.debug { "CasterWizard HP: ${item.casterWizard?.getHealthPoints()}" }
-                LOG.debug { "ReceiverWizard: ${item.receiverWizard?.displayName}" }
-                LOG.debug { "Damage: ${item.damageDealt}" }
-                LOG.debug { "Healing: ${item.healing}" }
-                LOG.debug { "Absorbed: ${item.damageAbsorbed}" }
-            }
+        actions.forEach { item ->
+            LOG.debug { "Caster ${item.caster}" }
+            LOG.debug { "Spell ${item.spell.spellName}" }
+            LOG.debug { "CasterWizard: ${item.casterWizard?.displayName}" }
+            LOG.debug { "CasterWizard HP: ${item.casterWizard?.getHealthPoints()}" }
+            LOG.debug { "ReceiverWizard: ${item.receiverWizard?.displayName}" }
+            LOG.debug { "Damage: ${item.damageDealt}" }
+            LOG.debug { "Healing: ${item.healing}" }
+            LOG.debug { "Absorbed: ${item.damageAbsorbed}" }
+        }
 
-        return actions.map { spellAction ->  SpellActionWithAnimation(spellAction)}
+        return actions.map { spellAction -> SpellActionWithAnimation(spellAction) }
     }
 }

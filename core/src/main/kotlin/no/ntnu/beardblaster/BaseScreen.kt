@@ -29,11 +29,11 @@ abstract class BaseScreen(
         Gdx.input.inputProcessor = stage
     }
 
+    open fun initComponents() {} // Optional step
     abstract fun initScreen() // Abstract step
-    open fun initComponents() {}
-    abstract fun setBtnEventListeners()
-    open fun update(delta: Float) {}
+    abstract fun setBtnEventListeners() // Abstract step
 
+    // Template method pattern
     override fun render(delta: Float) {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
@@ -43,7 +43,8 @@ abstract class BaseScreen(
         additionalRender(delta)
     }
 
-    open fun additionalRender(delta: Float) {}
+    open fun update(delta: Float) {} // Optional step
+    open fun additionalRender(delta: Float) {} // Optional step
 
     override fun dispose() {
         stage.clear()
