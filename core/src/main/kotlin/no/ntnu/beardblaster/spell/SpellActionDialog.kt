@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Align
 import ktx.scene2d.*
 import no.ntnu.beardblaster.WORLD_HEIGHT
 import no.ntnu.beardblaster.WORLD_WIDTH
+import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.leaderboard.BeardScale
 import no.ntnu.beardblaster.ui.Image
 import no.ntnu.beardblaster.ui.LabelStyle
@@ -15,7 +16,7 @@ import no.ntnu.beardblaster.ui.get
 class SpellActionDialog : Table(Scene2DSkin.defaultSkin), KTable {
 
     private val nameLabel: Label =
-        scene2d.label("Calculating Spells", LabelStyle.LightText.name) {
+        scene2d.label(Nls.calculatingSpells(), LabelStyle.LightText.name) {
             setAlignment(Align.left)
             setFontScale(1.8f)
         }
@@ -24,7 +25,7 @@ class SpellActionDialog : Table(Scene2DSkin.defaultSkin), KTable {
             setAlignment(Align.right)
             setFontScale(1.8f)
         }
-    private val descLabel: Label = scene2d.label("Hold on...", LabelStyle.LightText.name) {
+    private val descLabel: Label = scene2d.label(Nls.holdOn(), LabelStyle.LightText.name) {
         setAlignment(Align.center)
         setFontScale(1.5f)
         wrap = true

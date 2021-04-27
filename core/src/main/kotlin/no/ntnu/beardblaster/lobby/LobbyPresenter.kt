@@ -43,7 +43,7 @@ class LobbyPresenter(private val view: View, val game: BeardBlasterGame) : Obser
             lobbyHandler.startGame()?.collect {
                 when (it) {
                     is State.Loading -> {
-                        view.setOpponentLabel("Starting game..")
+                        view.setOpponentLabel(Nls.startingGame())
                     }
                     is State.Failed -> {
                         view.setOpponentLabel(it.message)
@@ -107,14 +107,14 @@ class LobbyPresenter(private val view: View, val game: BeardBlasterGame) : Obser
                                 if (it.data.opponent != null) {
                                     // Player may now start the game
                                     GameData.instance.game = it.data
-                                    view.setInfoLabel("A worthy opponent joined!")
+                                    view.setInfoLabel(Nls.worthyOpponentJoined())
                                     view.setOpponentLabel("${it.data.opponent?.displayName}")
                                     view.setOpponentBeardLengthLabel(
                                         it.data.opponent?.beardLength ?: 0f
                                     )
                                     view.setStartGameBtnVisibility(true)
                                 } else {
-                                    view.setOpponentLabel("Waiting for opponent to join");
+                                    view.setOpponentLabel(Nls.waitingForOpponentToJoin())
                                     view.setInfoLabel(Nls.shareGameCodeMessage())
                                     view.setStartGameBtnVisibility(false)
                                 }

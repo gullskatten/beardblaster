@@ -101,7 +101,7 @@ class GamePlayScreen(
             bodyLabel("${gameInstance.wizardState.getCurrentUserAsWizard()!!.beardLength}cm", 1.25f)
 
         myHealthPointsLabel = gameInstance.wizardState.getCurrentUserAsWizard()
-            ?.let { bodyLabel(it.getHealthPoints()) } ?: bodyLabel("Unknown")
+            ?.let { bodyLabel(it.getHealthPoints()) } ?: bodyLabel(Nls.unknown())
         hostBeardLabel.color =
             BeardScale.getBeardColor(gameInstance.wizardState.getCurrentUserAsWizard()!!.beardLength)
         opponentLabel =
@@ -113,7 +113,7 @@ class GamePlayScreen(
             BeardScale.getBeardColor(gameInstance.wizardState.getEnemyAsWizard()!!.beardLength)
         opponentHealthPointsLabel =
             gameInstance.wizardState.getEnemyAsWizard()?.let { bodyLabel(it.getHealthPoints()) }
-                ?: bodyLabel("Unknown")
+                ?: bodyLabel(Nls.unknown())
 
         val myWizNameTable = scene2d.table {
             defaults().space(25f)
@@ -235,7 +235,7 @@ class GamePlayScreen(
 
         val table = fullSizeTable().apply {
             background = skin[Image.Background]
-            add(headingLabel("Action Phase"))
+            add(headingLabel(Nls.actionPhase()))
             row()
             add(spellAction).center()
             row()
@@ -285,7 +285,7 @@ class GamePlayScreen(
                     Timer("SpellDialog", true).schedule(4000 * idx.toLong()) {
                         LOG.info { "Updating spell dialog" }
                         spellAction.updateNameLabelText(
-                            spell.casterWizard?.displayName ?: "Unknown?"
+                            spell.casterWizard?.displayName ?: Nls.unknown()
                         )
                         spellAction.updateBeardLengthLabelText(
                             spell.casterWizard?.beardLength ?: 0f
@@ -311,8 +311,8 @@ class GamePlayScreen(
                 LOG.error { "Phasing Timer failed: ${e.message}" }
             }
         } else {
-            spellAction.updateNameLabelText("Both wizards were idle!")
-            spellAction.updateDescLabelText("It looks like no wizards wanted to cast any spells this turn. Moving back..")
+            spellAction.updateNameLabelText(Nls.bothWizardWereIdle())
+            spellAction.updateDescLabelText(Nls.noWizardsWantedToCastSpell())
             Timer("SwapToPreparePhase", true).schedule(4000L) {
                 gameInstance.currentPhase.setCurrentPhase(Phase.Preparation)
             }

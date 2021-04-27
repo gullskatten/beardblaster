@@ -38,7 +38,7 @@ class JoinLobbyScreen(
         backBtn = scene2d.button(ButtonStyle.Cancel.name)
 
         waitingLabel = bodyLabel("", 1.5f, LabelStyle.BodyOutlined.name)
-        errorLabel = bodyLabel("")
+        errorLabel = bodyLabel("", labelStyle = LabelStyle.BodyOutlined.name)
         waitingLabel.isVisible = false
         errorLabel.isVisible = false
 
@@ -50,6 +50,7 @@ class JoinLobbyScreen(
             this.add(codeInput).width(570f)
             this.row()
             this.add(waitingLabel)
+            this.row()
             this.add(errorLabel)
             this.row()
             this.add(submitCodeBtn)

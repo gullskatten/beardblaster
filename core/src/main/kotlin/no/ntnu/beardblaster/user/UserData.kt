@@ -3,6 +3,7 @@ package no.ntnu.beardblaster.user
 import kotlinx.coroutines.flow.collect
 import ktx.log.info
 import ktx.log.logger
+import no.ntnu.beardblaster.assets.Nls
 import no.ntnu.beardblaster.commons.State
 import no.ntnu.beardblaster.commons.user.User
 import no.ntnu.beardblaster.leaderboard.LeaderBoardRepository
@@ -57,13 +58,13 @@ class UserData private constructor() : Observable() {
                         is State.Loading -> {
                             isLoading = true
                             LOG.info { "Loading user data!" }
-                            notifyObservers("Loading user..")
+                            notifyObservers(Nls.loadingUser())
                             error = null
                         }
                         is State.Failed -> {
                             isLoading = false
                             LOG.info { "Loading user FAILED: ${it.message}" }
-                            notifyObservers("Failed to load user data!")
+                            notifyObservers(Nls.failedToLoadUserData())
                             error = it.message
                         }
                     }
@@ -75,7 +76,7 @@ class UserData private constructor() : Observable() {
 
     fun getCurrentUserString(): String {
         user?.let { return user!!.displayName }
-        return "Loading User.."
+        return Nls.loadingUser()
     }
 
     fun getBeardLength(): Float {
