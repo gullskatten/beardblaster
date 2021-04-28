@@ -11,6 +11,7 @@ Run the project with an Android emulator
 
 ## Patterns used
 * MVP pattern
+* Client-Server 
 * Template method pattern
 * Observer pattern
 * Singleton pattern
